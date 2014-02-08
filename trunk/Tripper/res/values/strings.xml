@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tripper</string>
+    <string name="splash_screen">Triper</string>
+    <string name="settings">Settings</string>
+    <string name="exit">Exit</string>
+    <string name="Choice">Choice</string>
+    <string name="btnSingleDestination">Notify On Arrival</string>
+    <string name="btnMultipleDestination">Create A Trip</string>
+    <string name="Enter_Destination_dialog_title">Enter Address</string>
+    <string name="Enter_Destination_dialog_text">Enter Destination</string>
+    <string name="Enter_Destination_dialog_confirm_button">Confirm</string>
+    <string name="Enter_Destination_dialog_cancel_button">Cancel</string>
+    <string name="title_activity_friends_list">FriendsList</string>
+    <string name="title_activity_find_address">FindAddress</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_contact_list">ContactList</string>
+    <!--
+         Used for the AlphabetIndexer in ContactsListFragment to provide quick navigation by
+         alphabet using ListView fast scroll.
+    -->
+    <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="title_activity_contact__list">Contact_List</string>
+
+</resources>

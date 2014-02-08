@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/btnSingleDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:layout_toLeftOf="@+id/view"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/logo"
+        android:onClick="OnBtnSingleDestinationClick"
+        android:text="@string/btnSingleDestination" 
+        style="?android:attr/buttonBarButtonStyle"
+         />
+
+    <Button
+        android:id="@+id/btnMultipleDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/logo"
+        android:layout_toRightOf="@+id/view"
+        android:onClick="OnBtnMultipleDestinationClick"
+        android:text="@string/btnMultipleDestination"
+        style="?android:attr/buttonBarButtonStyle" 
+        />
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_centerHorizontal="true" />
+    
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/splashscreen" />
+
+</RelativeLayout>

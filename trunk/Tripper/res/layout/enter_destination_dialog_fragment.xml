@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/enter_destination"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center" android:orientation="vertical"  >
+
+    <AutoCompleteTextView
+        android:id="@+id/atcvAddress"
+        android:hint="@string/Enter_Destination_dialog_text" 
+        android:layout_width="match_parent"  
+        android:layout_height="wrap_content" 
+        android:imeOptions="actionDone" />
+
+     
+</LinearLayout>
