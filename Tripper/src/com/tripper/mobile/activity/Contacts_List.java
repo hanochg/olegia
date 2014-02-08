@@ -121,7 +121,7 @@ public class Contacts_List extends Activity implements
         
         
         // Add a cache to the image loader
-        //mImageLoader.addImageCache(this.getSupportFragmentManager(), 0.1f);
+        //mImageLoader.addImageCache(null, 0.1f);
         
 
         // Set up ListView, assign adapter and set some listeners. The adapter was previously
@@ -381,13 +381,12 @@ public class Contacts_List extends Activity implements
 	        final String phoneNum = cursor.getString(Queries.PHONE_NUM);
 
 	        final int startIndex = indexOfSearchQuery(displayName);
-
+	        
 	        if (startIndex == -1) {
 	            // If the user didn't do a search, or the search string didn't match a display
 	            // name, show the display name without highlighting
 	            holder.contactsName.setText(displayName);
-	            holder.contactsNumber.setText(phoneNum);
-
+	            
 	        } else {
 	            // If the search string matched the display name, applies a SpannableString to
 	            // highlight the search string with the displayed display name
@@ -402,9 +401,12 @@ public class Contacts_List extends Activity implements
 
 	            // Binds the SpannableString to the display name View object
 	            holder.contactsName.setText(highlightedName);
-
 	        }
-
+	        
+	        //assign phone number to user in list
+            holder.contactsNumber.setText(phoneNum);
+            
+            
 	        // Processes the QuickContactBadge. A QuickContactBadge first appears as a contact's
 	        // thumbnail image with styling that indicates it can be touched for additional
 	        // information. When the user clicks the image, the badge expands into a dialog box
@@ -417,7 +419,11 @@ public class Contacts_List extends Activity implements
 	                cursor.getString(Queries.LOOKUP_KEY));
 
 	        // Binds the contact's lookup Uri to the QuickContactBadge
-	      holder.icon.assignContactUri(contactUri);
+	        String photo = cursor.getString(Queries.PHOTO_THUMBNAIL_DATA);
+	        Long id  = cursor.getLong(Queries.ID);
+	        String lookup = cursor.getString(Queries.LOOKUP_KEY);
+	        content://com.android.contacts/contacts/1173/photo
+	        holder.icon.assignContactUri(contactUri);
 
 	        // Loads the thumbnail image pointed to by photoUri into the QuickContactBadge in a
 	        // background worker thread

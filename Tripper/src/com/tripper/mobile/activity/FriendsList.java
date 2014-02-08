@@ -1,9 +1,11 @@
 package com.tripper.mobile.activity;
 
 import java.util.Locale;
+
 import com.tripper.mobile.R;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract.Contacts;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -11,6 +13,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -27,6 +30,7 @@ import android.widget.AlphabetIndexer;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
@@ -35,7 +39,7 @@ import android.widget.TextView;
 import com.tripper.mobile.utils.*;
 
 public class FriendsList extends Activity {
-	ListView mContactsList;
+	ListView mSelectedContactsList;
 	SimpleCursorAdapter mCursorAdapter;
 	private ContactsAdapter mAdapter; // The main query adapter
 	Context context;
@@ -43,12 +47,12 @@ public class FriendsList extends Activity {
 	AutoCompleteTextView actvContacts;
     String mSearchString=null;
     
-    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = this;
-		setContentView(R.layout.friends_list_screen);
+		setContentView(R.layout.friends_list_screen);		
+		
         mAdapter = new ContactsAdapter(this);
 		
 		plusButton=(ImageButton) findViewById(R.id.plusButton);
@@ -67,14 +71,19 @@ public class FriendsList extends Activity {
 		actvContacts=(AutoCompleteTextView) findViewById(R.id.acContactName);
 		
         // Gets the ListView from the View list of the parent activity
-        mContactsList = (ListView) findViewById(R.id.lvContactList);
+		mSelectedContactsList = (ListView) findViewById(R.id.lvContactList);
+        
+        ListViewContactsAdapter mListViewContactsAdapter=
+        		new ListViewContactsAdapter(this,R.layout.contact_list_item,ContactsListSingleton.getInstance().getDB());
+        mSelectedContactsList.setAdapter(mListViewContactsAdapter);
+        
         // Gets a CursorAdapter
-        mCursorAdapter = new SimpleCursorAdapter(
+        /*mCursorAdapter = new SimpleCursorAdapter(
                 this,
                 R.layout.contact_list_item,
                 null,
                 Queries.FROM_COLUMNS, Queries.TO_VIEWS_IDS2,
-                0);
+               	0);*/
         // Sets the adapter for the ListView
         //mContactsList.setAdapter(mAdapter);
         //actvContacts.setAdapter(mCursorAdapter);
@@ -85,7 +94,28 @@ public class FriendsList extends Activity {
 			@Override
 		    public void onItemClick(
 		            AdapterView<?> parent, View item, int position, long rowID) {
+		        
+				ContactDataStructure contact = new ContactDataStructure();
+				
+				// Gets the Cursor object currently bound to the ListView
+		        final Cursor cursor = mAdapter.getCursor();
 
+		        // Moves to the Cursor row corresponding to the ListView item that was clicked
+		        cursor.moveToPosition(position);
+
+		        // Creates a contact lookup Uri from contact ID and lookup_key
+		        final Uri uri = Contacts.getLookupUri(
+		                cursor.getLong(Queries.ID),
+		                cursor.getString(Queries.LOOKUP_KEY));
+		        		        
+		        contact.setId(cursor.getLong(Queries.ID));
+		        contact.setLookupkey(cursor.getString(Queries.LOOKUP_KEY));
+		        contact.setName(cursor.getString(Queries.DISPLAY_NAME));
+		        contact.setPhoneNumber(cursor.getString(Queries.PHONE_NUM));
+		        contact.setUri(uri);
+		        
+		        ContactsListSingleton.getInstance().insertContact(contact);
+		        
 			}
 		});
 			
@@ -118,7 +148,7 @@ public class FriendsList extends Activity {
           					cur = new CursorLoader(
         			        		context,
         			        		FilteredUri,
-        			        		Queries.PROJECTION,
+        			        		Queries.PROJECTION_WITH_BADGE,
         			        		Queries.DisplayName_SELECTION,
         			        		null,
         			                Queries.SORT_ORDER
@@ -179,7 +209,7 @@ public class FriendsList extends Activity {
   					cur = new CursorLoader(
 			        		context,
 			        		FilteredUri,
-			        		Queries.PROJECTION,
+			        		Queries.PROJECTION_WITH_BADGE,
 			        		Queries.DisplayName_SELECTION,
 			        		null,
 			                Queries.SORT_ORDER
@@ -279,7 +309,6 @@ public class FriendsList extends Activity {
 	        holder.contactsName = (TextView) itemLayout.findViewById(R.id.nameCL);
 	        holder.contactsNumber = (TextView) itemLayout.findViewById(R.id.phoneNumCL);
 	        holder.icon = (QuickContactBadge) itemLayout.findViewById(R.id.contactBadge);
-	        //holder.icon.setEnabled(false);
 	        holder.icon.setVisibility(View.INVISIBLE);
 	        // Stores the resourceHolder instance in itemLayout. This makes resourceHolder
 	        // available to bindView and other methods that receive a handle to the item view.
@@ -297,9 +326,9 @@ public class FriendsList extends Activity {
 	        // Gets handles to individual view resources
 	        final ViewHolder holder = (ViewHolder) view.getTag();
 
-	        final String displayName = cursor.getString(3);
+	        final String displayName = cursor.getString(Queries.DISPLAY_NAME);
 	        
-	        final String phoneNum = cursor.getString(2);
+	        final String phoneNum = cursor.getString(Queries.PHONE_NUM);
 
 	        final int startIndex = indexOfSearchQuery(displayName);
 

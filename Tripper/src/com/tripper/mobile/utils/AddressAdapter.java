@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class CustomAdapter extends ArrayAdapter<Address>{
+public class AddressAdapter extends ArrayAdapter<Address>{
 
 
 	Context context; 
@@ -20,7 +20,7 @@ public class CustomAdapter extends ArrayAdapter<Address>{
 	List<Address> data = null;
 	private LayoutInflater mInflater; 	
 
-	public CustomAdapter(Context context, int layoutResourceId, List<Address> data) {
+	public AddressAdapter(Context context, int layoutResourceId, List<Address> data) {
 		super(context, layoutResourceId, data);		  
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
