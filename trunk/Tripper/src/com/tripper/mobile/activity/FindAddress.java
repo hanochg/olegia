@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tripper.mobile.R;
-import com.tripper.mobile.R.id;
-import com.tripper.mobile.R.layout;
-import com.tripper.mobile.R.menu;
 import com.tripper.mobile.utils.*;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -21,20 +17,14 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class FindAddress extends Activity {

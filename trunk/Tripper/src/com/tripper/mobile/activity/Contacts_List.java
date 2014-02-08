@@ -191,7 +191,7 @@ public class Contacts_List extends Activity implements
 			if (!TextUtils.isEmpty(mSearchTerm)) 
 			{
 				contentUri = Uri.withAppendedPath(
-				    			Queries.CONTENT__FILTERED_URI,          						    	
+				    			Queries.CONTENT_FILTERED_URI,          						    	
 								Uri.encode(mSearchTerm));
 			}
 			else

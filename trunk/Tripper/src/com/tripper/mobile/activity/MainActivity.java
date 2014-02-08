@@ -8,10 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.EnterDestinationDialog;
 
 public class MainActivity extends FragmentActivity  {
 

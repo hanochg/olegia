@@ -1,33 +1,22 @@
 package com.tripper.mobile.activity;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Locale;
-
-import com.tripper.mobile.BuildConfig;
 import com.tripper.mobile.R;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.TextAppearanceSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +77,8 @@ public class FriendsList extends Activity {
                 0);
         // Sets the adapter for the ListView
         //mContactsList.setAdapter(mAdapter);
-		actvContacts.setAdapter(mAdapter);
+        //actvContacts.setAdapter(mCursorAdapter);
+        actvContacts.setAdapter(mAdapter);
 		
 		actvContacts.setOnItemClickListener(new OnItemClickListener() {
 
@@ -114,22 +104,16 @@ public class FriendsList extends Activity {
   
           			@Override
         			public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
-          				
+          				CursorLoader cur=null;
         				if (Queries.LoaderManagerID == loaderId)
         		        {
           					Uri FilteredUri;
           					if (!TextUtils.isEmpty(mSearchString))
-          					{
           						FilteredUri = Uri.withAppendedPath(
-          						    			Queries.CONTENT__FILTERED_URI,          						    	
+          						    			Queries.CONTENT_FILTERED_URI,          						    	
           										Uri.encode(mSearchString));
-          					}
           					else
-          					{
           						FilteredUri = Queries.CONTENT_URI;	
-          					}
-          					CursorLoader cur=null;
-          					try{
           					
           					cur = new CursorLoader(
         			        		context,
@@ -139,19 +123,19 @@ public class FriendsList extends Activity {
         			        		null,
         			                Queries.SORT_ORDER
         			                );
-          					}catch (Exception ex){
-          					Log.d("PPP",ex.getMessage());}
-        			        return cur;
-        			        		
+          					
+          					Log.e("PROGRAMM!", "onCreateLoader - succeed to return cur");
+        			        return cur;        			        		
         		        }
         				Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
-        				return null;
+        				return cur;
         			}
 
           			@Override
           			public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
           				// Put the result Cursor in the adapter for the ListView
           				if (Queries.LoaderManagerID == loader.getId())
+          					//mCursorAdapter.swapCursor(cursor);
           					mAdapter.swapCursor(cursor);
           			}
 
@@ -159,7 +143,8 @@ public class FriendsList extends Activity {
           			public void onLoaderReset(Loader<Cursor> loader) {
           		        // Delete the reference to the existing Cursor
           				if (Queries.LoaderManagerID == loader.getId())
-          		           mAdapter.swapCursor(null);
+          					//mCursorAdapter.swapCursor(null);
+          					mAdapter.swapCursor(null);
           			}
           		});
 			}
@@ -180,21 +165,17 @@ public class FriendsList extends Activity {
 
   			@Override
 			public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
-  				
+				CursorLoader cur=null;
 				if (Queries.LoaderManagerID == loaderId)
 		        {
   					Uri FilteredUri;
   					if (!TextUtils.isEmpty(mSearchString)) 
-  					{
   						FilteredUri = Uri.withAppendedPath(
-  						    			Queries.CONTENT__FILTERED_URI,          						    	
+  						    			Queries.CONTENT_FILTERED_URI,          						    	
   										Uri.encode(mSearchString));
-  					}
   					else
-  					{
   						FilteredUri = Queries.CONTENT_URI;	
-  					}
-  					CursorLoader cur=null;
+
   					cur = new CursorLoader(
 			        		context,
 			        		FilteredUri,
@@ -204,11 +185,12 @@ public class FriendsList extends Activity {
 			                Queries.SORT_ORDER
 			                );
 
-			        return cur;
-			        		
+  					Log.e("PROGRAMM!", "onCreateLoader - succeed to return cur");
+  					return cur;
+			            		
 		        }
 				Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
-				return null;
+				return cur;
 			}
 
 			@Override
@@ -341,6 +323,7 @@ public class FriendsList extends Activity {
 
 	            // Binds the SpannableString to the display name View object
 	            holder.contactsName.setText(highlightedName);
+	            holder.contactsNumber.setText(phoneNum);
 
 	        }
 

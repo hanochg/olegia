@@ -17,7 +17,7 @@ public class Queries {
 	public static final Uri CONTENT_URI = 
 			ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 	
-	public static final Uri CONTENT__FILTERED_URI = 
+	public static final Uri CONTENT_FILTERED_URI = 
 			ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI;
 	
     public static final String[] PROJECTION =
