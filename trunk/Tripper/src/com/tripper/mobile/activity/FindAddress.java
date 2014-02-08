@@ -85,7 +85,7 @@ public class FindAddress extends Activity {
 		//autoCompleteAdapter.setNotifyOnChange(false);
 
 		//Define ListAdapter
-		listViewAdapter=new CustomAdapter(this, android.R.layout.simple_dropdown_item_1line,new ArrayList<Address>());
+		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,new ArrayList<Address>());
 		listViewAdapter.setNotifyOnChange(false);
 		
 		
@@ -128,13 +128,12 @@ public class FindAddress extends Activity {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
+
 
 			}
 		});

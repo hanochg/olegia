@@ -20,13 +20,13 @@ public class Queries {
 	public static final Uri CONTENT_FILTERED_URI = 
 			ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI;
 	
-    public static final String[] PROJECTION =
+    /*public static final String[] PROJECTION =
         {
     	ContactsContract.CommonDataKinds.Phone._ID,
     	ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
     	ContactsContract.CommonDataKinds.Phone.NUMBER,
     	ContactsContract_DISPLAY_NAME()        		
-        };
+        };*/
     
     public static final String[] PROJECTION_WITH_BADGE =
         {
