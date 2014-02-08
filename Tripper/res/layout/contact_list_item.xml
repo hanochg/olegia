@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/listPreferredItemHeight">
+
+    <QuickContactBadge 
+        android:id="@+id/contactBadge"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_contact_picture_holo_light"
+        />
+
+    <TextView 
+        android:id="@+id/phoneNumCL"
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:layout_toRightOf="@android:id/icon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:fontFamily="sans-serif"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:gravity="right"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+    <TextView
+        android:id="@+id/nameCL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/phoneNumCL"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@android:id/icon"
+        android:ellipsize="marquee"
+        android:fontFamily="sans-serif-light"
+		android:gravity="right"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        />
+
+</RelativeLayout>
