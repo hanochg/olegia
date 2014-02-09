@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -37,7 +38,9 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import com.tripper.mobile.utils.*;
 
-public class FriendsList extends Activity {
+public class FriendsList extends Activity implements
+						LoaderManager.LoaderCallbacks<Cursor>
+{
 	ListView mSelectedContactsList;
 	SimpleCursorAdapter mCursorAdapter;
 	private ContactsAdapter mAdapter; // The main query adapter
@@ -46,6 +49,55 @@ public class FriendsList extends Activity {
 	AutoCompleteTextView actvContacts;
     String mSearchString=null;
     ListViewContactsAdapter mListViewContactsAdapter;
+    
+    
+
+	@Override
+public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
+		CursorLoader cur=null;
+	if (Queries.LoaderManagerID == loaderId)
+    {
+			Uri FilteredUri;
+			if (!TextUtils.isEmpty(mSearchString))
+				FilteredUri = Uri.withAppendedPath(
+				    			Queries.CONTENT_FILTERED_URI,          						    	
+								Uri.encode(mSearchString));
+			else
+				FilteredUri = Queries.CONTENT_URI;	
+			
+			cur = new CursorLoader(
+        		context,
+        		FilteredUri,
+        		Queries.PROJECTION_WITH_BADGE,
+        		Queries.DisplayName_SELECTION,
+        		null,
+                Queries.SORT_ORDER
+                );
+			
+			Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
+        return cur;        			        		
+    }
+	Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
+	return cur;
+}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
+		// Put the result Cursor in the adapter for the ListView
+		if (Queries.LoaderManagerID == loader.getId())
+		{
+			FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
+			mAdapter.swapCursor(filterCursorWrapper);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// Delete the reference to the existing Cursor
+		if (Queries.LoaderManagerID == loader.getId())
+			mAdapter.swapCursor(null);
+	}
+
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,16 +129,6 @@ public class FriendsList extends Activity {
         		new ListViewContactsAdapter(this,R.layout.friends_list_row_item,ContactsListSingleton.getInstance().getDB());
         mSelectedContactsList.setAdapter(mListViewContactsAdapter);
         
-        // Gets a CursorAdapter
-        /*mCursorAdapter = new SimpleCursorAdapter(
-                this,
-                R.layout.contact_list_item,
-                null,
-                Queries.FROM_COLUMNS, Queries.TO_VIEWS_IDS2,
-               	0);*/
-        // Sets the adapter for the ListView
-        //mContactsList.setAdapter(mAdapter);
-        //actvContacts.setAdapter(mCursorAdapter);
         
         actvContacts.setAdapter(mAdapter);
         
@@ -126,64 +168,16 @@ public class FriendsList extends Activity {
 		actvContacts.addTextChangedListener(new TextWatcher() {
 			
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) 
+			{
 				  Log.d("PROGRAM!!", "Text Changed");
 				  
               	  mSearchString=s.toString();
               	  
               	
                   // restart the loader
-                  getLoaderManager().restartLoader(Queries.LoaderManagerID, null,  new LoaderCallbacks<Cursor>() {
-  
-          			@Override
-        			public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
-          				CursorLoader cur=null;
-        				if (Queries.LoaderManagerID == loaderId)
-        		        {
-          					Uri FilteredUri;
-          					if (!TextUtils.isEmpty(mSearchString))
-          						FilteredUri = Uri.withAppendedPath(
-          						    			Queries.CONTENT_FILTERED_URI,          						    	
-          										Uri.encode(mSearchString));
-          					else
-          						FilteredUri = Queries.CONTENT_URI;	
-          					
-          					cur = new CursorLoader(
-        			        		context,
-        			        		FilteredUri,
-        			        		Queries.PROJECTION_WITH_BADGE,
-        			        		Queries.DisplayName_SELECTION,
-        			        		null,
-        			                Queries.SORT_ORDER
-        			                );
-          					
-          					Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
-        			        return cur;        			        		
-        		        }
-        				Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
-        				return cur;
-        			}
-
-          			@Override
-          			public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
-          				// Put the result Cursor in the adapter for the ListView
-          				if (Queries.LoaderManagerID == loader.getId())
-          				{
-          					//mAdapter.swapCursor(cursor);
-          		        	FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
-          		        	mAdapter.swapCursor(filterCursorWrapper);
-          				}
-          			}
-
-          			@Override
-          			public void onLoaderReset(Loader<Cursor> loader) {
-          		        // Delete the reference to the existing Cursor
-          				if (Queries.LoaderManagerID == loader.getId())
-          					//mCursorAdapter.swapCursor(null);
-          					mAdapter.swapCursor(null);
-          			}
-          		});
-			}
+                  getLoaderManager().restartLoader(Queries.LoaderManagerID, null, FriendsList.this);
+            }
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -197,58 +191,16 @@ public class FriendsList extends Activity {
 		
 		
         // Initializes the loader
-        getLoaderManager().initLoader(Queries.LoaderManagerID, null,  new LoaderCallbacks<Cursor>() {
-
-  			@Override
-			public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
-				CursorLoader cur=null;
-				if (Queries.LoaderManagerID == loaderId)
-		        {
-  					Uri FilteredUri;
-  					if (!TextUtils.isEmpty(mSearchString)) 
-  						FilteredUri = Uri.withAppendedPath(
-  						    			Queries.CONTENT_FILTERED_URI,          						    	
-  										Uri.encode(mSearchString));
-  					else
-  						FilteredUri = Queries.CONTENT_URI;	
-
-  					cur = new CursorLoader(
-			        		context,
-			        		FilteredUri,
-			        		Queries.PROJECTION_WITH_BADGE,
-			        		Queries.DisplayName_SELECTION,
-			        		null,
-			                Queries.SORT_ORDER
-			                );
-
-  					Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
-  					return cur;
-			            		
-		        }
-				Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
-				return cur;
-			}
-
-			@Override
-			public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
-				// Put the result Cursor in the adapter for the ListView
-				if (Queries.LoaderManagerID == loader.getId())
-				{
-					//mAdapter.swapCursor(cursor);
-  		        	FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
-  		        	mAdapter.swapCursor(filterCursorWrapper);
-				}
-
-			}
-
-			@Override
-			public void onLoaderReset(Loader<Cursor> loader) {
-		        // Delete the reference to the existing Cursor
-				if (Queries.LoaderManagerID == loader.getId())
-		           mAdapter.swapCursor(null);
-			}
-		});
+        getLoaderManager().initLoader(Queries.LoaderManagerID, null,  this);
+      }
+	
+    @Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		mAdapter.notifyDataSetChanged();
 	}
+
 	
 	public void removeContactButtonClick(View v)
 	{		
