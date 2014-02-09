@@ -9,6 +9,7 @@
         android:layout_width="?android:attr/listPreferredItemHeight"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_contact_picture_holo_light"
+        android:focusable="false"
         />
 
     <TextView
@@ -17,11 +18,13 @@
         android:layout_height="26dp"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/cbSelected"
-        android:layout_toRightOf="@android:id/icon"
+        android:layout_toRightOf="@+id/contactBadge"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif"
         android:gravity="right"
         android:singleLine="true"
+
+        android:focusable="false"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -29,14 +32,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/phoneNumCL"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/phoneNumCL"
-        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@+id/contactBadge"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif-light"
         android:gravity="right"
         android:singleLine="true"
+
+        android:focusable="false"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <CheckBox
@@ -46,6 +50,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+
+        android:focusable="false"
         android:text="" />
 
 </RelativeLayout>
