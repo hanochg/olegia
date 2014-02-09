@@ -11,18 +11,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,7 +38,7 @@ public class FindAddress extends Activity {
 
 	//Externals
 	public static Address selectedAddress;
-	public static ProgressDialog pd;
+//	public static ProgressDialog pd;
 
 
 	//Globals
@@ -45,13 +46,12 @@ public class FindAddress extends Activity {
 	private MessageHandler msgHandler;
 	private Message message;
 	private ListView listView;
-	private AutoCompleteTextView actvAddress;
 	private EditText addressSearch;
 	//private List<Address> addressSuggestions;
 	//private ArrayAdapter<String> autoCompleteAdapter;
 	private ArrayAdapter<Address> listViewAdapter;
 	private double longitude,latitude;
-
+	private ArrayList<Address> addressDB;
 
 	/*Unknown
 	public interface EditNameDialogListener {
@@ -61,7 +61,7 @@ public class FindAddress extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.find_address, menu);
+		getMenuInflater().inflate(R.menu.find_address_menu, menu);
 		return true;
 	}
 
@@ -70,6 +70,9 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
+		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		listView = (ListView)findViewById(R.id.addressList);
 		
@@ -83,9 +86,9 @@ public class FindAddress extends Activity {
 		//Define AutoComplete Adapter
 		//autoCompleteAdapter = new ArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);//android.R.layout.simple_dropdown_item_1line);
 		//autoCompleteAdapter.setNotifyOnChange(false);
-
+		addressDB = new ArrayList<Address>();
 		//Define ListAdapter
-		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,new ArrayList<Address>());
+		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,addressDB);
 		listViewAdapter.setNotifyOnChange(false);
 		
 		
@@ -151,6 +154,10 @@ public class FindAddress extends Activity {
 					longitude=selectedAddress.getLongitude();
 					latitude=selectedAddress.getLatitude();
 				}
+				//Address data = addressDB.get(position); 
+				//String addressStr = data.getAddressLine(1)+ "," +data.getAddressLine(0)+","+data.getAddressLine(2);
+				//addressSearch.setText(addressStr);
+				//TODO
 			}
 		});
 
@@ -167,7 +174,17 @@ public class FindAddress extends Activity {
 
 		//return view;		
 	}
-
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.nextFA:
+	    	Intent intent = new Intent(this,FriendsList.class);
+	    	startActivity(intent);	
+	    }
+	    return super.onOptionsItemSelected(item);
+	}
 	//@Override
 	/*
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

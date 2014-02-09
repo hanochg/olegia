@@ -6,9 +6,9 @@ import com.tripper.mobile.R;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -105,6 +105,9 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		context = this;
 		setContentView(R.layout.friends_list_screen);		
 		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		
         mAdapter = new ContactsAdapter(this);
 		
 		plusButton=(ImageButton) findViewById(R.id.plusButton);
@@ -199,6 +202,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		// TODO Auto-generated method stub
 		super.onResume();
 		mAdapter.notifyDataSetChanged();
+		Log.d("FriendsList","Resumed");
 	}
 
 	
