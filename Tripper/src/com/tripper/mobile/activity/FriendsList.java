@@ -88,7 +88,7 @@ public class FriendsList extends Activity {
         //actvContacts.setAdapter(mCursorAdapter);
         
         actvContacts.setAdapter(mAdapter);
-		
+        
 		actvContacts.setOnItemClickListener(
 				new OnItemClickListener() {
 
@@ -167,8 +167,11 @@ public class FriendsList extends Activity {
           			public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
           				// Put the result Cursor in the adapter for the ListView
           				if (Queries.LoaderManagerID == loader.getId())
-          					//mCursorAdapter.swapCursor(cursor);
-          					mAdapter.swapCursor(cursor);
+          				{
+          					//mAdapter.swapCursor(cursor);
+          		        	FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
+          		        	mAdapter.swapCursor(filterCursorWrapper);
+          				}
           			}
 
           			@Override
@@ -229,7 +232,12 @@ public class FriendsList extends Activity {
 			public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
 				// Put the result Cursor in the adapter for the ListView
 				if (Queries.LoaderManagerID == loader.getId())
-					mAdapter.swapCursor(cursor);
+				{
+					//mAdapter.swapCursor(cursor);
+  		        	FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
+  		        	mAdapter.swapCursor(filterCursorWrapper);
+				}
+
 			}
 
 			@Override
@@ -312,12 +320,7 @@ public class FriendsList extends Activity {
 	    @Override
 	    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
 
-	    	
-	        String phoneNum = cursor.getString(Queries.PHONE_NUM);
-
-	        if(ContactsListSingleton.getInstance().contains(phoneNum))
-	        	return mInflater.inflate(R.layout.null_item, null);
-	        
+	    	        
 	    	// Inflates the list item layout.
 	        final View itemLayout =
 	                mInflater.inflate(R.layout.contact_list_item, viewGroup, false);
@@ -329,8 +332,8 @@ public class FriendsList extends Activity {
 	        holder.contactsName = (TextView) itemLayout.findViewById(R.id.nameCL);
 	        holder.contactsNumber = (TextView) itemLayout.findViewById(R.id.phoneNumCL);
 	        holder.icon = (QuickContactBadge) itemLayout.findViewById(R.id.contactBadge);
-	        holder.icon.setVisibility(View.INVISIBLE);	        
-	        
+	        holder.icon.setVisibility(View.GONE);	        
+
 	        // Stores the resourceHolder instance in itemLayout. This makes resourceHolder
 	        // available to bindView and other methods that receive a handle to the item view.
 	        itemLayout.setTag(holder);
@@ -345,12 +348,7 @@ public class FriendsList extends Activity {
 	    @Override
 	    public void bindView(View view, Context context, Cursor cursor) {
 	        
-	    	if(view.findViewById(R.layout.null_item)!=null)
-	    	{
-	    		return;
-	    	}
 	    	
-	    	//view.getLayoutParams().
 	    	// Gets handles to individual view resources
 	        final ViewHolder holder = (ViewHolder) view.getTag();
 
@@ -360,13 +358,6 @@ public class FriendsList extends Activity {
 
 	        final int startIndex = indexOfSearchQuery(displayName);
 
-	        //if(ContactsListSingleton.getInstance().contains(phoneNum))
-	        {
-	        	//view.setVisibility(View.GONE);
-
-	        }
-	       // else
-	        //	view.setVisibility(View.VISIBLE);
 	        
 	        if (startIndex == -1) {
 	            // If the user didn't do a search, or the search string didn't match a display
