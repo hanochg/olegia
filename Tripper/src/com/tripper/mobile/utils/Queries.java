@@ -1,13 +1,12 @@
 package com.tripper.mobile.utils;
 
-
 import com.tripper.mobile.R;
 import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts;
+
 
 public class Queries {
 	

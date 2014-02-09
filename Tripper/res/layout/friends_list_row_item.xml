@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/listPreferredItemHeight">
+
+    <ImageButton 
+        android:id="@+id/removeButtonFL"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:scaleType="centerCrop"
+        android:src="@drawable/remove"
+        android:contentDescription="bla"
+        android:onClick="removeContactButtonClick"
+        />
+
+    <TextView 
+        android:id="@+id/phoneNumFL"
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:layout_toRightOf="@android:id/icon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:fontFamily="sans-serif"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:gravity="right"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+    <TextView
+        android:id="@+id/nameFL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/phoneNumFL"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@android:id/icon"
+        android:ellipsize="marquee"
+        android:fontFamily="sans-serif-light"
+		android:gravity="right"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        />
+
+</RelativeLayout>
+

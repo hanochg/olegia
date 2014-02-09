@@ -170,14 +170,7 @@ public class Contacts_List extends Activity implements
                 cursor.getLong(Queries.ID),
                 cursor.getString(Queries.LOOKUP_KEY));
 
-        // Notifies the parent activity that the user selected a contact. In a two-pane layout, the
-        // parent activity loads a ContactDetailFragment that displays the details for the selected
-        // contact. In a single-pane layout, the parent activity starts a new activity that
-        // displays contact details in its own Fragment.
-        //mOnContactSelectedListener.onContactSelected(uri);
 
-        // If two-pane layout sets the selected item to checked so it remains highlighted. In a
-        // single-pane layout a new activity is started so this is not needed.
     }
 
 
@@ -419,10 +412,9 @@ public class Contacts_List extends Activity implements
 	                cursor.getString(Queries.LOOKUP_KEY));
 
 	        // Binds the contact's lookup Uri to the QuickContactBadge
-	        String photo = cursor.getString(Queries.PHOTO_THUMBNAIL_DATA);
-	        Long id  = cursor.getLong(Queries.ID);
-	        String lookup = cursor.getString(Queries.LOOKUP_KEY);
-	        content://com.android.contacts/contacts/1173/photo
+	        //String photo = cursor.getString(Queries.PHOTO_THUMBNAIL_DATA);
+	        //Long id  = cursor.getLong(Queries.ID);
+	        //String lookup = cursor.getString(Queries.LOOKUP_KEY);
 	        holder.icon.assignContactUri(contactUri);
 
 	        // Loads the thumbnail image pointed to by photoUri into the QuickContactBadge in a

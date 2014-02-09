@@ -13,7 +13,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -30,7 +29,6 @@ import android.widget.AlphabetIndexer;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
@@ -46,6 +44,7 @@ public class FriendsList extends Activity {
 	ImageButton plusButton;
 	AutoCompleteTextView actvContacts;
     String mSearchString=null;
+    ListViewContactsAdapter mListViewContactsAdapter;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +72,8 @@ public class FriendsList extends Activity {
         // Gets the ListView from the View list of the parent activity
 		mSelectedContactsList = (ListView) findViewById(R.id.lvContactList);
         
-        ListViewContactsAdapter mListViewContactsAdapter=
-        		new ListViewContactsAdapter(this,R.layout.contact_list_item,ContactsListSingleton.getInstance().getDB());
+        mListViewContactsAdapter=
+        		new ListViewContactsAdapter(this,R.layout.friends_list_row_item,ContactsListSingleton.getInstance().getDB());
         mSelectedContactsList.setAdapter(mListViewContactsAdapter);
         
         // Gets a CursorAdapter
@@ -87,9 +86,11 @@ public class FriendsList extends Activity {
         // Sets the adapter for the ListView
         //mContactsList.setAdapter(mAdapter);
         //actvContacts.setAdapter(mCursorAdapter);
+        
         actvContacts.setAdapter(mAdapter);
 		
-		actvContacts.setOnItemClickListener(new OnItemClickListener() {
+		actvContacts.setOnItemClickListener(
+				new OnItemClickListener() {
 
 			@Override
 		    public void onItemClick(
@@ -115,7 +116,8 @@ public class FriendsList extends Activity {
 		        contact.setUri(uri);
 		        
 		        ContactsListSingleton.getInstance().insertContact(contact);
-		        
+		        mListViewContactsAdapter.notifyDataSetChanged();
+		        actvContacts.setText("");
 			}
 		});
 			
@@ -154,7 +156,7 @@ public class FriendsList extends Activity {
         			                Queries.SORT_ORDER
         			                );
           					
-          					Log.e("PROGRAMM!", "onCreateLoader - succeed to return cur");
+          					Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
         			        return cur;        			        		
         		        }
         				Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
@@ -215,7 +217,7 @@ public class FriendsList extends Activity {
 			                Queries.SORT_ORDER
 			                );
 
-  					Log.e("PROGRAMM!", "onCreateLoader - succeed to return cur");
+  					Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
   					return cur;
 			            		
 		        }
@@ -238,12 +240,23 @@ public class FriendsList extends Activity {
 			}
 		});
 	}
+	
+	public void removeContactButtonClick(View v)
+	{		
+		Log.d("ON CLICK!!","ON CLICK!!");
+		int position = mSelectedContactsList.getPositionForView((View) v.getParent());		
+		ContactsListSingleton.getInstance().getDB().remove(position);
+		mListViewContactsAdapter.notifyDataSetChanged();
+	}
+	
 	/**
 	 * This is a subclass of CursorAdapter that supports binding Cursor columns to a view layout.
 	 * If those items are part of search results, the search string is marked by highlighting the
 	 * query text. An {@link AlphabetIndexer} is used to allow quicker navigation up and down the
 	 * ListView.
 	 */
+	
+	
 	private class ContactsAdapter extends CursorAdapter implements SectionIndexer {
 	    private LayoutInflater mInflater; // Stores the layout inflater
 	    private AlphabetIndexer mAlphabetIndexer; // Stores the AlphabetIndexer instance
@@ -298,7 +311,14 @@ public class FriendsList extends Activity {
 	     */
 	    @Override
 	    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-	        // Inflates the list item layout.
+
+	    	
+	        String phoneNum = cursor.getString(Queries.PHONE_NUM);
+
+	        if(ContactsListSingleton.getInstance().contains(phoneNum))
+	        	return mInflater.inflate(R.layout.null_item, null);
+	        
+	    	// Inflates the list item layout.
 	        final View itemLayout =
 	                mInflater.inflate(R.layout.contact_list_item, viewGroup, false);
 
@@ -309,7 +329,8 @@ public class FriendsList extends Activity {
 	        holder.contactsName = (TextView) itemLayout.findViewById(R.id.nameCL);
 	        holder.contactsNumber = (TextView) itemLayout.findViewById(R.id.phoneNumCL);
 	        holder.icon = (QuickContactBadge) itemLayout.findViewById(R.id.contactBadge);
-	        holder.icon.setVisibility(View.INVISIBLE);
+	        holder.icon.setVisibility(View.INVISIBLE);	        
+	        
 	        // Stores the resourceHolder instance in itemLayout. This makes resourceHolder
 	        // available to bindView and other methods that receive a handle to the item view.
 	        itemLayout.setTag(holder);
@@ -323,7 +344,14 @@ public class FriendsList extends Activity {
 	     */
 	    @Override
 	    public void bindView(View view, Context context, Cursor cursor) {
-	        // Gets handles to individual view resources
+	        
+	    	if(view.findViewById(R.layout.null_item)!=null)
+	    	{
+	    		return;
+	    	}
+	    	
+	    	//view.getLayoutParams().
+	    	// Gets handles to individual view resources
 	        final ViewHolder holder = (ViewHolder) view.getTag();
 
 	        final String displayName = cursor.getString(Queries.DISPLAY_NAME);
@@ -332,6 +360,14 @@ public class FriendsList extends Activity {
 
 	        final int startIndex = indexOfSearchQuery(displayName);
 
+	        //if(ContactsListSingleton.getInstance().contains(phoneNum))
+	        {
+	        	//view.setVisibility(View.GONE);
+
+	        }
+	       // else
+	        //	view.setVisibility(View.VISIBLE);
+	        
 	        if (startIndex == -1) {
 	            // If the user didn't do a search, or the search string didn't match a display
 	            // name, show the display name without highlighting
