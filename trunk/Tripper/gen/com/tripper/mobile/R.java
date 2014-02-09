@@ -31,39 +31,43 @@ public final class R {
         public static final int ic_contact_picture_holo_light=0x7f020000;
         public static final int ic_launcher=0x7f020001;
         public static final int plus_sign=0x7f020002;
-        public static final int splashscreen=0x7f020003;
+        public static final int remove=0x7f020003;
+        public static final int splashscreen=0x7f020004;
     }
     public static final class id {
         public static final int CL_list=0x7f0a0002;
-        public static final int ListTextView=0x7f0a000f;
-        public static final int acContactName=0x7f0a000c;
-        public static final int action_settings=0x7f0a001b;
+        public static final int ListTextView=0x7f0a0012;
+        public static final int acContactName=0x7f0a000f;
+        public static final int action_settings=0x7f0a001e;
         public static final int addressList=0x7f0a000a;
         public static final int atcvAddress=0x7f0a0009;
-        public static final int btnMultipleDestination=0x7f0a001a;
-        public static final int btnSingleDestination=0x7f0a0017;
+        public static final int btnMultipleDestination=0x7f0a001d;
+        public static final int btnSingleDestination=0x7f0a001a;
         public static final int contactBadge=0x7f0a0005;
         public static final int contactName=0x7f0a0000;
         public static final int contactNumber=0x7f0a0001;
-        public static final int email=0x7f0a0013;
+        public static final int email=0x7f0a0016;
         public static final int enter_destination=0x7f0a0008;
         public static final int etAddressSearch=0x7f0a000b;
         public static final int etSearchCL=0x7f0a0003;
-        public static final int exit=0x7f0a001d;
-        public static final int login=0x7f0a0015;
-        public static final int login_form=0x7f0a0012;
-        public static final int login_status=0x7f0a0010;
-        public static final int login_status_message=0x7f0a0011;
-        public static final int logo=0x7f0a0019;
-        public static final int lvContactList=0x7f0a000e;
+        public static final int exit=0x7f0a0020;
+        public static final int login=0x7f0a0018;
+        public static final int login_form=0x7f0a0015;
+        public static final int login_status=0x7f0a0013;
+        public static final int login_status_message=0x7f0a0014;
+        public static final int logo=0x7f0a001c;
+        public static final int lvContactList=0x7f0a0011;
         public static final int nameCL=0x7f0a0007;
+        public static final int nameFL=0x7f0a000e;
         public static final int noResults=0x7f0a0004;
-        public static final int password=0x7f0a0014;
+        public static final int password=0x7f0a0017;
         public static final int phoneNumCL=0x7f0a0006;
-        public static final int plusButton=0x7f0a000d;
-        public static final int settings=0x7f0a001c;
-        public static final int sign_in_button=0x7f0a0016;
-        public static final int view=0x7f0a0018;
+        public static final int phoneNumFL=0x7f0a000d;
+        public static final int plusButton=0x7f0a0010;
+        public static final int removeButtonFL=0x7f0a000c;
+        public static final int settings=0x7f0a001f;
+        public static final int sign_in_button=0x7f0a0019;
+        public static final int view=0x7f0a001b;
     }
     public static final class integer {
         public static final int MultipleDestination=0x7f050002;
@@ -76,11 +80,13 @@ public final class R {
         public static final int contact_list_item=0x7f030002;
         public static final int enter_destination_dialog_fragment=0x7f030003;
         public static final int find_address=0x7f030004;
-        public static final int friends_list_screen=0x7f030005;
-        public static final int list_single_item=0x7f030006;
-        public static final int login_screen=0x7f030007;
-        public static final int main_screen=0x7f030008;
-        public static final int splash_screen=0x7f030009;
+        public static final int friends_list_row_item=0x7f030005;
+        public static final int friends_list_screen=0x7f030006;
+        public static final int list_single_item=0x7f030007;
+        public static final int login_screen=0x7f030008;
+        public static final int main_screen=0x7f030009;
+        public static final int null_item=0x7f03000a;
+        public static final int splash_screen=0x7f03000b;
     }
     public static final class menu {
         public static final int contact__list=0x7f090000;

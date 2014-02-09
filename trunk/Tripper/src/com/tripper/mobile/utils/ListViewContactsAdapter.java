@@ -1,12 +1,10 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import com.tripper.mobile.R;
 
 import android.content.Context;
-import android.location.Address;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,7 @@ public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
 	int layoutResourceId;    
 	ArrayList<ContactDataStructure> data = null;
 	private LayoutInflater mInflater; 	
-
+	
 	public ListViewContactsAdapter(Context context, int layoutResourceId, ArrayList<ContactDataStructure> data) {
 		super(context, layoutResourceId, data);		  
 		this.layoutResourceId = layoutResourceId;
@@ -37,28 +35,24 @@ public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
 		if (convertView == null) {
 
 			//item_list
-			convertView = mInflater.inflate(R.layout.contact_list_item, null);
+			convertView = mInflater.inflate(layoutResourceId,parent, false);
 
 			holder = new ViewHolder();
 
 			//fill the views
-	        holder.contactsName = (TextView) convertView.findViewById(R.id.nameCL);
-	        holder.contactsNumber = (TextView) convertView.findViewById(R.id.phoneNumCL);
-	        holder.icon = (QuickContactBadge) convertView.findViewById(R.id.contactBadge);
+	        holder.contactsName = (TextView) convertView.findViewById(R.id.nameFL);
+	        holder.contactsNumber = (TextView) convertView.findViewById(R.id.phoneNumFL);
 	        convertView.setTag(holder);	
-	        //holder.icon.setVisibility(View.INVISIBLE);
 		} 
 		else {
 			// Get the ViewHolder back to get fast access to the TextView
 			// and the ImageView.
 			holder = (ViewHolder) convertView.getTag();
-			
-			
-
 		}
-		String name = data.get(position).getName();
-		name="blabla";
-		holder.contactsName.setText(name);
+		
+
+
+		holder.contactsName.setText(data.get(position).getName());
 		holder.contactsNumber.setText(data.get(position).getPhoneNumber());
 		return convertView;
 	}
