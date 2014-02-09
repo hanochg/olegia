@@ -27,10 +27,9 @@ public class ContactsListSingleton
 	{
 		return db; 
 	}
+	
 	public void insertContact(ContactDataStructure contact) 
 	{
-		ContactDataStructure tempContact=null;
-		
 		if(db!=null)
 		{
 			//check if already contain the value
@@ -41,7 +40,7 @@ public class ContactsListSingleton
 			db.add(contact);
 		}
 		else
-			Log.e("ContactDataStructure","DB Not created before insertContact");
+			Log.e("ContactsListSingelton","DB Not created before insertContact");
 	}
 	
 	public Boolean contains(String phone)
@@ -60,16 +59,38 @@ public class ContactsListSingleton
 		return false; 
 	}
 	
-	public void removeContact(ContactDataStructure contact) 
+	public void removeContactByPhoneNum(String phone) 
 	{
 		if(db!=null)
 		{
-			db.remove(contact);
+			ContactDataStructure tempContact=null;
+			//check if already contain the value
+			for(int i=0 ; i<db.size() ; i++)
+			{
+				tempContact=db.get(i);
+				if(tempContact.getPhoneNumber().equals(phone))
+				{
+					db.remove(i);
+					return;
+				}
+			}
 		}			
 		else
-			Log.e("ContactDataStructure","DB Not created before removeContact");
+			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
 	}
 	
-
-	
+	public void removeContactByIndex(int index) 
+	{
+		if(db!=null)
+		{
+			try{
+				db.remove(index);
+			}
+			catch (Exception e){
+				Log.e("ContactsListSingelton","Error in removeContactByIndex: "+e.getMessage());
+			}
+		}
+		else
+				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
+		}
 }

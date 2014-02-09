@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Locale;
 import com.tripper.mobile.BuildConfig;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ImageLoader;
 import com.tripper.mobile.utils.Queries;
 import android.app.Activity;
@@ -43,6 +45,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AlphabetIndexer;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -154,6 +159,7 @@ public class Contacts_List extends Activity implements
         // In the case onPause() is called during a fling the image loader is
         // un-paused to let any remaining background work complete.
         mImageLoader.setPauseWork(false);
+        mAdapter.notifyDataSetChanged();
     }
     
     
@@ -343,7 +349,7 @@ public class Contacts_List extends Activity implements
 	        holder.contactsName = (TextView) itemLayout.findViewById(R.id.nameCL);
 	        holder.contactsNumber = (TextView) itemLayout.findViewById(R.id.phoneNumCL);
 	        holder.icon = (QuickContactBadge) itemLayout.findViewById(R.id.contactBadge);
-
+	        holder.checked = (CheckBox) itemLayout.findViewById(R.id.cbSelected);
 	        // Stores the resourceHolder instance in itemLayout. This makes resourceHolder
 	        // available to bindView and other methods that receive a handle to the item view.
 	        itemLayout.setTag(holder);
@@ -365,15 +371,16 @@ public class Contacts_List extends Activity implements
 	        // generated from the other fields in the row.
 
 	        final String photoUri = cursor.getString(Queries.PHOTO_THUMBNAIL_DATA);
-	        if (photoUri==null)
-	        	Log.d("APP!!!","NULL PHOTO URI");
-	        else
-	        	Log.d("APP!!!","NO NULL URI");
-	        final String displayName = cursor.getString(Queries.DISPLAY_NAME);
-	        
+	        final String displayName = cursor.getString(Queries.DISPLAY_NAME);	        
 	        final String phoneNum = cursor.getString(Queries.PHONE_NUM);
-
-	        final int startIndex = indexOfSearchQuery(displayName);
+	        //need this items for creating a new contact in the DB
+	        final long contactID = cursor.getLong(Queries.ID);
+	        final String lookupKey = cursor.getString(Queries.LOOKUP_KEY);
+	        final Uri uri = Contacts.getLookupUri(
+	                cursor.getLong(Queries.ID),
+	                cursor.getString(Queries.LOOKUP_KEY));
+	        
+	        int startIndex = indexOfSearchQuery(displayName);
 	        
 	        if (startIndex == -1) {
 	            // If the user didn't do a search, or the search string didn't match a display
@@ -398,6 +405,36 @@ public class Contacts_List extends Activity implements
 	        
 	        //assign phone number to user in list
             holder.contactsNumber.setText(phoneNum);
+            
+	        //mark if contact selected
+	        holder.checked.setOnCheckedChangeListener(null);
+	        if(ContactsListSingleton.getInstance().contains(phoneNum))
+	        	holder.checked.setChecked(true);
+	        else
+	        	holder.checked.setChecked(false);
+	        
+	        holder.checked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					if(isChecked)
+					{
+						ContactDataStructure contact = new ContactDataStructure();
+				        contact.setId(contactID);
+				        contact.setLookupkey(lookupKey);
+				        contact.setName(displayName);
+				        contact.setPhoneNumber(phoneNum);
+				        contact.setUri(uri);
+				        ContactsListSingleton.getInstance().insertContact(contact);
+					}
+					else
+					{
+						ContactsListSingleton.getInstance().removeContactByPhoneNum(phoneNum);
+					}
+					mAdapter.notifyDataSetChanged();
+					
+				}
+			});
+
             
             
 	        // Processes the QuickContactBadge. A QuickContactBadge first appears as a contact's
@@ -484,6 +521,7 @@ public class Contacts_List extends Activity implements
 	        TextView contactsName;
 	        TextView contactsNumber;
 	        QuickContactBadge icon;
+	        CheckBox checked;
 	    }
 	}
 

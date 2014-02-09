@@ -11,34 +11,41 @@
         android:src="@drawable/ic_contact_picture_holo_light"
         />
 
-    <TextView 
+    <TextView
         android:id="@+id/phoneNumCL"
         android:layout_width="match_parent"
         android:layout_height="26dp"
-        android:layout_toRightOf="@android:id/icon"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:fontFamily="sans-serif"
-        android:singleLine="true"
+        android:layout_toLeftOf="@+id/cbSelected"
+        android:layout_toRightOf="@android:id/icon"
         android:ellipsize="marquee"
+        android:fontFamily="sans-serif"
         android:gravity="right"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        />
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/nameCL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/phoneNumCL"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/phoneNumCL"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@android:id/icon"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif-light"
-		android:gravity="right"
+        android:gravity="right"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" 
-        />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <CheckBox
+        android:id="@+id/cbSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="" />
 
 </RelativeLayout>

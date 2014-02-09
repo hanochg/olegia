@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AlphabetIndexer;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -253,7 +254,7 @@ public class FriendsList extends Activity {
 	{		
 		Log.d("ON CLICK!!","ON CLICK!!");
 		int position = mSelectedContactsList.getPositionForView((View) v.getParent());		
-		ContactsListSingleton.getInstance().getDB().remove(position);
+		ContactsListSingleton.getInstance().removeContactByIndex(position);
 		mListViewContactsAdapter.notifyDataSetChanged();
 	}
 	
@@ -332,7 +333,9 @@ public class FriendsList extends Activity {
 	        holder.contactsName = (TextView) itemLayout.findViewById(R.id.nameCL);
 	        holder.contactsNumber = (TextView) itemLayout.findViewById(R.id.phoneNumCL);
 	        holder.icon = (QuickContactBadge) itemLayout.findViewById(R.id.contactBadge);
-	        holder.icon.setVisibility(View.GONE);	        
+	        holder.icon.setVisibility(View.GONE);	      
+	        holder.checked = (CheckBox)itemLayout.findViewById(R.id.cbSelected);
+	        holder.checked.setVisibility(View.GONE);	      
 
 	        // Stores the resourceHolder instance in itemLayout. This makes resourceHolder
 	        // available to bindView and other methods that receive a handle to the item view.
@@ -447,6 +450,7 @@ public class FriendsList extends Activity {
 	        TextView contactsName;
 	        TextView contactsNumber;
 	        QuickContactBadge icon;
+	        CheckBox checked;
 	    }
 	}
 
