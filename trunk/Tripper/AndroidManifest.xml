@@ -34,11 +34,13 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.FriendsList"
-            android:label="@string/title_activity_friends_list" >
+            android:label="@string/title_activity_friends_list"
+            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.FindAddress"
-            android:label="@string/title_activity_find_address" >
+            android:label="@string/title_activity_find_address"
+            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.LoginActivity"
@@ -47,7 +49,8 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.Contacts_List"
-            android:label="@string/title_activity_contact__list" >
+            android:label="@string/title_activity_contact__list" 
+            android:parentActivityName="com.tripper.mobile.activity.FriendsList">
         </activity>
     </application>
 

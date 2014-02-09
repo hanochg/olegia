@@ -7,7 +7,6 @@ public class FilterCursorWrapper extends CursorWrapper {
     private int[] index;
     private int count = 0;
     private int pos = 0;
-    private Cursor cursor;
     
     public boolean isHidden(String phoneNum) {
 
@@ -22,7 +21,6 @@ public class FilterCursorWrapper extends CursorWrapper {
 
     public FilterCursorWrapper(Cursor cursor, boolean doFilter, int column) {
         super(cursor);
-        this.cursor=cursor;
         if (doFilter) {
             this.count = super.getCount();
             this.index = new int[this.count];

@@ -1,7 +1,6 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import android.util.Log;
 

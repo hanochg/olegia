@@ -11,6 +11,8 @@ import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ImageLoader;
 import com.tripper.mobile.utils.Queries;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -40,6 +42,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -75,6 +79,10 @@ public class Contacts_List extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_list);
+		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(this);
         getLoaderManager().initLoader(Queries.LoaderManagerID, null, this);
@@ -156,16 +164,24 @@ public class Contacts_List extends Activity implements
 		        final Uri uri = Contacts.getLookupUri(
 		                cursor.getLong(Queries.ID),
 		                cursor.getString(Queries.LOOKUP_KEY));
-		        
-		        CheckBox checked = (CheckBox) findViewById(R.id.cbSelected);
-		        checked.setChecked(true);
-				ContactDataStructure contact = new ContactDataStructure();
-		        contact.setId(contactID);
-		        contact.setLookupkey(lookupKey);
-		        contact.setName(displayName);
-		        contact.setPhoneNumber(phoneNum);
-		        contact.setUri(uri);
-		        //ContactsListSingleton.getInstance().insertContact(contact);
+
+		        CheckBox checked = (CheckBox) (((ViewGroup)v).getChildAt(3));
+		        if(!checked.isChecked())
+		        {
+		        	checked.setChecked(true);
+		        	ContactDataStructure contact = new ContactDataStructure();
+		        	contact.setId(contactID);
+		        	contact.setLookupkey(lookupKey);
+		        	contact.setName(displayName);
+		        	contact.setPhoneNumber(phoneNum);
+		        	contact.setUri(uri);
+		        	ContactsListSingleton.getInstance().insertContact(contact);
+		        }
+		        else
+		        {
+		        	checked.setChecked(false);
+		        	ContactsListSingleton.getInstance().removeContactByPhoneNum(phoneNum);
+		        }
 				
 				
 			}
@@ -189,48 +205,31 @@ public class Contacts_List extends Activity implements
           
     }
 	
-    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.contact_list_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+	    switch(item.getItemId()){
+	    case R.id.doneCL:
+	    	this.finish();
+	        return true;            
+	    }
+	    return false;
+	}
     
     @Override
     public void onPause() {
         super.onPause();
-
         // In the case onPause() is called during a fling the image loader is
         // un-paused to let any remaining background work complete.
         mImageLoader.setPauseWork(false);
-        //mAdapter.notifyDataSetChanged();
     }
     
-    /*
-    @Override
-    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        // Gets the Cursor object currently bound to the ListView
-        final Cursor cursor = mAdapter.getCursor();
-
-        // Moves to the Cursor row corresponding to the ListView item that was clicked
-        cursor.moveToPosition(position);
-
-        // Creates a contact lookup Uri from contact ID and lookup_key
-        final String displayName = cursor.getString(Queries.DISPLAY_NAME);	        
-        final String phoneNum = cursor.getString(Queries.PHONE_NUM);
-        //need this items for creating a new contact in the DB
-        final long contactID = cursor.getLong(Queries.ID);
-        final String lookupKey = cursor.getString(Queries.LOOKUP_KEY);
-        final Uri uri = Contacts.getLookupUri(
-                cursor.getLong(Queries.ID),
-                cursor.getString(Queries.LOOKUP_KEY));
-		
-		ContactDataStructure contact = new ContactDataStructure();
-        contact.setId(contactID);
-        contact.setLookupkey(lookupKey);
-        contact.setName(displayName);
-        contact.setPhoneNumber(phoneNum);
-        contact.setUri(uri);
-        //ContactsListSingleton.getInstance().insertContact(contact);
-        Log.d("CLICK","CLICK!!!!!");
-		
-    }
-*/
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
