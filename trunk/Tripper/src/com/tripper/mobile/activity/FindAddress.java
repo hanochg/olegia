@@ -1,7 +1,26 @@
 package com.tripper.mobile.activity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.*;
@@ -27,6 +46,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 public class FindAddress extends Activity {
 
@@ -38,8 +58,6 @@ public class FindAddress extends Activity {
 
 	//Externals
 	public static Address selectedAddress;
-//	public static ProgressDialog pd;
-
 
 	//Globals
 	private AsyncGeocode AsyncTasker;
@@ -47,16 +65,11 @@ public class FindAddress extends Activity {
 	private Message message;
 	private ListView listView;
 	private EditText addressSearch;
-	//private List<Address> addressSuggestions;
-	//private ArrayAdapter<String> autoCompleteAdapter;
 	private ArrayAdapter<Address> listViewAdapter;
 	private double longitude,latitude;
 	private ArrayList<Address> addressDB;
-
-	/*Unknown
-	public interface EditNameDialogListener {
-		void onFinishEditDialog(String inputText);
-	}*/
+	private Context context;
+	private Locale GeoCodeLocale;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,6 +83,8 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
+		GeoCodeLocale = new Locale("iw"); //change to "en" or default
+		context=this;
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -91,10 +106,6 @@ public class FindAddress extends Activity {
 		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,addressDB);
 		listViewAdapter.setNotifyOnChange(false);
 		
-		
-		//listViewAdapter.addAll("hello","welcome");
-		//View view = inflater.inflate(R.layout.enter_destination_dialog_fragment, container);
-		//actvAddress = (AutoCompleteTextView) view.findViewById(R.id.atcvAddress);
 		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
 		
 		
@@ -153,6 +164,7 @@ public class FindAddress extends Activity {
 					selectedAddress = listViewAdapter.getItem(position);
 					longitude=selectedAddress.getLongitude();
 					latitude=selectedAddress.getLatitude();
+					Toast.makeText(context, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
 				}
 				//Address data = addressDB.get(position); 
 				//String addressStr = data.getAddressLine(1)+ "," +data.getAddressLine(0)+","+data.getAddressLine(2);
@@ -160,19 +172,7 @@ public class FindAddress extends Activity {
 				//TODO
 			}
 		});
-
-
-		//actvAddress.setThreshold(THRESHOLD);
-		//actvAddress.setAdapter(listViewAdapter);
-
-
-		//getDialog().setTitle(getResources().getString(R.string.Enter_Destination_dialog_title));
-
-
-
-		//actvAddress.setOnEditorActionListener(this);
-
-		//return view;		
+	
 	}
 	
 	
@@ -185,18 +185,6 @@ public class FindAddress extends Activity {
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
-	//@Override
-	/*
-	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		if (EditorInfo.IME_ACTION_DONE == actionId) {
-			// Return input text to activity
-			EditNameDialogListener activity = (EditNameDialogListener) this;
-			activity.onFinishEditDialog(actvAddress.getText().toString());
-			//this.dismiss();
-			return true;
-		}
-		return false;
-	}*/
 	
 	private  void notifyResult(String value,Context context) {
 		Log.d("App!!!","notifyResult");
@@ -223,38 +211,44 @@ public class FindAddress extends Activity {
 		{
 			
 			Log.d("App!!!","doInBackground-begin");
+			
 			String value = search[0];
 			try {
 				
 				if(!Geocoder.isPresent())
-					throw new Exception("Geocoder is not present! {Geocoder.isPresent()==false}");
-				GeoResultsList = new Geocoder(context).getFromLocationName(value, GEOCODE_MAX_RESULTS);				
+				{					
+					Log.e("AsyncGeocode","Geocoder is not present! {Geocoder.isPresent()==false}");
+					return null;
+				}
+				String searchJSONString = ("yoseftal haifa").replaceAll(" ", "+");
+				getLatLongFromAddress(searchJSONString);
+				GeoResultsList = new Geocoder(context,GeoCodeLocale).getFromLocationName(value, GEOCODE_MAX_RESULTS);				
 
 				Log.d("App!!!","after Geocode - list size: "+GeoResultsList.size());
 			} catch (Exception ex) {
-				Log.d("Error#@$#$",ex.getMessage());
+				Log.e("AsyncGeocode","Geocode Error:"+ex.getMessage());
 			}
 			return null;
 		}
 	    @Override
 	    protected void onPostExecute(Void unused)
-	    {				    		    	
+	    {				    		    
+	    	Log.d("AsyncGeocode","OnPostExcecute");
 	    	super.onPostExecute(unused);
-	    	if(GeoResultsList.size()!=0)
-	    	{
-	    		Log.d("App!!!","OnPostExcecute-much change");
+	    	if(GeoResultsList!=null && GeoResultsList.size()!=0)
+	    	{	    	
+	    		Log.d("AsyncGeocode","OnPostExcecute-valid changes");
+	    		
 	    		listViewAdapter.clear();
-				for (Address address : GeoResultsList) 
-				{        			
-					    
+				for (Address address : GeoResultsList)      								    
 					listViewAdapter.add(address);					
-				}	
+
 	    		listViewAdapter.notifyDataSetChanged();
 	    	}
 	    	else
-	    		Log.d("App!!!","OnPostExcecute-zero changes");
+	    		Log.d("AsyncGeocode","OnPostExcecute-zero changes");
 	    	
-	    	Log.d("App!!!","OnPostExcecute");
+	    	Log.d("AsyncGeocode","OnPostExcecute");
 	    }
 	}//End Class AsyncTask
 
@@ -278,5 +272,52 @@ public class FindAddress extends Activity {
 			}
 		}
 	}//End class Handler
+
+	public void getLatLongFromAddress(String youraddress) {
+	    Address address=new Address(GeoCodeLocale);
+		
+		String uri = "http://maps.google.com/maps/api/geocode/json?address=" +
+	                  youraddress + "&sensor=false&language=he";
+	    HttpGet httpGet = new HttpGet(uri);
+	    HttpClient client = new DefaultHttpClient();
+	    HttpResponse response;
+	    StringBuilder stringBuilder = new StringBuilder();
+
+	    try {
+	        response = client.execute(httpGet);
+	        HttpEntity entity = response.getEntity();
+	        InputStream stream = entity.getContent();
+	        int b;
+	        while ((b = stream.read()) != -1) {
+	            stringBuilder.append((char) b);
+	        }
+	    } catch (ClientProtocolException e) {
+	        e.printStackTrace();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+
+	    JSONObject jsonObject = new JSONObject();
+	    try {
+	        jsonObject = new JSONObject(stringBuilder.toString());
+
+	        Double lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+	        		.getJSONObject("geometry").getJSONObject("location")
+	        		.getDouble("lng");
+
+	        Double lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+	            .getJSONObject("geometry").getJSONObject("location")
+	            .getDouble("lat");
+	        int length=((JSONArray)jsonObject.get("results")).length();
+	        
+	        
+	        Log.d("latitude", String.valueOf(lat));
+	        Log.d("longitude", String.valueOf(lng));
+	        Log.d("longitude", String.valueOf(length));
+	    } catch (JSONException e) {
+	        e.printStackTrace();
+	    }
+
+	}
 
 }
