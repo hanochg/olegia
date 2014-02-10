@@ -80,7 +80,7 @@ public class SplashScreen extends Activity {
 			return; //Exit, connection error.
 		}
 		
-		ParseUser.logOut();
+		//ParseUser.logOut();
 		currentUser = ParseUser.getCurrentUser();	
 		
 		if(currentUser==null)

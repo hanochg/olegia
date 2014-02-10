@@ -1,27 +1,16 @@
 package com.tripper.mobile.activity;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.*;
 import android.location.Address;
@@ -68,9 +57,8 @@ public class FindAddress extends Activity {
 	private ArrayAdapter<Address> listViewAdapter;
 	private double longitude,latitude;
 	private ArrayList<Address> addressDB;
-	private Context context;
-	private Locale GeoCodeLocale;
-	
+	private Context activityContext;
+	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -83,8 +71,8 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
-		GeoCodeLocale = new Locale("iw"); //change to "en" or default
-		context=this;
+
+		activityContext=this;
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -164,7 +152,7 @@ public class FindAddress extends Activity {
 					selectedAddress = listViewAdapter.getItem(position);
 					longitude=selectedAddress.getLongitude();
 					latitude=selectedAddress.getLatitude();
-					Toast.makeText(context, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
+					Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
 				}
 				//Address data = addressDB.get(position); 
 				//String addressStr = data.getAddressLine(1)+ "," +data.getAddressLine(0)+","+data.getAddressLine(2);
@@ -199,7 +187,7 @@ public class FindAddress extends Activity {
 	//Class extends AsyncTask for defining the AsyncTask function 
 	private class AsyncGeocode extends AsyncTask<String, Void, Void> {
 		private Context context;
-		List<Address> GeoResultsList;
+		List<Address> GeoResultsList,GeoResultsList1;
 		
 		public AsyncGeocode(Context context) {
 			super();
@@ -220,13 +208,14 @@ public class FindAddress extends Activity {
 					Log.e("AsyncGeocode","Geocoder is not present! {Geocoder.isPresent()==false}");
 					return null;
 				}
-				String searchJSONString = ("yoseftal haifa").replaceAll(" ", "+");
-				getLatLongFromAddress(searchJSONString);
 				GeoResultsList = new Geocoder(context,GeoCodeLocale).getFromLocationName(value, GEOCODE_MAX_RESULTS);				
-
+				
 				Log.d("App!!!","after Geocode - list size: "+GeoResultsList.size());
-			} catch (Exception ex) {
+			} catch (Exception ex) {				
 				Log.e("AsyncGeocode","Geocode Error:"+ex.getMessage());
+				Log.e("AsyncGeocode","Trying Geocode via HTTP request");
+				GeoResultsList = geocodingViaHTTPRequest(value);
+				
 			}
 			return null;
 		}
@@ -235,7 +224,13 @@ public class FindAddress extends Activity {
 	    {				    		    
 	    	Log.d("AsyncGeocode","OnPostExcecute");
 	    	super.onPostExecute(unused);
-	    	if(GeoResultsList!=null && GeoResultsList.size()!=0)
+
+	    	if(GeoResultsList==null)
+	    		{
+	    			Toast.makeText(activityContext,"Connection problem occured, Check your internet connectivity",Toast.LENGTH_LONG).show();
+	    			return;
+	    		}
+	    	if(GeoResultsList.size()!=0)
 	    	{	    	
 	    		Log.d("AsyncGeocode","OnPostExcecute-valid changes");
 	    		
@@ -247,7 +242,7 @@ public class FindAddress extends Activity {
 	    	}
 	    	else
 	    		Log.d("AsyncGeocode","OnPostExcecute-zero changes");
-	    	
+
 	    	Log.d("AsyncGeocode","OnPostExcecute");
 	    }
 	}//End Class AsyncTask
@@ -273,16 +268,20 @@ public class FindAddress extends Activity {
 		}
 	}//End class Handler
 
-	public void getLatLongFromAddress(String youraddress) {
-	    Address address=new Address(GeoCodeLocale);
-		
+	public ArrayList<Address> geocodingViaHTTPRequest(String youraddress) {
+	    ArrayList<Address> addressList= new ArrayList<Address>();
+	    Address address;
+	    
+	    String addressString = youraddress.replaceAll(" ", "+");
+	    
 		String uri = "http://maps.google.com/maps/api/geocode/json?address=" +
-	                  youraddress + "&sensor=false&language=he";
+				addressString + "&sensor=false&language=" + GeoCodeLocale.getLanguage();
 	    HttpGet httpGet = new HttpGet(uri);
 	    HttpClient client = new DefaultHttpClient();
 	    HttpResponse response;
 	    StringBuilder stringBuilder = new StringBuilder();
 
+	    //Create connection and get response part
 	    try {
 	        response = client.execute(httpGet);
 	        HttpEntity entity = response.getEntity();
@@ -291,33 +290,71 @@ public class FindAddress extends Activity {
 	        while ((b = stream.read()) != -1) {
 	            stringBuilder.append((char) b);
 	        }
-	    } catch (ClientProtocolException e) {
-	        e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace();
+	    } catch (Exception e) {
+	        Log.e("getLatLongFromAddress","connection Error occured: "+e.getMessage());
+	        return null;
 	    }
 
+	    //JSON PART
 	    JSONObject jsonObject = new JSONObject();
 	    try {
 	        jsonObject = new JSONObject(stringBuilder.toString());
-
-	        Double lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-	        		.getJSONObject("geometry").getJSONObject("location")
-	        		.getDouble("lng");
-
-	        Double lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-	            .getJSONObject("geometry").getJSONObject("location")
-	            .getDouble("lat");
-	        int length=((JSONArray)jsonObject.get("results")).length();
 	        
+    		String StreetNumber="";
+    		String addressType="";
+    		String currentAddress="";
 	        
-	        Log.d("latitude", String.valueOf(lat));
-	        Log.d("longitude", String.valueOf(lng));
-	        Log.d("longitude", String.valueOf(length));
-	    } catch (JSONException e) {
-	        e.printStackTrace();
+	        int resultSize=((JSONArray)jsonObject.get("results")).length();
+	        
+	        for(int i=0;i<resultSize && i<GEOCODE_MAX_RESULTS;i++)
+	        {
+	    		address=new Address(GeoCodeLocale);
+	    		
+	    		address.setLongitude(((JSONArray)jsonObject.get("results")).getJSONObject(i)
+	    				.getJSONObject("geometry").getJSONObject("location")
+	    				.getDouble("lng"));
+	    		
+	    		address.setLatitude(((JSONArray)jsonObject.get("results")).getJSONObject(i)
+	    				.getJSONObject("geometry").getJSONObject("location")
+	    				.getDouble("lat"));
+	    		
+	    		int addressComponentsSize = ((JSONArray)jsonObject.get("results")).getJSONObject(i)
+	    				.getJSONArray("address_components").length();
+	    		
+	    		StreetNumber="";
+	    		addressType="";
+	    		currentAddress="";
+	    		
+	    		for(int k=0;k<addressComponentsSize;k++)
+	    		{
+	    			addressType =((JSONArray)jsonObject.get("results")).getJSONObject(i)
+    	    				.getJSONArray("address_components").getJSONObject(k).getJSONArray("types").getString(0);
+	    			
+	    			currentAddress=((JSONArray)jsonObject.get("results")).getJSONObject(i)
+    	    				.getJSONArray("address_components").getJSONObject(k).getString("long_name");	    			
+	    			
+	    			if(addressType.equals("street_number"))
+	    			{
+	    				StreetNumber=currentAddress;
+	    				continue;
+	    			}
+	    			else if(addressType.equals("route") && !StreetNumber.equals(""))
+	    			{
+	    				currentAddress=currentAddress + " " + StreetNumber;
+	    			}
+
+	    			//new string and the {getBytes("ISO-8859-1"), "UTF-8"} shit for supporting Hebrew on the results
+	    			address.setAddressLine((addressComponentsSize-k)-1,new String(
+	    					currentAddress.getBytes("ISO-8859-1"), "UTF-8"));
+	    		}
+	    		addressList.add(address);
+	        }
+	        
+	    } catch (Exception e) {
+	    	Log.e("getLatLongFromAddress","JSON Error occured: "+e.getMessage());
+	    	return null;
 	    }
-
+	    return addressList;
 	}
 
 }
