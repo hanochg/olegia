@@ -57,7 +57,7 @@ public class SplashScreen extends Activity {
 		{
 			flag=true;
 		}
-
+		//////
 		Timer myTimer = new Timer();
 		myTimer.schedule(new TimerTask(){
 			public void run() 
