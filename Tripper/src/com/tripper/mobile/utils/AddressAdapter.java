@@ -50,7 +50,7 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 			holder = (ViewHolder) convertView.getTag();			
 		}
 
-		holder.address.setText(data.get(position).getAddressLine(1)+ "," +data.get(position).getAddressLine(0)+","+data.get(position).getAddressLine(2));
+		holder.address.setText(data.get(position).getAddressLine(2)+ "," +data.get(position).getAddressLine(1)+","+data.get(position).getAddressLine(0));
 
 		return convertView;
 	}
