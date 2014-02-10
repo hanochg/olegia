@@ -23,6 +23,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -58,6 +60,8 @@ public class FindAddress extends Activity {
 	private double longitude,latitude;
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
+	int SPEECH_REQUEST_CODE = 10;
+	
 	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,13 +69,32 @@ public class FindAddress extends Activity {
 		getMenuInflater().inflate(R.menu.find_address_menu, menu);
 		return true;
 	}
-
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	    	String address = "";
+	        // Populate the wordsList with the String values the recognition engine thought it heard
+	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	        addressSearch.setText(matches.get(0));
+	    }
+	}
+	public void speechActivation(View view)
+	{
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the address...");
+		startActivityForResult(intent, SPEECH_REQUEST_CODE);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
-
+		
+		List<ResolveInfo> activities = getPackageManager().queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		
 		activityContext=this;
 		
 		ActionBar actionBar = getActionBar();

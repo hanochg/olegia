@@ -21,11 +21,25 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@id/addressList"
-        android:inputType="text"
-        android:ems="10" >
+        android:ems="10"
+        android:inputType="text" >
 
         <requestFocus />
     </EditText>
+
+    <ImageButton
+        android:id="@+id/activateSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/addressList"
+        android:layout_toRightOf="@+id/etAddressSearch"
+        android:adjustViewBounds="true"
+        android:background="#FFFFFF"
+        android:maxHeight="40dp"
+        android:maxWidth="30dp"
+        android:onClick="speechActivation"
+        android:scaleType="fitCenter"
+        android:src="@drawable/glass" />
 
 </RelativeLayout>
