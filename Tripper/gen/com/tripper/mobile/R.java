@@ -48,7 +48,6 @@ public final class R {
         public static final int contactName=0x7f0a0000;
         public static final int contactNumber=0x7f0a0001;
         public static final int doneCL=0x7f0a001f;
-        public static final int email=0x7f0a0017;
         public static final int enter_destination=0x7f0a0009;
         public static final int etAddressSearch=0x7f0a000c;
         public static final int etSearchCL=0x7f0a0003;
@@ -64,6 +63,7 @@ public final class R {
         public static final int nextFA=0x7f0a0020;
         public static final int noResults=0x7f0a0004;
         public static final int password=0x7f0a0018;
+        public static final int phone=0x7f0a0017;
         public static final int phoneNumCL=0x7f0a0006;
         public static final int phoneNumFL=0x7f0a000e;
         public static final int plusButton=0x7f0a0011;
@@ -122,15 +122,15 @@ public final class R {
         public static final int btnSingleDestination=0x7f070005;
         public static final int error_field_required=0x7f07001e;
         public static final int error_incorrect_password=0x7f07001d;
-        public static final int error_invalid_email=0x7f07001b;
         public static final int error_invalid_password=0x7f07001c;
+        public static final int error_invalid_phone=0x7f07001b;
         public static final int exit=0x7f070003;
         public static final int hello_world=0x7f07000e;
         public static final int login_progress_signing_in=0x7f07001a;
+        public static final int prompt_password=0x7f070016;
         /**  Strings related to login 
          */
-        public static final int prompt_email=0x7f070015;
-        public static final int prompt_password=0x7f070016;
+        public static final int prompt_phone=0x7f070015;
         public static final int settings=0x7f070002;
         public static final int splash_screen=0x7f070001;
         public static final int title_activity_contact__list=0x7f070013;

@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
@@ -30,35 +32,31 @@ import com.parse.ParseUser;
  * well.
  */
 public class LoginActivity extends Activity {
-	/**
-	 * A dummy authentication store containing known user names and passwords.
-	 * TODO: remove after connecting to a real authentication system.
-	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-			"foo@example.com:hello", "bar@example.com:world" };
-
+	
 	/**
 	 * The default email to populate the email field with.
 	 */
-	public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
-
+	public static final String EXTRA_PHONE = "Phone Number";
+	
+	 private enum eConnectionStatus {
+		   NoConnection, SighUp, PasswordError, SighIn
+		 }
+		
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
 
-	// Values for email and password at the time of the login attempt.
-	private String mEmail;
+	// Values for phone and password at the time of the login attempt.
+	private String mPhoneNumber;
 	private String mPassword;
 
 	// UI references.
-	private EditText mEmailView;
+	private EditText mPhoneView;
 	private EditText mPasswordView;
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
-	
-	ParseUser user = new ParseUser();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -72,14 +70,9 @@ public class LoginActivity extends Activity {
 		
 		ParseAnalytics.trackAppOpened(getIntent()); //???
 		
-		ParseObject testObject = new ParseObject("TestObject");
-		testObject.put("foo", "bar");
-		testObject.saveInBackground();
-		
-		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);     //////////////////////
-		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
+		mPhoneView = (EditText) findViewById(R.id.phone);
+		mPhoneNumber=getIntent().getStringExtra(EXTRA_PHONE);
+		mPhoneView.setText(mPhoneNumber);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView
@@ -110,7 +103,7 @@ public class LoginActivity extends Activity {
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), the
+	 * If there are form errors (invalid phone, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
 	public void attemptLogin() 
@@ -121,11 +114,11 @@ public class LoginActivity extends Activity {
 		}
 
 		// Reset errors.
-		mEmailView.setError(null);
+		mPhoneView.setError(null);
 		mPasswordView.setError(null);
 
 		// Store values at the time of the login attempt.
-		mEmail = mEmailView.getText().toString();
+		mPhoneNumber = mPhoneView.getText().toString();
 		mPassword = mPasswordView.getText().toString();
 
 		boolean cancel = false;
@@ -145,17 +138,17 @@ public class LoginActivity extends Activity {
 			cancel = true;
 		}
 
-		// Check for a valid email address.
-		if (TextUtils.isEmpty(mEmail)) 
+		// Check for a valid phone address.
+		if (TextUtils.isEmpty(mPhoneNumber)) 
 		{
-			mEmailView.setError(getString(R.string.error_field_required));
-			focusView = mEmailView;
+			mPhoneView.setError(getString(R.string.error_field_required));
+			focusView = mPhoneView;
 			cancel = true;
 		} 
-		else if (!mEmail.contains("@"))
+		else if( mPhoneNumber.length()<5)
 		{
-			mEmailView.setError(getString(R.string.error_invalid_email));
-			focusView = mEmailView;
+			mPhoneView.setError(getString(R.string.error_invalid_phone));
+			focusView = mPhoneView;
 			cancel = true;
 		}
 
@@ -171,8 +164,6 @@ public class LoginActivity extends Activity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			user.setUsername(mEmail);
-			user.setPassword(mPassword);
 			mAuthTask = new UserLoginTask(this);
 			mAuthTask.execute((Void) null);
 		}
@@ -226,13 +217,9 @@ public class LoginActivity extends Activity {
 	 */
 	
 	
-	
-	
-	
-	//conect a server and sigh up + then store the it on the disk 
-	
-	
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+	//connect a server and sigh up  
+		
+	public class UserLoginTask extends AsyncTask<Void, Void, eConnectionStatus> {
 		
 		private Context context;
 		
@@ -241,50 +228,81 @@ public class LoginActivity extends Activity {
 			this.context = context;
 		}
 		
-		protected Boolean doInBackground(Void... params)
+		protected eConnectionStatus doInBackground(Void... params)
 		{
 			// TODO: attempt authentication against a network service.
 			try
 			{				
-				user.signUp();		
+				ParseUser.logIn(mPhoneNumber, mPassword);
 			} 
 			catch (ParseException  e) 
 			{
-				return false;
-			}
-			/*
-			for (String credential : DUMMY_CREDENTIALS) {
-				String[] pieces = credential.split(":");
-				if (pieces[0].equals(mEmail)) {
-					// Account exists, return true if the password matches.
-					return pieces[1].equals(mPassword);
-				}
-			}*/
-
-			// TODO: register the new account here.
-			return true;
+				switch (e.getCode())
+				{
+					case ParseException.OBJECT_NOT_FOUND: //no such user + password
+						
+						ParseUser user = new ParseUser();					
+						user.setUsername(mPhoneNumber);
+						user.setPassword(mPassword);
+						
+						try
+						{		
+							user.signUp();		
+						} 
+						catch (ParseException  e2) 
+						{
+							switch (e2.getCode())
+							{
+								case ParseException.USERNAME_TAKEN:
+									return eConnectionStatus.PasswordError;	
+								
+								default:
+									return eConnectionStatus.NoConnection;	
+							}	
+						}
+						return eConnectionStatus.SighUp;	
+						
+					case ParseException.CONNECTION_FAILED:
+						//can't connect server
+						return eConnectionStatus.NoConnection;	
+						
+					default:
+						return eConnectionStatus.NoConnection;	
+				}//Switch					
+			}//Catch
+			
+			return eConnectionStatus.SighIn;	//Log in success
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success)
+		protected void onPostExecute(final eConnectionStatus success)
 		{
 			mAuthTask = null;
 			showProgress(false);
 			
-			
-
-			if (success)
+			switch (success)
 			{
-				Intent intent = new Intent(context, MainActivity.class);
-				startActivity(intent);	
-				finish();
-			} 
-			else
-			{
-				mPasswordView
-						.setError(getString(R.string.error_incorrect_password));
-				mPasswordView.requestFocus();
-			}
+				case SighIn: case SighUp:
+					String message = (success==eConnectionStatus.SighIn)?"You have sign in successfully":"You have sign up successfully";
+					
+					Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+					finish();
+					Intent intent = new Intent(context, MainActivity.class);
+					startActivity(intent);	
+					
+				return;
+								
+				case NoConnection:
+					Toast.makeText(getApplicationContext(), "Connection can't be established", Toast.LENGTH_LONG).show();
+					finish();
+					return;
+					
+				case PasswordError:
+					mPasswordView
+					.setError(getString(R.string.error_incorrect_password));
+					mPasswordView.requestFocus();
+				return;				
+			} 				
 		}
 
 		@Override
