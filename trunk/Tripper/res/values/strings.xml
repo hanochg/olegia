@@ -21,9 +21,10 @@
     <string name="Next">Next</string>
     <!--
          Used for the AlphabetIndexer in ContactsListFragment to provide quick navigation by
-         alphabet using ListView fast scroll.
+         alphabet using ListView fast scroll.
     -->
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="title_activity_contact__list">Contact_List</string>
+    <string name="title_activity_notification">NotificationActivity</string>
 
 </resources>

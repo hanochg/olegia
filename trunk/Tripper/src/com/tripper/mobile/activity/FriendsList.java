@@ -1,7 +1,16 @@
 package com.tripper.mobile.activity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
+import com.parse.FindCallback;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.ParseException;
 import com.tripper.mobile.R;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +30,8 @@ import android.text.TextWatcher;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -37,6 +48,9 @@ import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import com.tripper.mobile.utils.*;
+
+
+
 
 public class FriendsList extends Activity implements
 						LoaderManager.LoaderCallbacks<Cursor>
@@ -409,7 +423,74 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	        CheckBox checked;
 	    }
 	}
-
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.friends_list_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+	    switch(item.getItemId()){
+	    case R.id.doneFL:
+	    	//sendNotifications();
+	    	//this.finish();
+	        return true;            
+	    }
+	    return false;
+	}
+	
+	
+	public void sendNotifications()
+	{
+		ParseQuery<ParseUser> query = ParseUser.getQuery();
+		
+		String[] names = {"+972545956685", "bua"};
+		
+    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhones();
+    	query.whereContainedIn("username", Arrays.asList(names));//phones); 
+    	
+		ParseQuery pushQuery = ParseInstallation.getQuery();
+		pushQuery.whereMatchesQuery("user", query);
+		 
+		// Send push notification to query
+		ParsePush push = new ParsePush();
+		push.setQuery(pushQuery); // Set our Installation query
+		push.setMessage("Free hotdogs at the Parse concession stand!");
+		push.sendInBackground();
+		
+	}
+	
+	
+	List<ParseUser> ob=null;
+	
+	public void CheckForUsers()
+	{
+		ParseQuery<ParseUser> query = ParseUser.getQuery();
+    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhones();
+    	query.whereContainedIn("username", phones); 	
+    	query.findInBackground(new FindCallback<ParseUser>() 
+    	{
+    	  public void done(List<ParseUser> objects, ParseException e)
+    	  {
+    	    if (e == null)
+    	    {
+    	    	ob=objects;
+    	        // The query was successful.
+    	    } 
+    	    else
+    	    {
+    	        // Something went wrong.
+    	    }
+    	  }
+    	});
+		
+	}
+	
+	
 
 
 }

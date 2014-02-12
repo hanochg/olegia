@@ -1,6 +1,7 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.util.Log;
 
@@ -91,5 +92,20 @@ public class ContactsListSingleton
 		}
 		else
 				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
-		}
+	}
+	
+	public ArrayList<String> getAllPhones()
+	{
+		ArrayList<String> phones = new ArrayList<String>();
+		if(db!=null)
+		{
+			for(int i=0 ; i<db.size() ; i++)
+			{
+				phones.add(db.get(i).getPhoneNumber().replace("-", ""));
+			}
+		}	
+		return phones;
+	}
+	
+	
 }

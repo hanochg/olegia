@@ -66,7 +66,6 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.login_screen);
 		
 		SplashScreen.splashActivity.finish();
-		Parse.initialize(this, "dWDyR9aVsulbZmhK9HHG5VhMyHmYpCIa7YMxSott", "2D6DdeglHFpi96NexPVIQS6E9jh8dAsbhonQeaDx"); 
 		
 		ParseAnalytics.trackAppOpened(getIntent()); //???
 		
@@ -260,6 +259,7 @@ public class LoginActivity extends Activity {
 									return eConnectionStatus.NoConnection;	
 							}	
 						}
+						
 						return eConnectionStatus.SighUp;	
 						
 					case ParseException.CONNECTION_FAILED:
