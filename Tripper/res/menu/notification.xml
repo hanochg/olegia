@@ -4,11 +4,6 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/settings"></item>
-    
-    <item
-        android:id="@+id/doneFL"
-        android:showAsAction="always"
-        android:title="@string/Done"/>   
+        android:title="@string/action_settings"/>
 
 </menu>

@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import com.parse.LogInCallback;
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.tripper.mobile.R;
@@ -39,7 +40,6 @@ public class SplashScreen extends Activity {
 		splashActivity=this;
 
 		setContentView(R.layout.splash_screen);
-		Parse.initialize(this, "dWDyR9aVsulbZmhK9HHG5VhMyHmYpCIa7YMxSott", "2D6DdeglHFpi96NexPVIQS6E9jh8dAsbhonQeaDx"); 
 
 		Timer myTimer = new Timer();
 		myTimer.schedule(new TimerTask()

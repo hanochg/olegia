@@ -8,6 +8,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.FragmentActivity;
+
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
 import com.tripper.mobile.R;
 
 public class MainActivity extends FragmentActivity  {
@@ -18,6 +21,11 @@ public class MainActivity extends FragmentActivity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);	
 		SplashScreen.splashActivity.finish();
+		
+		
+		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+		installation.put("user",ParseUser.getCurrentUser());
+		installation.saveInBackground();
 	}
 
 	@Override
@@ -46,10 +54,4 @@ public class MainActivity extends FragmentActivity  {
         Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
     }
 }
-
-
-
-
-
-
 

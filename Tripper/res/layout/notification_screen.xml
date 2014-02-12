@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NotificationActivity"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"    
+    android:paddingBottom="@dimen/activity_vertical_margin">
+    
+    
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+	    android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:text="@string/mes"
+        android:textSize="23sp" />  
+    
+     <Button
+        android:id="@+id/btnNoThanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+         
+        android:layout_below="@+id/tvMessage"
+        android:lines="1"
+        android:onClick="OnBtnNoThanksClick"
+        android:text="@string/btnNoThanks"/>
+         
+    <Button
+        android:id="@+id/btnMyLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEnterAdress"
+        android:layout_below="@+id/btnNoThanks"
+        android:layout_toLeftOf="@+id/btnEnterAdress"
+        android:lines="2"
+        android:onClick="OnBtnMylocationClick"
+        android:text="@string/btnMyLocation" />
+
+    <Button
+        android:id="@+id/btnEnterAdress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnNoThanks"
+        android:layout_alignRight="@+id/btnNoThanks"
+        android:layout_below="@+id/btnNoThanks"
+        android:lines="2"
+        android:onClick="OnBtnEnterAdressClick"
+        android:text="@string/btnEnterAdress" />
+    
+     <Button
+         android:id="@+id/btnProfileAddress"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@+id/btnEnterAdress"
+         android:layout_below="@+id/btnNoThanks"
+         android:layout_toRightOf="@+id/btnEnterAdress"
+         android:lines="2"
+         android:onClick="OnBtnProfileAddressClick"
+         android:text="@string/btnProfileAddress" />
+
+</RelativeLayout>
