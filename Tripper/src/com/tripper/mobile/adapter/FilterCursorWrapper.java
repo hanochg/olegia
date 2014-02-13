@@ -15,7 +15,7 @@ public class FilterCursorWrapper extends CursorWrapper {
 
       // the logic to check where this item should be hidden
 
-      if(ContactsListSingleton.getInstance().contains(phoneNum))
+      if(ContactsListSingleton.getInstance().indexOf(phoneNum)!=-1)
     	  return true;
       else
     	  return false;
