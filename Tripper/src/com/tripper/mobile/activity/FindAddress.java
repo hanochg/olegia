@@ -61,7 +61,12 @@ public class FindAddress extends Activity {
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
+	private final int MAINACTIVITY_ORIGIN=0;
+	private final int NOTIFICATION_ORIGIN=1;
+	private final int MANUALADDRESS_ORIGIN=2;
 	private int ORIGIN_ACTIVITY;
+	
+	
 	
 	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
@@ -177,13 +182,24 @@ public class FindAddress extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 			{
 				Log.d("App!!!","onItemSelected");
-				if (position < listViewAdapter.getCount()) 
+				
+				switch (ORIGIN_ACTIVITY)
 				{
-					selectedAddress = listViewAdapter.getItem(position);
-					longitude=selectedAddress.getLongitude();
-					latitude=selectedAddress.getLatitude();
-					Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
+				case 0: //MainActivity
+					if (position < listViewAdapter.getCount()) 
+					{
+						selectedAddress = listViewAdapter.getItem(position);
+						longitude=selectedAddress.getLongitude();
+						latitude=selectedAddress.getLatitude();
+						Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
+					}
+					break;
+				case 1:	//Notification
+					break;
+				case 2:	//Manual
+					break;					
 				}
+
 				//Address data = addressDB.get(position); 
 				//String addressStr = data.getAddressLine(1)+ "," +data.getAddressLine(0)+","+data.getAddressLine(2);
 				//addressSearch.setText(addressStr);

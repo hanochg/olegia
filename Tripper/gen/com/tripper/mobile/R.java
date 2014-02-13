@@ -87,9 +87,9 @@ public final class R {
         public static final int view=0x7f0a001e;
     }
     public static final class integer {
-        public static final int MultipleDestination=0x7f050002;
-        public static final int NotificationDestination=0x7f050003;
-        public static final int SingleDestination=0x7f050001;
+        public static final int MainActivityOrigin=0x7f050001;
+        public static final int ManualAddressOrigin=0x7f050003;
+        public static final int NotificationOrigin=0x7f050002;
         public static final int splash_screen_timeout=0x7f050000;
     }
     public static final class layout {
