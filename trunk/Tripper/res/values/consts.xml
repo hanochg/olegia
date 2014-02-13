@@ -2,9 +2,9 @@
 <resources>
 
     <integer name="splash_screen_timeout">500</integer>
-    <integer name="SingleDestination">0</integer>
-    <integer name="MultipleDestination">1</integer>
-    <integer name="NotificationDestination">2</integer>
+    <integer name="MainActivityOrigin">0</integer>
+    <integer name="NotificationOrigin">1</integer>
+    <integer name="ManualAddressOrigin">2</integer>
 
 
 </resources>

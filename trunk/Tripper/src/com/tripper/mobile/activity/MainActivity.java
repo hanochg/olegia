@@ -33,14 +33,14 @@ public class MainActivity extends FragmentActivity  {
 	public void OnBtnMultipleDestinationClick(View view)
 	{	
 		Intent intent = new Intent(this, FriendsList.class);
-		intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.MultipleDestination));
+		//intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.MultipleDestination));
 		startActivity(intent);	
 	}
 	
 	public void OnBtnSingleDestinationClick(View view)
 	{	
 		Intent intent = new Intent(this, FindAddress.class);
-		intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.SingleDestination));
+		intent.putExtra(getResources().getString(R.string.Choice),(int)getResources().getInteger(R.integer.MainActivityOrigin));
 		startActivity(intent);     
 	}
 	

@@ -1,4 +1,7 @@
-package com.tripper.mobile.utils;
+package com.tripper.mobile.adapter;
+
+import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
