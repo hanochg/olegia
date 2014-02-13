@@ -55,6 +55,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tripper.mobile.adapter.ListViewContactsAdapter;
 import com.tripper.mobile.utils.*;
 
 

@@ -12,7 +12,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.*;
+import com.tripper.mobile.TripperApplication;
+import com.tripper.mobile.adapter.AddressAdapter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -23,8 +24,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
-import android.graphics.drawable.Drawable;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,7 +34,6 @@ import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -63,6 +61,7 @@ public class FindAddress extends Activity {
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
+	private int ORIGIN_ACTIVITY;
 	
 	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
@@ -76,7 +75,6 @@ public class FindAddress extends Activity {
 	{
 	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
 	    {
-	    	String address = "";
 	        // Populate the wordsList with the String values the recognition engine thought it heard
 	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 	        addressSearch.setText(matches.get(0));
@@ -95,12 +93,14 @@ public class FindAddress extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
 		
-		//List<ResolveInfo> activities = getPackageManager().queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		Bundle extra = getIntent().getExtras();
+		ORIGIN_ACTIVITY = extra.getInt(getResources().getString(R.string.Choice), 0);
+		
 		
 		activityContext=this;
 		
 		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
-		
+
 
 		
 		//addressSearch.setCompoundDrawables(getResources().getDrawable(R.drawable.mic), null, null, null);

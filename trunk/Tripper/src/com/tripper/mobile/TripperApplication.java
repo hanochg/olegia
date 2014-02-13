@@ -6,9 +6,14 @@ import com.parse.PushService;
 
 public class TripperApplication extends android.app.Application {
 
+	public int AppMode = 0; 
+	
+	
   public TripperApplication() {
   }
 
+  
+  
   @Override
   public void onCreate() {
     super.onCreate();
