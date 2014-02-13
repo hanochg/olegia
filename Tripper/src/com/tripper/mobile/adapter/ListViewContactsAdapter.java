@@ -1,7 +1,8 @@
-package com.tripper.mobile.utils;
+package com.tripper.mobile.adapter;
 
 import java.util.ArrayList;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactDataStructure;
 
 import android.content.Context;
 import android.view.LayoutInflater;

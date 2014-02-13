@@ -1,4 +1,4 @@
-package com.tripper.mobile.utils;
+package com.tripper.mobile.adapter;
 
 import java.util.List;
 

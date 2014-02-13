@@ -1,4 +1,4 @@
-package com.tripper.mobile.utils;
+package com.tripper.mobile.adapter;
 
 import android.content.Context;
 import android.location.Address;
