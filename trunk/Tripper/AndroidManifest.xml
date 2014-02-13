@@ -9,11 +9,15 @@
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+     <!-- To check if connected to the Internet -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
- <!-- To check if connected to the Internet -->
+     <!-- To read the user phone number -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
- <!-- To read the user phone number -->
+	<!-- Location Access -->
+ 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+ 
+ 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
  <!-- To check the WhatsApp account for phone number & Parse -->
 
@@ -68,7 +72,7 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.Contacts_List"
-            android:label="@string/title_activity_contact__list"
+            android:label="@string/title_activity_contact_list"
             android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
         </activity>
         
@@ -76,6 +80,11 @@
             android:name="com.tripper.mobile.activity.NotificationActivity"
             android:label="@string/title_activity_notification" 
             android:theme="@android:style/Theme.Dialog" >
+                    
+            <intent-filter>
+  				<action android:name="com.tripper.Invite" />
+			</intent-filter>
+			
         </activity>
 
         <!-- Parse -->

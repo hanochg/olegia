@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -86,6 +87,7 @@ public class LoginActivity extends Activity {
 						return false;
 					}
 				});
+		
 
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
@@ -260,6 +262,11 @@ public class LoginActivity extends Activity {
 							}	
 						}
 						
+					try {
+						ParseUserInstalation();
+					} catch (ParseException e1) {
+						return eConnectionStatus.NoConnection;
+					}
 						return eConnectionStatus.SighUp;	
 						
 					case ParseException.CONNECTION_FAILED:
@@ -271,6 +278,11 @@ public class LoginActivity extends Activity {
 				}//Switch					
 			}//Catch
 			
+			try {
+				ParseUserInstalation();
+			} catch (ParseException e) {
+				return eConnectionStatus.NoConnection;
+			}
 			return eConnectionStatus.SighIn;	//Log in success
 		}
 
@@ -312,4 +324,12 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 		}
 	}
+	
+	private void ParseUserInstalation() throws ParseException 
+	{
+		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+		installation.put("user",ParseUser.getCurrentUser());
+		installation.save();
+	}
+	
 }

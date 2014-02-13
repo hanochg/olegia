@@ -4,5 +4,6 @@
     <string name="btnEnterAdress">Enter Address</string>
     <string name="btnProfileAddress">Use my profile Address</string> 
     <string name="btnNoThanks">No Thanks</string>
-    <string name="mes">User sjadjkha wants to make a trip</string>
+  	<string name="title_activity_notification">Tripper Invitation:</string>  
+   
 </resources>
