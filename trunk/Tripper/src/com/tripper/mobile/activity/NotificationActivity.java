@@ -9,6 +9,8 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactsListSingleton;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +28,8 @@ public class NotificationActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
+		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.NOTIFICATION;
 		
 		ParseAnalytics.trackAppOpened(getIntent());	
 		try {

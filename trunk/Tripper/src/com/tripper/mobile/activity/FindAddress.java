@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import com.tripper.mobile.R;
 import com.tripper.mobile.TripperApplication;
 import com.tripper.mobile.adapter.AddressAdapter;
+import com.tripper.mobile.utils.ContactsListSingleton;
+
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -61,10 +63,7 @@ public class FindAddress extends Activity {
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
-	private final int MAINACTIVITY_ORIGIN=0;
-	private final int NOTIFICATION_ORIGIN=1;
-	private final int MANUALADDRESS_ORIGIN=2;
-	private int ORIGIN_ACTIVITY;
+
 	
 	
 	
@@ -98,19 +97,9 @@ public class FindAddress extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
 		
-		Bundle extra = getIntent().getExtras();
-		ORIGIN_ACTIVITY = extra.getInt(getResources().getString(R.string.Choice), 0);
-		
-		
 		activityContext=this;
 		
 		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
-
-
-		
-		//addressSearch.setCompoundDrawables(getResources().getDrawable(R.drawable.mic), null, null, null);
-		
-		//text.setCompoundDrawables(null, null, getResources().getDrawable(R.drawable.check_box), null);
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -182,21 +171,35 @@ public class FindAddress extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 			{
 				Log.d("App!!!","onItemSelected");
-				
-				switch (ORIGIN_ACTIVITY)
+				switch (ContactsListSingleton.getInstance().APP_MODE)
 				{
-				case 0: //MainActivity
+				case SINGLE_DESTINATION: //MainActivity
 					if (position < listViewAdapter.getCount()) 
 					{
+						//get selected address
 						selectedAddress = listViewAdapter.getItem(position);
-						longitude=selectedAddress.getLongitude();
-						latitude=selectedAddress.getLatitude();
+						//store coordinates on the singleton 
+						ContactsListSingleton.setSingleDestCoordinates(
+								selectedAddress.getLongitude(),selectedAddress.getLatitude());
 						Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
+						
+						//launch MAP
 					}
 					break;
-				case 1:	//Notification
+				case MULTI_DESTINATION:	//Manual
+					
+					//get number from intent
+					String phone="";
+					
+					//get selected address
+					selectedAddress = listViewAdapter.getItem(position);
+					
+					//get longitude and latitude and send it to user's data
+					ContactsListSingleton.getInstance().setContactLocation(
+							phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
 					break;
-				case 2:	//Manual
+				case NOTIFICATION:	//Notification
+					
 					break;					
 				}
 

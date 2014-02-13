@@ -485,7 +485,7 @@ public class Contacts_List extends Activity implements
             
 	        //mark if contact selected
 	        holder.checked.setOnCheckedChangeListener(null);
-	        if(ContactsListSingleton.getInstance().contains(phoneNum))
+	        if(ContactsListSingleton.getInstance().indexOf(phoneNum)!=(-1))
 	        	holder.checked.setChecked(true);
 	        else
 	        	holder.checked.setChecked(false);

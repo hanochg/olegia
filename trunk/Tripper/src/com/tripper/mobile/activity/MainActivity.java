@@ -1,17 +1,13 @@
 package com.tripper.mobile.activity;
 
-
-
 import android.os.Bundle;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.FragmentActivity;
-
-import com.parse.ParseInstallation;
-import com.parse.ParseUser;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactsListSingleton;
 
 public class MainActivity extends FragmentActivity  {
 
@@ -32,15 +28,21 @@ public class MainActivity extends FragmentActivity  {
 	
 	public void OnBtnMultipleDestinationClick(View view)
 	{	
+		//define single destination mode:
+		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.MULTI_DESTINATION;
+		
+		//open Intent		
 		Intent intent = new Intent(this, FriendsList.class);
-		//intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.MultipleDestination));
 		startActivity(intent);	
 	}
 	
 	public void OnBtnSingleDestinationClick(View view)
 	{	
+		//define single destination mode:
+		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.SINGLE_DESTINATION;
+		
+		//open Intent
 		Intent intent = new Intent(this, FindAddress.class);
-		intent.putExtra(getResources().getString(R.string.Choice),(int)getResources().getInteger(R.integer.MainActivityOrigin));
 		startActivity(intent);     
 	}
 	

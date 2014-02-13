@@ -13,8 +13,19 @@ import android.util.Log;
 
 public class ContactsListSingleton 
 {
+	public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
+	public AppMode APP_MODE;
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
+	
+	public double singleCoordinates_lat=0;
+	public double singleCoordinates_long=0;
+	
+	public static void setSingleDestCoordinates(double lon, double lat)
+	{
+			getInstance().singleCoordinates_lat=lat;
+			getInstance().singleCoordinates_long=lon;
+	}
 	
 	private ContactsListSingleton()
 	{
@@ -40,7 +51,7 @@ public class ContactsListSingleton
 		if(db!=null)
 		{
 			//check if already contain the value
-			if(contains(contact.getPhoneNumber()))	
+			if(indexOf(contact.getPhoneNumber())!=(-1))	
 				return;
 			//if its not already contained in the list
 			db.add(contact);
@@ -73,7 +84,17 @@ public class ContactsListSingleton
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
 	}
 	
-	public Boolean contains(String phone)
+	public void setContactLocation(String phone, double lon, double lat)
+	{
+		int index = indexOf(phone);
+		if(index!=(-1))
+		{
+			db.get(index).setLongtitude(lon);
+			db.get(index).setLatitude(lat);			
+		}
+	}
+	
+	public int indexOf(String phone)
 	{
 		if(db!=null)
 		{
@@ -83,27 +104,19 @@ public class ContactsListSingleton
 			{
 				tempContact=db.get(i);
 				if(tempContact.getPhoneNumber().equals(phone))
-					return true;
+					return i;
 			}			
 		}
-		return false; 
+		return (-1); 
 	}
 	
 	public void removeContactByPhoneNum(String phone) 
 	{
 		if(db!=null)
 		{
-			ContactDataStructure tempContact=null;
-			//check if already contain the value
-			for(int i=0 ; i<db.size() ; i++)
-			{
-				tempContact=db.get(i);
-				if(tempContact.getPhoneNumber().equals(phone))
-				{
-					db.remove(i);
-					return;
-				}
-			}
+			int indexNum = indexOf(phone);
+			if(indexNum!=(-1))
+				db.get(indexNum);
 		}			
 		else
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
