@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tripper.mobile"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+     <!-- To check if connected to the Internet -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <!-- To read the user phone number -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<!-- Location Access -->
+ 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+ 
+ 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+ <!-- To check the WhatsApp account for phone number & Parse -->
+
+
+    <!-- Parse -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.tripper.mobile.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.tripper.mobile.permission.C2D_MESSAGE" />
+
+    <application
+      android:name="com.tripper.mobile.TripperApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.tripper.mobile.activity.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.SplashScreen"
+            android:label="@string/splash_screen"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.FriendsList"
+            android:label="@string/title_activity_friends_list"
+            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.FindAddress"
+            android:label="@string/title_activity_find_address"
+            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.Contacts_List"
+            android:label="@string/title_activity_contact_list"
+            android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
+        </activity>
+        
+        <activity
+            android:name="com.tripper.mobile.activity.NotificationActivity"
+            android:label="@string/title_activity_notification" 
+            android:theme="@android:style/Theme.Dialog" >
+                    
+            <intent-filter>
+  				<action android:name="com.tripper.Invite" />
+			</intent-filter>
+			
+        </activity>
+
+        <!-- Parse -->
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.tripper.mobile" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

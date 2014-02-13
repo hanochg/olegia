@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,6 +35,7 @@ import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -60,7 +62,7 @@ public class FindAddress extends Activity {
 	private double longitude,latitude;
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
-	int SPEECH_REQUEST_CODE = 10;
+	private final int SPEECH_REQUEST_CODE = 10;
 	
 	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
@@ -93,9 +95,17 @@ public class FindAddress extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
 		
-		List<ResolveInfo> activities = getPackageManager().queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		//List<ResolveInfo> activities = getPackageManager().queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		
 		activityContext=this;
+		
+		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
+		
+
+		
+		//addressSearch.setCompoundDrawables(getResources().getDrawable(R.drawable.mic), null, null, null);
+		
+		//text.setCompoundDrawables(null, null, getResources().getDrawable(R.drawable.check_box), null);
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -115,10 +125,7 @@ public class FindAddress extends Activity {
 		addressDB = new ArrayList<Address>();
 		//Define ListAdapter
 		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,addressDB);
-		listViewAdapter.setNotifyOnChange(false);
-		
-		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
-		
+		listViewAdapter.setNotifyOnChange(false);	
 		
 		// Show soft keyboard automatically
 		addressSearch.requestFocus();

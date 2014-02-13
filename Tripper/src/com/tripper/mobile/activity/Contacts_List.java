@@ -4,6 +4,7 @@ package com.tripper.mobile.activity;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 import com.tripper.mobile.BuildConfig;
 import com.tripper.mobile.R;
@@ -17,6 +18,7 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -33,6 +35,7 @@ import android.provider.ContactsContract.Contacts.Photo;
 //import android.support.v4.content.Loader;
 //import android.support.v4.widget.CursorAdapter;
 
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -72,7 +75,26 @@ public class Contacts_List extends Activity implements
     private EditText searchEditText;
     private ListView listView;
     private TextView mEmptyView;
+    private final int SPEECH_REQUEST_CODE = 10;
+    private final int CONTACTLIST_REQUEST_CODE = 11;
     
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	    	String address = "";
+	        // Populate the wordsList with the String values the recognition engine thought it heard
+	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	        searchEditText.setText(matches.get(0));
+	    }
+	}
+	public void speechActivation(View view)
+	{
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
+		startActivityForResult(intent, SPEECH_REQUEST_CODE);
+	}
 
 
 	@Override
@@ -80,8 +102,10 @@ public class Contacts_List extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_list);
 		
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		
+		//NO back arrow to previous activity!
+		/*ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);*/
 		
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(this);
@@ -216,7 +240,9 @@ public class Contacts_List extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item){
 	    switch(item.getItemId()){
 	    case R.id.doneCL:
-	    	this.finish();
+	    	Intent intent = new Intent(this, MainActivity.class);
+	    	setResult(Activity.RESULT_OK,intent);
+	    	finish();
 	        return true;            
 	    }
 	    return false;
