@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.tripper.mobile.R;
 import com.tripper.mobile.TripperApplication;
 import com.tripper.mobile.adapter.AddressAdapter;
+import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
@@ -182,8 +183,10 @@ public class FindAddress extends Activity {
 						ContactsListSingleton.setSingleDestCoordinates(
 								selectedAddress.getLongitude(),selectedAddress.getLatitude());
 						Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
-						
-						//launch MAP
+												
+						//launch MAP						
+						Intent intent = new Intent(activityContext, OnMap.class);
+						startActivity(intent);
 					}
 					break;
 				case MULTI_DESTINATION:	//Manual
