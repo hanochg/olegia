@@ -1,7 +1,13 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import com.parse.CountCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
 import android.util.Log;
 
@@ -26,18 +32,42 @@ public class ContactsListSingleton
 	public ArrayList<ContactDataStructure> getDB() 
 	{
 		return db; 
+		
 	}
 	
-	public void insertContact(ContactDataStructure contact) 
+	public void insertContact(final ContactDataStructure contact) 
 	{
 		if(db!=null)
 		{
 			//check if already contain the value
 			if(contains(contact.getPhoneNumber()))	
 				return;
-
 			//if its not already contained in the list
 			db.add(contact);
+			
+			//*Parse*// 
+			ParseQuery<ParseUser> query = ParseUser.getQuery();
+			query.whereEqualTo("username", contact.getPhoneNumberforParse()); 
+	    	
+	    	query.countInBackground(new CountCallback() 
+	    	{
+	    		  public void done(int count, ParseException e) 
+	    		  {  
+	    		    if (e == null && contact!=null)
+	    		    {
+	    		      if(count!=0)
+	    		    	  contact.UpdateAppStatus(eAppStatus.hasApp);
+	    		      else
+	    		    	  contact.UpdateAppStatus(eAppStatus.noApp);
+	    		    } 
+	    		    else if (contact!=null)
+	    		    {
+	    		      // The request failed,connection error
+	    		    }
+	    		  }
+	    	}); 
+		
+			
 		}
 		else
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
@@ -94,14 +124,19 @@ public class ContactsListSingleton
 				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
 	}
 	
-	public ArrayList<String> getAllPhones()
+	public ArrayList<String> getAllPhonesForParse()
 	{
-		ArrayList<String> phones = new ArrayList<String>();
-		if(db!=null)
+		ArrayList<String> phones = null; 
+		if(db!=null && !db.isEmpty())
 		{
+			phones = new ArrayList<String>();			
+			ContactDataStructure tempContact=null;
+			
 			for(int i=0 ; i<db.size() ; i++)
 			{
-				phones.add(db.get(i).getPhoneNumber().replace("-", ""));
+				tempContact=db.get(i);
+				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp)
+					phones.add(tempContact.getPhoneNumberforParse());
 			}
 		}	
 		return phones;

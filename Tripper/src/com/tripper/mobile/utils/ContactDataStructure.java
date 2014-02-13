@@ -2,13 +2,20 @@ package com.tripper.mobile.utils;
 
 import android.net.Uri;
 
-public class ContactDataStructure {
+public class ContactDataStructure 
+{
 
+	 public enum eAppStatus {
+		   notChecked,noApp,hasApp
+		 }
+	
+	
 	private String name;
 	private String phoneNumber;
 	private long id;
 	private String lookupkey;
 	private Uri uri;
+	private eAppStatus appStatus=eAppStatus.notChecked;
 	
 	public ContactDataStructure()
 	{
@@ -57,4 +64,27 @@ public class ContactDataStructure {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	public void UpdateAppStatus(eAppStatus appStatus)
+	{
+		this.appStatus = appStatus;
+	}
+	
+	public eAppStatus getAppStatus()
+	{
+		return appStatus;
+	}
+	public String getPhoneNumberforParse() 
+	{
+		String tempString=phoneNumber;
+		
+		if(tempString.startsWith("0"))
+			tempString=tempString.replaceFirst("0", "+972");		
+		
+		return tempString.replace("-", "");
+	}	
 }
+
+
+
+

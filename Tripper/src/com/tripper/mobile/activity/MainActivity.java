@@ -21,11 +21,6 @@ public class MainActivity extends FragmentActivity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);	
 		SplashScreen.splashActivity.finish();
-		
-		
-		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-		installation.put("user",ParseUser.getCurrentUser());
-		installation.saveInBackground();
 	}
 
 	@Override
@@ -46,8 +41,7 @@ public class MainActivity extends FragmentActivity  {
 	{	
 		Intent intent = new Intent(this, FindAddress.class);
 		intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.SingleDestination));
-		startActivity(intent);
-        
+		startActivity(intent);     
 	}
 	
     public void onFinishEditDialog(String inputText) {

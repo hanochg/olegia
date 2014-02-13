@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.parse.FindCallback;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
@@ -12,6 +15,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.tripper.mobile.R;
+import com.tripper.mobile.TripperApplication;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
@@ -47,6 +52,8 @@ import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.tripper.mobile.utils.*;
 
 
@@ -436,8 +443,14 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	public boolean onOptionsItemSelected(MenuItem item){
 	    switch(item.getItemId()){
 	    case R.id.doneFL:
-	    	//sendNotifications();
-	    	//this.finish();
+	    	
+	    	ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();    	
+	    	if(db==null || db.isEmpty())
+	    		return true;
+	    	
+	    	sendNotifications();
+	    	this.finish();
+	    	
 	        return true;            
 	    }
 	    return false;
@@ -447,30 +460,40 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	public void sendNotifications()
 	{
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
-		
-		String[] names = {"+972545956685", "bua"};
-		
-    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhones();
-    	query.whereContainedIn("username", Arrays.asList(names));//phones); 
+			
+    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhonesForParse();
+    	query.whereContainedIn("username", phones); 
     	
-		ParseQuery pushQuery = ParseInstallation.getQuery();
+		ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
 		pushQuery.whereMatchesQuery("user", query);
 		 
-		// Send push notification to query
 		ParsePush push = new ParsePush();
-		push.setQuery(pushQuery); // Set our Installation query
-		push.setMessage("Free hotdogs at the Parse concession stand!");
-		push.sendInBackground();
+		push.setQuery(pushQuery); 
 		
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+		
+		JSONObject data = new JSONObject();		
+	    try
+	    {
+	        data.put("alert", "Gomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
+	        data.put("action","com.tripper.Invite");
+	        data.put("User", ParseUser.getCurrentUser().getUsername());
+	    }
+	    catch(JSONException x)
+	    {
+	    	Toast.makeText(getApplicationContext(), "The Program has Crushed.", Toast.LENGTH_LONG).show();
+	    	throw new RuntimeException("Something wrong with JSON", x);
+	    }
+		push.setData(data);
+		push.sendInBackground();
 	}
 	
 	
-	List<ParseUser> ob=null;
-	
+	/*
 	public void CheckForUsers()
 	{
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
-    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhones();
+    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhonesForParse();
     	query.whereContainedIn("username", phones); 	
     	query.findInBackground(new FindCallback<ParseUser>() 
     	{
@@ -478,7 +501,6 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
     	  {
     	    if (e == null)
     	    {
-    	    	ob=objects;
     	        // The query was successful.
     	    } 
     	    else
@@ -486,11 +508,6 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
     	        // Something went wrong.
     	    }
     	  }
-    	});
-		
-	}
-	
-	
-
-
+    	});		
+	}*/
 }
