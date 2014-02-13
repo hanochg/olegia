@@ -15,31 +15,31 @@
         android:layout_below="@+id/etAddressSearch" >
     </ListView>
 
+    <ImageButton
+        android:id="@+id/activateSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addressList"
+        android:layout_alignLeft="@+id/addressList"
+        android:adjustViewBounds="true"
+        android:background="#FFFFFF"
+        android:maxHeight="30dp"
+        android:maxWidth="30dp"
+        android:onClick="speechActivation"
+        android:scaleType="fitCenter"
+        android:src="@drawable/mic" />
+
     <EditText
         android:id="@+id/etAddressSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/activateSpeech"
         android:ems="10"
         android:inputType="text" >
 
         <requestFocus />
     </EditText>
-
-    <ImageButton
-        android:id="@+id/activateSpeech"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/addressList"
-        android:layout_toRightOf="@+id/etAddressSearch"
-        android:adjustViewBounds="true"
-        android:background="#FFFFFF"
-        android:maxHeight="40dp"
-        android:maxWidth="30dp"
-        android:onClick="speechActivation"
-        android:scaleType="fitCenter"
-        android:src="@drawable/glass" />
 
 </RelativeLayout>

@@ -12,16 +12,29 @@
         android:id="@+id/acContactName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/plusButton"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/plusButton"
+        android:layout_toRightOf="@+id/activateSpeech"
         android:ems="10"
         android:hint="Enter Contact&apos;s Name" >
 
         <requestFocus />
     </AutoCompleteTextView>
 
+   <ImageButton
+        android:id="@+id/activateSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lvContactList"
+        android:adjustViewBounds="true"
+        android:background="#FFFFFF"
+        android:maxHeight="30dp"
+        android:maxWidth="30dp"
+        android:onClick="speechActivation"
+        android:scaleType="fitCenter"
+        android:src="@drawable/mic" 
+   />
+    
     <ListView
         android:id="@+id/lvContactList"
         android:layout_width="match_parent"
@@ -31,7 +44,7 @@
     </ListView>
 
     <ImageButton
-        android:id="@+id/plusButton"
+        android:id="@+id/contactsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/lvContactList"
@@ -40,8 +53,8 @@
         android:background="#FFFFFF"
         android:contentDescription="plusSign"
         android:maxHeight="50dp"
-        android:maxWidth="50dp"
+        android:maxWidth="30dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/plus_sign" />
+        android:src="@drawable/phone_book_1" />
 
 </RelativeLayout>

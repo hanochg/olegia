@@ -1,7 +1,5 @@
 package com.tripper.mobile.activity;
 
-import java.util.ArrayList;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,21 +9,11 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
-import com.tripper.mobile.R.layout;
-import com.tripper.mobile.R.menu;
-import com.tripper.mobile.utils.ContactsListSingleton;
-
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.UserDictionary;
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 

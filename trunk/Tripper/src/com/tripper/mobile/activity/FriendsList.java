@@ -28,6 +28,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -66,79 +67,32 @@ public class FriendsList extends Activity implements
 	SimpleCursorAdapter mCursorAdapter;
 	private ContactsAdapter mAdapter; // The main query adapter
 	Context context;
-	ImageButton plusButton;
+	ImageButton contactsButton;
 	AutoCompleteTextView actvContacts;
     String mSearchString=null;
     ListViewContactsAdapter mListViewContactsAdapter;
-    
-    
+    private final int SPEECH_REQUEST_CODE = 10;
+    private final int CONTACTLIST_REQUEST_CODE = 11;
 
-	@Override
-public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
-		CursorLoader cur=null;
-	if (Queries.LoaderManagerID == loaderId)
-    {
-			Uri FilteredUri;
-			if (!TextUtils.isEmpty(mSearchString))
-				FilteredUri = Uri.withAppendedPath(
-				    			Queries.CONTENT_FILTERED_URI,          						    	
-								Uri.encode(mSearchString));
-			else
-				FilteredUri = Queries.CONTENT_URI;	
-			
-			cur = new CursorLoader(
-        		context,
-        		FilteredUri,
-        		Queries.PROJECTION_WITH_BADGE,
-        		Queries.DisplayName_SELECTION,
-        		null,
-                Queries.SORT_ORDER
-                );
-			
-			Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
-        return cur;        			        		
-    }
-	Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
-	return cur;
-}
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
-		// Put the result Cursor in the adapter for the ListView
-		if (Queries.LoaderManagerID == loader.getId())
-		{
-			FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
-			mAdapter.swapCursor(filterCursorWrapper);
-		}
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// Delete the reference to the existing Cursor
-		if (Queries.LoaderManagerID == loader.getId())
-			mAdapter.swapCursor(null);
-	}
-
-    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = this;
-		setContentView(R.layout.friends_list_screen);		
+		setContentView(R.layout.friends_list);		
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
         mAdapter = new ContactsAdapter(this);
 		
-		plusButton=(ImageButton) findViewById(R.id.plusButton);
-		plusButton.setOnClickListener(new OnClickListener() {
+		contactsButton=(ImageButton) findViewById(R.id.contactsButton);
+		contactsButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(context, Contacts_List.class);
-				//intent.putExtra(getResources().getString(R.string.Choice),(long)getResources().getInteger(R.integer.MultipleDestination));
-				startActivity(intent);	
+				startActivityForResult(intent,CONTACTLIST_REQUEST_CODE);	
 				
 			}
 		});
@@ -211,19 +165,89 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 			public void afterTextChanged(Editable s) {}
 		});
 		
-		
-		
-		
         // Initializes the loader
         getLoaderManager().initLoader(Queries.LoaderManagerID, null,  this);
       }
 	
+	//##Google speech##
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	        // Populate the wordsList with the String values the recognition engine thought it heard
+	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	        actvContacts.setText(matches.get(0));
+	    }
+	    if(requestCode == CONTACTLIST_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	    	mAdapter.notifyDataSetChanged();
+	    	Log.d("onActivityResult","CONTACTLIST_REQUEST_CODE");
+	    }
+	}
+	public void speechActivation(View view)
+	{
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
+		startActivityForResult(intent, SPEECH_REQUEST_CODE);
+	}
+    
+
+	//##Implements LoaderManager.LoaderCallbacks<Cursor>##
+	
+	@Override
+public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
+		CursorLoader cur=null;
+	if (Queries.LoaderManagerID == loaderId)
+    {
+			Uri FilteredUri;
+			if (!TextUtils.isEmpty(mSearchString))
+				FilteredUri = Uri.withAppendedPath(
+				    			Queries.CONTENT_FILTERED_URI,          						    	
+								Uri.encode(mSearchString));
+			else
+				FilteredUri = Queries.CONTENT_URI;	
+			
+			cur = new CursorLoader(
+        		context,
+        		FilteredUri,
+        		Queries.PROJECTION_WITH_BADGE,
+        		Queries.DisplayName_SELECTION,
+        		null,
+                Queries.SORT_ORDER
+                );
+			
+			Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
+        return cur;        			        		
+    }
+	Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
+	return cur;
+}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
+		// Put the result Cursor in the adapter for the ListView
+		if (Queries.LoaderManagerID == loader.getId())
+		{
+			FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
+			mAdapter.swapCursor(filterCursorWrapper);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// Delete the reference to the existing Cursor
+		if (Queries.LoaderManagerID == loader.getId())
+			mAdapter.swapCursor(null);
+	}
+
+
+	
     @Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
-		mAdapter.notifyDataSetChanged();
-		Log.d("FriendsList","Resumed");
+		//mAdapter.notifyDataSetChanged();
+		//Log.d("FriendsList","Resumed");
 	}
 
 	
