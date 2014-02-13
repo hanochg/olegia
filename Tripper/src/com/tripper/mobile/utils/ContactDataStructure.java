@@ -16,6 +16,7 @@ public class ContactDataStructure
 	private String lookupkey;
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
+	private double longtitude, latitude;
 	
 	public ContactDataStructure()
 	{
@@ -24,6 +25,8 @@ public class ContactDataStructure
 		id=0;
 		lookupkey=null;
 		uri=null;
+		longtitude=0;
+		latitude=0;
 	}
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
 	{
@@ -34,6 +37,18 @@ public class ContactDataStructure
 		this.uri=uri;		
 	}
 	
+	public double getLongtitude() {
+		return longtitude;
+	}
+	public void setLongtitude(double longtitude) {
+		this.longtitude = longtitude;
+	}
+	public double getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
 	public long getId() {
 		return id;
 	}
