@@ -19,12 +19,14 @@ import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
@@ -177,6 +179,7 @@ public class FindAddress extends Activity {
 				case SINGLE_DESTINATION: //MainActivity
 					if (position < listViewAdapter.getCount()) 
 					{
+						
 						//get selected address
 						selectedAddress = listViewAdapter.getItem(position);
 						//store coordinates on the singleton 

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -17,9 +19,12 @@ import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -27,6 +32,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class OnMap extends Activity {
@@ -74,7 +81,7 @@ public class OnMap extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.on_map);
-		
+	
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
 		
@@ -156,14 +163,79 @@ public class OnMap extends Activity {
 
 			//launch Async Geocode query
 			notifyResult(this,markerCounter);
-
+			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(markersList.get(markerCounter).markerOptions.getPosition(), 14, 0, 0)),3000,null);
 			//increment markers counter
 			markerCounter++;
 			
 		}
-		selectedAddress=null;
+
+		/*
+		 * NAVIGATION
+		 */
+		//GOOGLE
+		Button GoogleNavigate = (Button)findViewById(R.id.navigateGooG);
+		GoogleNavigate.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				selectedAddress=new Address(Locale.getDefault());
+				selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
+				selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);
+				
+				//GoogleMaps Navigation
+				try{					
+					//source location
+				    double latitudeCurr = 31.2718;
+				    double longitudeCurr = 34.78256;
+					
+				    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(
+				    		"http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+selectedAddress.getLatitude()+","+selectedAddress.getLongitude()));
+				    		//can enter a String address after saddr\daddr
+				    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+				    startActivity(intent);
+				}catch(Exception e)
+				{
+					Log.e("Google Navigate","Error: "+e.getMessage());
+				}
+		        
+	
+			}
+		});		
 		
+		Button WazeNavigate = (Button)findViewById(R.id.navigateWaze);
+		WazeNavigate.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) 
+			{
+				selectedAddress=new Address(Locale.getDefault());
+				selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
+				selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);		        
+				/*  WAZE API
+				 *  search for address: 	waze://?q=<address search term>
+				 *	center map to lat / lon: 	waze://?ll=<lat>,<lon>
+				 *	set zoom (minimum is 6): 	waze://?z=<zoom>
+				 */
+				
+		        //Waze Navigation
+				try
+				{
+					//String url = "waze://?ll="+ selectedAddress.getLatitude()+","+selectedAddress.getLongitude();
+					String url = "waze://?q=ביאליק 1 באר שבע";
+				    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+				   startActivity( intent );
+				}
+				catch ( ActivityNotFoundException ex  )
+				{
+				  Intent intent =
+				    new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
+				  startActivity(intent);
+				}	
+				
+			}
+		});
+
+		//selectedAddress=null;//RETURN THIS COMMENT 
 	}
+	
 	
 	/**
 	 * function to load map. If map is not created it will create it for you
@@ -171,7 +243,9 @@ public class OnMap extends Activity {
 	private void initilizeMap() {
 		if (googleMap == null) {
 			googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			//googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 			
+			googleMap.setMyLocationEnabled(true);
 			// check if map is created successfully or not
 			if (googleMap == null) {
 				Toast.makeText(getApplicationContext(),
