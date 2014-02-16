@@ -1,8 +1,10 @@
 package com.tripper.mobile.map;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,11 +12,16 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.R;
+import com.tripper.mobile.activity.FriendsList;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
@@ -27,7 +34,9 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,10 +47,21 @@ import android.widget.Toast;
 
 public class OnMap extends Activity {
 
+	//Map Route Vars
+	private static final LatLng AMSTERDAM = new LatLng(52.37518, 4.895439);
+	private static final LatLng PARIS = new LatLng(48.856132, 2.352448);
+	private static final LatLng FRANKFURT = new LatLng(50.111772, 8.682632);
+	private LatLngBounds latlngBounds;
+	private Polyline newPolyline;
+	private boolean isTravelingToParis = false;
+	private int width, height;
+	
+	
 	//Globals
 	private GoogleMap googleMap;
 	List<MyMarkers> markersList;
     int markerCounter=0;
+    Context context;
     
 	//Externals
 	public static Address selectedAddress=null;
@@ -82,6 +102,9 @@ public class OnMap extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.on_map);
 	
+		context=this;
+		getSreenDimanstions();
+		
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
 		
@@ -169,6 +192,8 @@ public class OnMap extends Activity {
 			
 		}
 
+		
+		
 		/*
 		 * NAVIGATION
 		 */
@@ -191,7 +216,7 @@ public class OnMap extends Activity {
 				    		"http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+selectedAddress.getLatitude()+","+selectedAddress.getLongitude()));
 				    		//can enter a String address after saddr\daddr
 				    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-				    startActivity(intent);
+				    startActivityForResult(intent,5);
 				}catch(Exception e)
 				{
 					Log.e("Google Navigate","Error: "+e.getMessage());
@@ -206,6 +231,7 @@ public class OnMap extends Activity {
 			@Override
 			public void onClick(View v) 
 			{
+				/*
 				selectedAddress=new Address(Locale.getDefault());
 				selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
 				selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);		        
@@ -214,29 +240,39 @@ public class OnMap extends Activity {
 				 *	center map to lat / lon: 	waze://?ll=<lat>,<lon>
 				 *	set zoom (minimum is 6): 	waze://?z=<zoom>
 				 */
-				
+				/*
 		        //Waze Navigation
 				try
 				{
 					//String url = "waze://?ll="+ selectedAddress.getLatitude()+","+selectedAddress.getLongitude();
 					String url = "waze://?q=ביאליק 1 באר שבע";
 				    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-				   startActivity( intent );
+				    startActivityForResult(intent,6);
 				}
 				catch ( ActivityNotFoundException ex  )
 				{
 				  Intent intent =
 				    new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
 				  startActivity(intent);
-				}	
+				}	*/
+
 				
 			}
 		});
-
-		//selectedAddress=null;//RETURN THIS COMMENT 
+		
+		//selectedAddress=null;//RETURN THIS COMMENT
+		
 	}
 	
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode==5)
+			Toast.makeText(this, "GoogleMap "+resultCode, Toast.LENGTH_LONG).show();
+		if(requestCode==6)
+			Toast.makeText(this, "Waze "+resultCode, Toast.LENGTH_LONG).show();
+	}
+
 	/**
 	 * function to load map. If map is not created it will create it for you
 	 * */
@@ -255,7 +291,80 @@ public class OnMap extends Activity {
 			}
 		}
 	}
+	
+	/*
+	 * MAP ROUTE FUNCTIONS
+	 */
+	
+	public void navigateClick(View v)
+	{
+		if (!isTravelingToParis)
+		{
+			isTravelingToParis = true;
+			findDirections( AMSTERDAM.latitude, AMSTERDAM.longitude,PARIS.latitude, PARIS.longitude, GMapV2Direction.MODE_DRIVING );
+		}
+		else
+		{
+			isTravelingToParis = false;
+			findDirections( AMSTERDAM.latitude, AMSTERDAM.longitude, FRANKFURT.latitude, FRANKFURT.longitude, GMapV2Direction.MODE_DRIVING );  
+		}
+	}
+	public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
+		PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.RED);
 
+		for(int i = 0 ; i < directionPoints.size() ; i++) 
+		{          
+			rectLine.add(directionPoints.get(i));
+		}
+		if (newPolyline != null)
+		{
+			newPolyline.remove();
+		}
+		newPolyline = googleMap.addPolyline(rectLine);
+		if (isTravelingToParis)
+		{
+			latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
+	        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
+		}
+		else
+		{
+			latlngBounds = createLatLngBoundsObject(AMSTERDAM, FRANKFURT);
+	        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
+		}
+		
+	}
+	
+	private void getSreenDimanstions()
+	{
+		Display display = getWindowManager().getDefaultDisplay();
+		width = display.getWidth(); 
+		height = display.getHeight(); 
+	}
+	
+	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation, LatLng secondLocation)
+	{
+		if (firstLocation != null && secondLocation != null)
+		{
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();    
+			builder.include(firstLocation).include(secondLocation);
+			
+			return builder.build();
+		}
+		return null;
+	}
+	
+	public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
+	{
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(GetDirectionsAsyncTask.USER_CURRENT_LAT, String.valueOf(fromPositionDoubleLat));
+		map.put(GetDirectionsAsyncTask.USER_CURRENT_LONG, String.valueOf(fromPositionDoubleLong));
+		map.put(GetDirectionsAsyncTask.DESTINATION_LAT, String.valueOf(toPositionDoubleLat));
+		map.put(GetDirectionsAsyncTask.DESTINATION_LONG, String.valueOf(toPositionDoubleLong));
+		map.put(GetDirectionsAsyncTask.DIRECTIONS_MODE, mode);
+		
+		GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(this);
+		asyncTask.execute(map);	
+	}	
 	@Override
 	protected void onResume() {
 		super.onResume();		
@@ -278,6 +387,11 @@ public class OnMap extends Activity {
 			markerCounter++;
 			selectedAddress=null;
 		}
+		
+		//MAP ROUTE 
+    	latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
+
 	}
 	
 	//Launch Async Geocode

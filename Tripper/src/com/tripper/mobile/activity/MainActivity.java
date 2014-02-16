@@ -30,10 +30,16 @@ public class MainActivity extends FragmentActivity  {
 	{	
 		//define single destination mode:
 		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.MULTI_DESTINATION;
+		/*
+		//open Intent		
+		Intent intent = new Intent(this, NavigationActivity.class);
+		startActivity(intent);
+		*/	
 		
 		//open Intent		
 		Intent intent = new Intent(this, FriendsList.class);
-		startActivity(intent);	
+		startActivity(intent);
+		
 	}
 	
 	public void OnBtnSingleDestinationClick(View view)

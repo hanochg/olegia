@@ -14,14 +14,24 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="GoogleNavigate" />
+            android:text="Google" />
 
         <Button
             android:id="@+id/navigateWaze"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/navigateTo"
             android:layout_toRightOf="@+id/navigateGooG"
-            android:text="WazeNavigate" />
+            android:text="Waze" />
+
+        <Button
+            android:id="@+id/navigateTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:onClick="navigateClick"
+            android:text="Navigate" />
 
 </RelativeLayout>
