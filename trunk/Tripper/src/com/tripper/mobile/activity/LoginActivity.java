@@ -1,6 +1,9 @@
 package com.tripper.mobile.activity;
 
+import java.util.concurrent.ExecutionException;
+
 import com.tripper.mobile.R;
+import com.tripper.mobile.TripperApplication;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,6 +29,7 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.PushService;
 
 
 /**
@@ -327,9 +331,25 @@ public class LoginActivity extends Activity {
 	
 	private void ParseUserInstalation() throws ParseException 
 	{
-		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-		installation.put("user",ParseUser.getCurrentUser());
+		ParseInstallation installation = ParseInstallation.getCurrentInstallation();	
+		//installation.put("user",ParseUser.getCurrentUser());			
 		installation.save();
+		
+		
+		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("a"), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("b"), FriendsList.class);
+		//PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("c"), FriendsList.class);
 	}
 	
+	private String israelPhoneToChannel(String channelPrefix)	
+	{
+		
+		String channelName= ParseUser.getCurrentUser().getUsername();
+		if(channelName.startsWith("+972"))
+			channelName=channelPrefix +channelName.substring(1);
+		else if(channelName.startsWith("0"))
+			channelName=channelName.replaceFirst("0", channelPrefix + "972");		
+			
+		return channelName.replace("-", "");	
+	}	
 }

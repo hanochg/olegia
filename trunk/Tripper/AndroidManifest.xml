@@ -23,12 +23,9 @@
         android:protectionLevel="signature" />
     <uses-permission android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
-    
+      
  	<!-- To check the WhatsApp account for phone number & Parse --> 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
-
 
     <!-- Parse -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -55,7 +52,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" />
+            android:value="AIzaSyCEcxbS5QckQg3JraGgVp-DBPxJ1-OSBPU" /> <!--  AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" /> -->
         
         <activity
             android:name="com.tripper.mobile.activity.MainActivity"
@@ -75,7 +72,8 @@
         <activity
             android:name="com.tripper.mobile.activity.FriendsList"
             android:label="@string/title_activity_friends_list"
-            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
+            android:parentActivityName="com.tripper.mobile.activity.MainActivity">
+			
         </activity>
         <activity
             android:name="com.tripper.mobile.map.OnMap"
@@ -101,12 +99,14 @@
             android:name="com.tripper.mobile.activity.NotificationActivity"
             android:label="@string/title_activity_notification" 
             android:theme="@android:style/Theme.Dialog" >
-                    
-            <intent-filter>
-  				<action android:name="com.tripper.Invite" />
-			</intent-filter>
 			
         </activity>
+             
+        <receiver android:name="com.tripper.mobile.MyCustomReceiver" android:exported="false">
+  			<intent-filter>
+    			<action android:name="com.tripper.mobile.Answer" />
+  			</intent-filter>
+		</receiver>
 
         <!-- Parse -->
         <service android:name="com.parse.PushService" />

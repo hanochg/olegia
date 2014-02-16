@@ -9,12 +9,15 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
+import android.content.Intent;
 import android.util.Log;
 
 public class ContactsListSingleton 
 {
 	public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
 	public AppMode APP_MODE;
+	
+	
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
 	
@@ -58,7 +61,7 @@ public class ContactsListSingleton
 			
 			//*Parse*// 
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
-			query.whereEqualTo("username", contact.getPhoneNumberforParse()); 
+			query.whereEqualTo("username","+"+ contact.getPhoneNumberforParse()); 
 	    	
 	    	query.countInBackground(new CountCallback() 
 	    	{
@@ -137,7 +140,7 @@ public class ContactsListSingleton
 				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
 	}
 	
-	public ArrayList<String> getAllPhonesForParse()
+	public ArrayList<String> getAllChannelsForParse(String channelPrefix)
 	{
 		ArrayList<String> phones = null; 
 		if(db!=null && !db.isEmpty())
@@ -149,11 +152,11 @@ public class ContactsListSingleton
 			{
 				tempContact=db.get(i);
 				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp)
-					phones.add(tempContact.getPhoneNumberforParse());
+					phones.add(channelPrefix + tempContact.getPhoneNumberforParse());
 			}
 		}	
 		return phones;
 	}
-	
+
 	
 }

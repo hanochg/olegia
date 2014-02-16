@@ -9,7 +9,6 @@ public class ContactDataStructure
 		   notChecked,noApp,hasApp
 		 }
 	
-	
 	private String name;
 	private String phoneNumber;
 	private long id;
@@ -94,7 +93,9 @@ public class ContactDataStructure
 		String tempString=phoneNumber;
 		
 		if(tempString.startsWith("0"))
-			tempString=tempString.replaceFirst("0", "+972");		
+			tempString=tempString.replaceFirst("0", "972");		
+		else if(tempString.startsWith("+972"))
+			tempString= tempString.substring(1);
 		
 		return tempString.replace("-", "");
 	}	
