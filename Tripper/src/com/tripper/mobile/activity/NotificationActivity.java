@@ -11,8 +11,13 @@ import com.parse.ParseUser;
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
@@ -23,11 +28,16 @@ public class NotificationActivity extends Activity {
 
 	private TextView tvMessage;
 	private String phone="";
+	private LocationManager locationManager=null;
+	LocationListener locationListener;
+	Boolean mylocationClicked=false;
+	private Activity notificationActivity;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		notificationActivity=this;
 		
 		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.NOTIFICATION;
 		
@@ -47,33 +57,58 @@ public class NotificationActivity extends Activity {
 		tvMessage = (TextView) findViewById(R.id.tvMessage);
 		tvMessage.setText("User "+ phone + " is inviting you to the trip.");		
 	}
-			
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.	
-		getMenuInflater().inflate(R.menu.notification, menu);			
-		return true;
-	}
+
 	public void OnBtnMylocationClick(View view)
 	{	
+		if(mylocationClicked==true)
+			return;	
+		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
-		/*
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            return true;
-        // Google Play services was not available for some reason
-        } else {
-        }
-		
-		*/
-		
-		
+		// Define a listener that responds to location updates
+		locationListener = new LocationListener() 
+		{
+		    public void onLocationChanged(Location location) 
+		    {
+		    	if(location.getAccuracy()<100)
+		    	{
+		    		 locationManager.removeUpdates(this);
+		    		 Toast.makeText(getApplicationContext(), "Your location was sent back.", Toast.LENGTH_LONG).show();
+		    		 answerHandler(getJSONDataMessage("ok",location));	
+		    		 notificationActivity.finish();
+		    		 
+		    	}
+		    	else if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)&& !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) )
+		    	{
+		    	 	mylocationClicked=false;
+		 		 	Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
+		    	}	
+		    }
+		    public void onStatusChanged(String provider, int status, Bundle extras) { }
+		    public void onProviderEnabled(String provider) {}
+		    public void onProviderDisabled(String provider) {}
+		 };
+		 
+		 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
+		 	//locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener,null);
+			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 0, locationListener);
+		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+			 //locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener,null);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0, locationListener);
+		 else
+		 {
+			 mylocationClicked=false;
+			 Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
+			 return;
+		 }
+		 mylocationClicked=true;
+			 
 	}
 	public void OnBtnNoThanksClick(View view)
 	{	
-		JSONObject data = getJSONDataMessage("No");
+		JSONObject data = getJSONDataMessage("no",null);
+		answerHandler(data);
+		Toast.makeText(getApplicationContext(), "Your answer was sent.", Toast.LENGTH_LONG).show();
+		this.finish();
 	}
 	public void OnBtnProfileAddressClick(View view)
 	{	
@@ -86,14 +121,19 @@ public class NotificationActivity extends Activity {
 		startActivity(intent);
 	}
 	
-	private JSONObject getJSONDataMessage(String coordinates)
+	private JSONObject getJSONDataMessage(String answer,Location location)
 	{
 	    try
 	    {
 	        JSONObject data = new JSONObject();
 	        data.put("action","com.tripper.mobile.Answer");
 	        data.put("User", ParseUser.getCurrentUser().getUsername());
-	        data.put("Answer", coordinates);
+	        data.put("Answer", answer);
+	        if(location!=null)
+	        {
+	        	data.put("Latitude",  location.getLongitude());
+	        	data.put("Longitude",  location.getLongitude());
+	        }
 	        return data;
 	    }
 	    catch(JSONException x)
@@ -113,6 +153,23 @@ public class NotificationActivity extends Activity {
 		push.setData(data);
 		push.sendInBackground();		
 	}
+	
+    @Override
+    protected void onPause() 
+    {
+    	super.onPause();
+    	if(locationManager!=null)
+    		locationManager.removeUpdates(locationListener);
+    }
+	
+	/*		
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.	
+		getMenuInflater().inflate(R.menu.notification, menu);			
+		return true;
+	}*/
 
 }
 

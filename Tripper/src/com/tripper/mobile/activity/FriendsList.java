@@ -474,9 +474,10 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    	if(db==null || db.isEmpty())
 	    		return true;
 	    	
-	    	sendNotifications();
+	    	
 	    	Intent intent = new Intent(this, OnMap.class);	
 	    	startActivity(intent);
+	    	sendNotifications();
 	        return true;            
 	    }
 	    return false;

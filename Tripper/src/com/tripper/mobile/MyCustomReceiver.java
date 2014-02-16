@@ -34,8 +34,8 @@ public class MyCustomReceiver extends BroadcastReceiver
 		switch(channel)
 		{
 			case ChannelMode.ANSWER:
-		    	Intent intent2 = new Intent(context, OnMap.class);	
-		    	context.startActivity(intent2);
+		    	//Intent intent2 = new Intent(context, OnMap.class);	
+		    	//context.startActivity(intent2);
 		        return ;  	
 		}
 	}
