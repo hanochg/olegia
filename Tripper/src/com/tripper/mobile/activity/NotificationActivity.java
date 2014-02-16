@@ -71,16 +71,11 @@ public class NotificationActivity extends Activity {
 		    {
 		    	if(location.getAccuracy()<100)
 		    	{
-		    		 locationManager.removeUpdates(this);
+		    		 locationManager.removeUpdates(this);										//not so working
 		    		 Toast.makeText(getApplicationContext(), "Your location was sent back.", Toast.LENGTH_LONG).show();
 		    		 answerHandler(getJSONDataMessage("ok",location));	
 		    		 notificationActivity.finish();
 		    		 
-		    	}
-		    	else if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)&& !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) )
-		    	{
-		    	 	mylocationClicked=false;
-		 		 	Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
 		    	}	
 		    }
 		    public void onStatusChanged(String provider, int status, Bundle extras) { }
@@ -89,19 +84,17 @@ public class NotificationActivity extends Activity {
 		 };
 		 
 		 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
-		 	//locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener,null);
-			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 0, locationListener);
+			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		 
 		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-			 //locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener,null);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0, locationListener);
-		 else
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		 else if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))  //don't have both
 		 {
 			 mylocationClicked=false;
 			 Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
 			 return;
 		 }
-		 mylocationClicked=true;
-			 
+		 mylocationClicked=true;			 
 	}
 	public void OnBtnNoThanksClick(View view)
 	{	
