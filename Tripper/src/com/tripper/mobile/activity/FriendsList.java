@@ -57,6 +57,7 @@ import android.widget.Toast;
 
 import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.ListViewContactsAdapter;
+import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.*;
 
 
@@ -255,7 +256,6 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	
 	public void removeContactButtonClick(View v)
 	{		
-		Log.d("ON CLICK!!","ON CLICK!!");
 		int position = mSelectedContactsList.getPositionForView((View) v.getParent());		
 		ContactsListSingleton.getInstance().removeContactByIndex(position);
 		mListViewContactsAdapter.notifyDataSetChanged();
@@ -475,8 +475,8 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    		return true;
 	    	
 	    	sendNotifications();
-	    	this.finish();
-	    	
+	    	Intent intent = new Intent(this, OnMap.class);	
+	    	startActivity(intent);
 	        return true;            
 	    }
 	    return false;
@@ -484,26 +484,19 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	
 	
 	public void sendNotifications()
-	{
-		ParseQuery<ParseUser> query = ParseUser.getQuery();
-			
-    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhonesForParse();
-    	query.whereContainedIn("username", phones); 
-    	
-		ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
-		pushQuery.whereMatchesQuery("user", query);
-		 
+	{	 
 		ParsePush push = new ParsePush();
-		push.setQuery(pushQuery); 
+		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse("a");
+		push.setChannels(phones);
 		
 		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
 		
 		JSONObject data = new JSONObject();		
 	    try
 	    {
-	        data.put("alert", "Gomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
-	        data.put("action","com.tripper.Invite");
-	        data.put("User", ParseUser.getCurrentUser().getUsername());
+	    		data.put("alert", "Gooomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
+	    		data.put("User", ParseUser.getCurrentUser().getUsername());
+
 	    }
 	    catch(JSONException x)
 	    {
@@ -513,27 +506,4 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		push.setData(data);
 		push.sendInBackground();
 	}
-	
-	
-	/*
-	public void CheckForUsers()
-	{
-		ParseQuery<ParseUser> query = ParseUser.getQuery();
-    	ArrayList<String> phones = ContactsListSingleton.getInstance().getAllPhonesForParse();
-    	query.whereContainedIn("username", phones); 	
-    	query.findInBackground(new FindCallback<ParseUser>() 
-    	{
-    	  public void done(List<ParseUser> objects, ParseException e)
-    	  {
-    	    if (e == null)
-    	    {
-    	        // The query was successful.
-    	    } 
-    	    else
-    	    {
-    	        // Something went wrong.
-    	    }
-    	  }
-    	});		
-	}*/
 }

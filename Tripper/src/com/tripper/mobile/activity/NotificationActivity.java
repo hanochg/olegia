@@ -32,6 +32,7 @@ public class NotificationActivity extends Activity {
 		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.NOTIFICATION;
 		
 		ParseAnalytics.trackAppOpened(getIntent());	
+		
 		try {
 			JSONObject json = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
 			phone= json.get("User").toString();
@@ -90,8 +91,8 @@ public class NotificationActivity extends Activity {
 	    try
 	    {
 	        JSONObject data = new JSONObject();
-	        data.put("action","com.tripper.Answer");
-	        data.put("User", phone);
+	        data.put("action","com.tripper.mobile.Answer");
+	        data.put("User", ParseUser.getCurrentUser().getUsername());
 	        data.put("Answer", coordinates);
 	        return data;
 	    }
@@ -103,15 +104,9 @@ public class NotificationActivity extends Activity {
 	}
 	
 	private void answerHandler(JSONObject data)
-	{
-		ParseQuery<ParseUser> query = ParseUser.getQuery();   	
-		query.whereEqualTo("username", phone);  
-    	
-		ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
-		pushQuery.whereMatchesQuery("user", query);
-		 
+	{		 
 		ParsePush push = new ParsePush();
-		push.setQuery(pushQuery); 
+		push.setChannel("b"+phone.substring(1)); 
 		
 		push.setExpirationTimeInterval(60*60*24);//one day, till query is relevant
 		
