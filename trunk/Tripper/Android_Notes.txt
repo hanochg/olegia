@@ -1,7 +1,12 @@
-//singelton synchronized 
-//singelton OnClose()
+1. singelton synchronized  - Oleg
+2. singelton OnClose()  - Oleg
+3. SplashScreen.splashActivity.finish();
+4. Adding people to friend list with hebrew and english have different style - different font in FriendsList in hebrew and english
+5. to delete previous installation when new user is getting sign in or sign up - Oleg
+6. to check activities with screen lock
 
-2.SplashScreen.splashActivity.finish();
-3. Adding peaple to friend list with hebrew and english have different style
-4. to delete privios instalation when new user is getting singh in or sign up
-5. to check activities with screen lock
+7. fix normilized numbers in Cursor and wrapper - Hanoch
+8. send oleg the number query from contacts - Hanoch
+9. add slide menu to OnMap
+10. Contact list - fix checkboxes (do not uncheck)
+11. get enum APP_MODE out of the singleton and into intent extras
