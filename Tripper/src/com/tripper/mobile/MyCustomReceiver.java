@@ -44,21 +44,29 @@ public class MyCustomReceiver extends BroadcastReceiver
 	
 	public void ANSWERHandler(JSONObject json,Context context)
 	{
-		String answer;
+		String answer="";
+		String user="";
 		try
 	    {    	
 			answer=json.getString("answer");
+			user=json.getString("user");
 	    }
 	    catch (JSONException x) 
 	    {
 	    	return;
 	    }
 		if(answer=="ok")
-		{
-			Intent intent = new Intent("com.tripper.mobile.UPDATE");
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-			return;
+		{	
+			//update singelton ok
 		}
+		else
+		{
+			//update singelton no
+		}
+		
+		Intent intent = new Intent("com.tripper.mobile.UPDATE");
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+		return;
 	}
 	
 }

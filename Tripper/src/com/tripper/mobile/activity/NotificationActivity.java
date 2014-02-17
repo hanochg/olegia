@@ -83,7 +83,7 @@ public class NotificationActivity extends Activity implements
 		{
 		    public void onLocationChanged(Location location) 
 		    {
-		    	if(location.getAccuracy()<50)
+		    	if(location.getAccuracy()<100)
 		    	{
 		    		 locationManager.removeUpdates(this);										//not so working
 		    		 Toast.makeText(getApplicationContext(), "Your location was sent back.", Toast.LENGTH_LONG).show();

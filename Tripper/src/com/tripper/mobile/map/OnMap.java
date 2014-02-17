@@ -115,7 +115,8 @@ public class OnMap extends Activity {
 			  @Override
 			  public void onReceive(Context context, Intent intent) 
 			  {
-			    Log.d("receiver", "Got message: " );
+				  Log.e("onReceive","aaaaaaaaaaaaaaaaaaaaaaaa");
+				  Toast.makeText(getApplicationContext(), "zzzzzzzzzzzzzzzzzzzzz", Toast.LENGTH_LONG).show();
 			  }
 		};
 				
