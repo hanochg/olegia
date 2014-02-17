@@ -63,7 +63,7 @@ import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-public class Contacts_List extends Activity implements
+public class ContactsList extends Activity implements
 					 LoaderManager.LoaderCallbacks<Cursor>
 {
     // Defines a tag for identifying log entries {LOG.D TAG}
@@ -123,7 +123,7 @@ public class Contacts_List extends Activity implements
               	  mSearchTerm=s.toString();
               	                	
                   // restart the loader
-                  getLoaderManager().restartLoader(Queries.LoaderManagerID, null, Contacts_List.this);				
+                  getLoaderManager().restartLoader(Queries.LoaderManagerID, null, ContactsList.this);				
 			}
 
 			@Override
