@@ -56,7 +56,7 @@ public class NotificationActivity extends Activity implements
 		
 		try {
 			JSONObject json = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
-			phone= json.get("User").toString();
+			phone= json.get("user").toString();
 			
 			
 		} catch (JSONException e) {
@@ -135,12 +135,12 @@ public class NotificationActivity extends Activity implements
 	    {
 	        JSONObject data = new JSONObject();
 	        data.put("action","com.tripper.mobile.Answer");
-	        data.put("User", ParseUser.getCurrentUser().getUsername());
-	        data.put("Answer", answer);
+	        data.put("user", ParseUser.getCurrentUser().getUsername());
+	        data.put("answer", answer);
 	        if(location!=null)
 	        {
-	        	data.put("Latitude",  location.getLongitude());
-	        	data.put("Longitude",  location.getLongitude());
+	        	data.put("latitude",  location.getLongitude());
+	        	data.put("longitude",  location.getLongitude());
 	        }
 	        return data;
 	    }

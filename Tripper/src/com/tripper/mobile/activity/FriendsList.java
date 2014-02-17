@@ -496,7 +496,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    try
 	    {
 	    		data.put("alert", "Gooomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
-	    		data.put("User", ParseUser.getCurrentUser().getUsername());
+	    		data.put("user", ParseUser.getCurrentUser().getUsername());
 
 	    }
 	    catch(JSONException x)
