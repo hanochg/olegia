@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class AddressAdapter extends ArrayAdapter<Address>{
@@ -18,7 +21,8 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 	Context context; 
 	int layoutResourceId;    
 	List<Address> data = null;
-	private LayoutInflater mInflater; 	
+	private LayoutInflater mInflater;
+	private int lastCheckedPosition=-1;
 
 	public AddressAdapter(Context context, int layoutResourceId, List<Address> data) {
 		super(context, layoutResourceId, data);		  
@@ -28,6 +32,11 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 		this.mInflater = LayoutInflater.from(context);						
 	}
 
+	public void setLastCheckPosition(int pos)
+	{
+		lastCheckedPosition=pos;
+	}
+	
 	public View getView(final int position, View convertView, ViewGroup parent) {		
 
 		ViewHolder holder = null;		       
@@ -35,13 +44,13 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 		if (convertView == null) {
 
 			//item_list
-			convertView = mInflater.inflate(R.layout.list_single_item, null);
+			convertView = mInflater.inflate(layoutResourceId, null);
 
 			holder = new ViewHolder();
 
 			//fill the views
-			holder.address = (TextView) convertView.findViewById(R.id.ListTextView);
-
+			holder.address = (TextView) convertView.findViewById(R.id.addressItem);
+			holder.checked = (RadioButton)convertView.findViewById(R.id.addressRadioButton);
 			convertView.setTag(holder);						
 		} 
 		else {
@@ -49,13 +58,19 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 			// and the ImageView.
 			holder = (ViewHolder) convertView.getTag();			
 		}
-
+		
 		holder.address.setText(data.get(position).getAddressLine(2)+ "," +data.get(position).getAddressLine(1)+","+data.get(position).getAddressLine(0));
-
+		if(position==lastCheckedPosition)
+			holder.checked.setChecked(true);
+		else
+			holder.checked.setChecked(false);
+		
+		
 		return convertView;
 	}
 
 	class ViewHolder {		
 		TextView address;
+		RadioButton checked;
 	}
 }
