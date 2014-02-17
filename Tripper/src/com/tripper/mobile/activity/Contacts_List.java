@@ -282,7 +282,7 @@ public class Contacts_List extends Activity implements
             return new CursorLoader(this,
                     contentUri,
                     Queries.PROJECTION_WITH_BADGE,
-                    Queries.DisplayName_SELECTION,
+                    Queries.SELECTION_DISPLAY_NAME,
                     null,
                     Queries.SORT_ORDER);
         }

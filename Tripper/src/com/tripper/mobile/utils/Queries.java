@@ -1,6 +1,7 @@
 package com.tripper.mobile.utils;
 
 import com.tripper.mobile.R;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
@@ -19,22 +20,23 @@ public class Queries {
 	public static final Uri CONTENT_FILTERED_URI = 
 			ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI;
 	
-    /*public static final String[] PROJECTION =
+
+    @SuppressLint("InlinedApi")
+	public static final String[] PROJECTION_FOR_NOTIFICATION =
         {
-    	ContactsContract.CommonDataKinds.Phone._ID,
-    	ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
-    	ContactsContract.CommonDataKinds.Phone.NUMBER,
-    	ContactsContract_DISPLAY_NAME()        		
-        };*/
-    
-    public static final String[] PROJECTION_WITH_BADGE =
+    	ContactsContract_DISPLAY_NAME()
+        };
+	
+    @SuppressLint("InlinedApi")
+	public static final String[] PROJECTION_WITH_BADGE =
         {
     	ContactsContract.CommonDataKinds.Phone._ID,
     	ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
     	ContactsContract_DISPLAY_NAME(),
     	Queries.hasHoneycomb() ? ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI : ContactsContract.CommonDataKinds.Phone._ID,    			
     	SORT_ORDER,
-    	ContactsContract.CommonDataKinds.Phone.NUMBER    	
+    	ContactsContract.CommonDataKinds.Phone.NUMBER,
+    	ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER
         };
     
     // The query column numbers which map to each value in the projection
@@ -45,13 +47,14 @@ public class Queries {
     public final static int SORT_KEY = 4;
     public final static int PHONE_NUM = 5;
     
-    public final static String DisplayName_SELECTION =
+    public final static String SELECTION_DISPLAY_NAME=
             (ContactsContract_DISPLAY_NAME()) +
             "<>''" +" AND " + ContactsContract.CommonDataKinds.Phone.IN_VISIBLE_GROUP + "=1"  
             	   +" AND " + ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER + "=1" ;
             	   
     
     public final static int LoaderManagerID = 1;
+    public final static int LoaderManagerID_Notification = 2;
 
     public final static String[] FROM_COLUMNS = 
     {
