@@ -107,12 +107,10 @@ public class ContactsListSingleton
 	{
 		if(db!=null)
 		{
-			ContactDataStructure tempContact=null;
 			//check if already contain the value
 			for(int i=0 ; i<db.size() ; i++)
 			{
-				tempContact=db.get(i);
-				if(tempContact.getPhoneNumber().equals(phone))
+				if(db.get(i).getPhoneNumber().equals(phone))
 					return i;
 			}			
 		}

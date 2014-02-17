@@ -23,7 +23,7 @@
         android:fontFamily="sans-serif"
         android:gravity="right"
         android:singleLine="true"
-
+		android:clickable="false"
         android:focusable="false"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -39,7 +39,7 @@
         android:fontFamily="sans-serif-light"
         android:gravity="right"
         android:singleLine="true"
-
+		android:clickable="false"
         android:focusable="false"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -50,7 +50,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-
+		android:clickable="false"
         android:focusable="false"
         android:text="" />
 
