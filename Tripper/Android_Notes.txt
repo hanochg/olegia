@@ -1,0 +1,7 @@
+//singelton synchronized 
+//singelton OnClose()
+
+2.SplashScreen.splashActivity.finish();
+3. Adding peaple to friend list with hebrew and english have different style
+4. to delete privios instalation when new user is getting singh in or sign up
+5. to check activities with screen lock
