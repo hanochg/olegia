@@ -181,9 +181,7 @@ public class OnMap extends Activity {
 				return false;
 			}
 		});
-		selectedAddress=new Address(Locale.getDefault());
-		selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
-		selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);
+		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
 		
 		if(selectedAddress.getLatitude()!=0 && 
 				selectedAddress.getLongitude()!=0)
@@ -216,9 +214,7 @@ public class OnMap extends Activity {
 		GoogleNavigate.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				selectedAddress=new Address(Locale.getDefault());
-				selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
-				selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);
+				selectedAddress=ContactsListSingleton.getSingleRouteAddress();
 				
 				//GoogleMaps Navigation
 				try{					

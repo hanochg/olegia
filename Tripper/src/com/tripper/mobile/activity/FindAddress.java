@@ -12,21 +12,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.tripper.mobile.R;
-import com.tripper.mobile.TripperApplication;
 import com.tripper.mobile.adapter.AddressAdapter;
-import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
@@ -38,10 +34,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 public class FindAddress extends Activity {
@@ -61,12 +57,11 @@ public class FindAddress extends Activity {
 	private Message message;
 	private ListView listView;
 	private EditText addressSearch;
-	private ArrayAdapter<Address> listViewAdapter;
-	private double longitude,latitude;
+	private AddressAdapter listViewAdapter;
 	private ArrayList<Address> addressDB;
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
-
+	private RadioButton lastCheckedRadioButton=null;
 	
 	
 	
@@ -108,10 +103,11 @@ public class FindAddress extends Activity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		listView = (ListView)findViewById(R.id.addressList);
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
 		
 		//Define Async
 		AsyncTasker = new AsyncGeocode(this);
-		longitude=latitude=-1;
 
 		//Define Message
 		msgHandler=new MessageHandler(this);
@@ -120,8 +116,9 @@ public class FindAddress extends Activity {
 		//autoCompleteAdapter = new ArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);//android.R.layout.simple_dropdown_item_1line);
 		//autoCompleteAdapter.setNotifyOnChange(false);
 		addressDB = new ArrayList<Address>();
+		
 		//Define ListAdapter
-		listViewAdapter=new AddressAdapter(this, android.R.layout.simple_dropdown_item_1line,addressDB);
+		listViewAdapter=new AddressAdapter(this, R.layout.find_address_row_item,addressDB);
 		listViewAdapter.setNotifyOnChange(false);	
 		
 		// Show soft keyboard automatically
@@ -136,7 +133,11 @@ public class FindAddress extends Activity {
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
 			{
 				final String value = s.toString();
-
+				
+				//reset list selection
+				listViewAdapter.setLastCheckPosition(-1);
+				lastCheckedRadioButton=null;
+				
 				if (!"".equals(value) && (value.length() >= THRESHOLD))
 				{	
 					//clean the message queue
@@ -150,7 +151,12 @@ public class FindAddress extends Activity {
 					msgHandler.sendMessageDelayed(message, TIME_INTERVAL_THRESHOLD);
 				}			
 				else
+				{
+					AsyncTasker.cancel(true);
+					msgHandler.removeMessages(MESSAGE_TYPE);
 					listViewAdapter.clear();
+				}
+					
 
 			}
 
@@ -168,51 +174,22 @@ public class FindAddress extends Activity {
 		});
 		
 		listView.setAdapter(listViewAdapter);
+		
 		listView.setOnItemClickListener(new OnItemClickListener() 
 		{
-			@Override//AdapterView<?> arg0, View arg1,int arg2, long arg3
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
-			{
-				Log.d("App!!!","onItemSelected");
-				switch (ContactsListSingleton.getInstance().APP_MODE)
-				{
-				case SINGLE_DESTINATION: //MainActivity
-					if (position < listViewAdapter.getCount()) 
-					{
-						
-						//get selected address
-						selectedAddress = listViewAdapter.getItem(position);
-						//store coordinates on the singleton 
-						ContactsListSingleton.setSingleDestCoordinates(
-								selectedAddress.getLongitude(),selectedAddress.getLatitude());
-						Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
-												
-						//launch MAP						
-						Intent intent = new Intent(activityContext, OnMap.class);
-						startActivity(intent);
-					}
-					break;
-				case MULTI_DESTINATION:	//Manual
-					
-					//get number from intent
-					String phone="";
-					
-					//get selected address
-					selectedAddress = listViewAdapter.getItem(position);
-					
-					//get longitude and latitude and send it to user's data
-					ContactsListSingleton.getInstance().setContactLocation(
-							phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
-					break;
-				case NOTIFICATION:	//Notification
-					
-					break;					
-				}
+			{				
+				if(lastCheckedRadioButton!=null)
+					lastCheckedRadioButton.setChecked(false);
+				
+				lastCheckedRadioButton=(RadioButton) view.findViewById(R.id.addressRadioButton);
+				lastCheckedRadioButton.setChecked(true);
+				listViewAdapter.setLastCheckPosition(position);
+				selectedAddress=addressDB.get(position);
 
-				//Address data = addressDB.get(position); 
-				//String addressStr = data.getAddressLine(1)+ "," +data.getAddressLine(0)+","+data.getAddressLine(2);
-				//addressSearch.setText(addressStr);
-				//TODO
+				Log.d("App!!!","onItemSelected");
+
 			}
 		});
 	
@@ -223,8 +200,37 @@ public class FindAddress extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.nextFA:
-	    	Intent intent = new Intent(this,FriendsList.class);
-	    	startActivity(intent);	
+			switch (ContactsListSingleton.getInstance().APP_MODE)
+			{
+			case SINGLE_DESTINATION: //MainActivity				
+				//get selected address
+				ContactsListSingleton.setSingleRouteAddress(selectedAddress);
+
+				Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
+
+				//launch FriendsList						
+				Intent intent = new Intent(activityContext, FriendsList.class);
+				startActivity(intent);
+				break;
+			case MULTI_DESTINATION:	//Manual
+
+				//get number from intent
+				String phone="";
+
+				//get selected address
+				//selectedAddress = listViewAdapter.getItem(position);
+				
+				//get longitude and latitude and send it to user's data
+				ContactsListSingleton.getInstance().setContactLocation(
+						phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
+				break;
+			case NOTIFICATION:	//Notification
+				
+				break;					
+			}
+
+	    	
+	
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
@@ -288,7 +294,6 @@ public class FindAddress extends Activity {
 	    	if(GeoResultsList.size()!=0)
 	    	{	    	
 	    		Log.d("AsyncGeocode","OnPostExcecute-valid changes");
-	    		
 	    		listViewAdapter.clear();
 				for (Address address : GeoResultsList)      								    
 					listViewAdapter.add(address);					

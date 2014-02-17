@@ -10,6 +10,7 @@ import com.parse.ParseUser;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
 import android.content.Intent;
+import android.location.Address;
 import android.util.Log;
 
 public class ContactsListSingleton 
@@ -20,14 +21,19 @@ public class ContactsListSingleton
 	
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
+	private Address singleRouteCoordinates;
+
 	
-	public double singleCoordinates_lat=0;
-	public double singleCoordinates_long=0;
-	
-	public static void setSingleDestCoordinates(double lon, double lat)
+	public static void setSingleRouteAddress(Address address)
 	{
-			getInstance().singleCoordinates_lat=lat;
-			getInstance().singleCoordinates_long=lon;
+			getInstance().singleRouteCoordinates=address;
+
+	}
+	
+	public static Address getSingleRouteAddress()
+	{
+			return(getInstance().singleRouteCoordinates);
+
 	}
 	
 	private ContactsListSingleton()
