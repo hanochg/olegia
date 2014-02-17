@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
-public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
+public class FriendsSelectedAdapter extends ArrayAdapter<ContactDataStructure>{
 
 
 	Context context; 
@@ -21,7 +21,7 @@ public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
 	ArrayList<ContactDataStructure> data = null;
 	private LayoutInflater mInflater; 	
 	
-	public ListViewContactsAdapter(Context context, int layoutResourceId,ArrayList<ContactDataStructure> data) {
+	public FriendsSelectedAdapter(Context context, int layoutResourceId,ArrayList<ContactDataStructure> data) {
 		super(context, layoutResourceId, data);		  
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;

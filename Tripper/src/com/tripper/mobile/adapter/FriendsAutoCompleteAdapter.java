@@ -27,7 +27,7 @@ import com.tripper.mobile.utils.Queries;
  */
 
 
-public class FriendsListSelectedAdapter 
+public class FriendsAutoCompleteAdapter 
 			extends CursorAdapter implements SectionIndexer {
     private LayoutInflater mInflater; // Stores the layout inflater
     private AlphabetIndexer mAlphabetIndexer; // Stores the AlphabetIndexer instance
@@ -39,7 +39,7 @@ public class FriendsListSelectedAdapter
     	mSearchString=s;
     }
     
-    public FriendsListSelectedAdapter(Context context) {
+    public FriendsAutoCompleteAdapter(Context context) {
         super(context, null, 0);
 
         // Stores inflater for use later
