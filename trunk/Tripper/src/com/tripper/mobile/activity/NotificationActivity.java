@@ -9,22 +9,32 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
+import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class NotificationActivity extends Activity {
+public class NotificationActivity extends Activity implements
+								LoaderManager.LoaderCallbacks<Cursor>{
 
 	private TextView tvMessage;
 	private String phone="";
@@ -32,6 +42,7 @@ public class NotificationActivity extends Activity {
 	LocationListener locationListener;
 	Boolean mylocationClicked=false;
 	private Activity notificationActivity;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -55,7 +66,10 @@ public class NotificationActivity extends Activity {
 		
 		setContentView(R.layout.notification_screen);
 		tvMessage = (TextView) findViewById(R.id.tvMessage);
-		tvMessage.setText("User "+ phone + " is inviting you to the trip.");		
+		tvMessage.setText("User "+ phone + " is inviting you to the trip.");
+
+		// Initializes the loader
+        getLoaderManager().initLoader(Queries.LoaderManagerID_Notification, null,  this);
 	}
 
 	public void OnBtnMylocationClick(View view)
@@ -156,6 +170,60 @@ public class NotificationActivity extends Activity {
     		locationManager.removeUpdates(locationListener);
     }
 	
+	//##Implements LoaderManager.LoaderCallbacks<Cursor>##
+	
+@Override
+public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
+		CursorLoader cur=null;
+	if (Queries.LoaderManagerID_Notification == loaderId)
+    {
+			Uri FilteredUri;
+			if (!TextUtils.isEmpty(phone))
+				FilteredUri = Uri.withAppendedPath(
+				    			Queries.CONTENT_FILTERED_URI,          						    	
+								Uri.encode(phone));
+			else
+				FilteredUri = Queries.CONTENT_URI;	
+			
+			cur = new CursorLoader(
+				notificationActivity,
+        		FilteredUri,
+        		Queries.PROJECTION_FOR_NOTIFICATION,
+        		Queries.SELECTION_DISPLAY_NAME,
+        		null,
+                Queries.SORT_ORDER
+                );
+			
+			Log.d("PROGRAMM!", "onCreateLoader - succeed to return cur");
+        return cur;        			        		
+    }
+	Log.e("PROGRAMM!", "onCreateLoader - incorrect ID provided (" + loaderId + ")");
+	return cur;
+}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {		        
+		// Put the result Cursor in the adapter for the ListView
+		if (Queries.LoaderManagerID_Notification == loader.getId())
+		{
+			if(cursor.getCount()!=0){
+				cursor.moveToPosition(0);
+				tvMessage.setText("User "+ cursor.getString(0) + " is inviting you to the trip.");
+			}
+				
+			//FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
+			//mAdapter.swapCursor(filterCursorWrapper);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// Delete the reference to the existing Cursor
+		//if (Queries.LoaderManagerID == loader.getId())
+			//mAdapter.swapCursor(null);
+	}
+
+    
 	/*		
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 

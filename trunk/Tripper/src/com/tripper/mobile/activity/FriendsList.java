@@ -198,7 +198,7 @@ public class FriendsList extends Activity implements
 
 	//##Implements LoaderManager.LoaderCallbacks<Cursor>##
 	
-	@Override
+@Override
 public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) { 
 		CursorLoader cur=null;
 	if (Queries.LoaderManagerID == loaderId)
@@ -215,7 +215,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
         		context,
         		FilteredUri,
         		Queries.PROJECTION_WITH_BADGE,
-        		Queries.DisplayName_SELECTION,
+        		Queries.SELECTION_DISPLAY_NAME,
         		null,
                 Queries.SORT_ORDER
                 );

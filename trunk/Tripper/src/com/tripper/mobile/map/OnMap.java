@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -107,7 +108,6 @@ public class OnMap extends Activity {
 		
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
-		
 		// Loading map
 		try {
 			initilizeMap();
