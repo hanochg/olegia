@@ -9,4 +9,4 @@
 8. send oleg the number query from contacts - Hanoch
 9. add slide menu to OnMap
 10. Contact list - fix checkboxes (do not uncheck)
-11. get enum APP_MODE out of the singleton and into intent extras
+11. get enum APP_MODE out of the singleton and into intent extras.
