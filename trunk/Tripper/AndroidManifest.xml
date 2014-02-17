@@ -90,7 +90,7 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name="com.tripper.mobile.activity.Contacts_List"
+            android:name="com.tripper.mobile.activity.ContactsList"
             android:label="@string/title_activity_contact_list"
             android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
         </activity>
