@@ -3,6 +3,7 @@ package com.tripper.mobile.adapter;
 import java.util.ArrayList;
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
 	ArrayList<ContactDataStructure> data = null;
 	private LayoutInflater mInflater; 	
 	
-	public ListViewContactsAdapter(Context context, int layoutResourceId, ArrayList<ContactDataStructure> data) {
+	public ListViewContactsAdapter(Context context, int layoutResourceId,ArrayList<ContactDataStructure> data) {
 		super(context, layoutResourceId, data);		  
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
@@ -28,6 +29,11 @@ public class ListViewContactsAdapter extends ArrayAdapter<ContactDataStructure>{
 		this.mInflater = LayoutInflater.from(context);						
 	}
 
+	public void refresh()
+	{
+		data=ContactsListSingleton.getInstance().getDB();
+	}
+	
 	public View getView(final int position, View convertView, ViewGroup parent) {		
 		
 		ViewHolder holder = null;		       

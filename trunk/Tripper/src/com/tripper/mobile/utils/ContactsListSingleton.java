@@ -129,7 +129,7 @@ public class ContactsListSingleton
 		{
 			int indexNum = indexOf(phone);
 			if(indexNum!=(-1))
-				db.get(indexNum);
+				db.remove(indexNum);
 		}			
 		else
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
