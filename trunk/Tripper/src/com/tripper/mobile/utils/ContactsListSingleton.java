@@ -135,6 +135,21 @@ public class ContactsListSingleton
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
 	}
 	
+	public ContactDataStructure findContactByPhoneNum(String phone)
+	{
+		if(db!=null)
+		{
+			//check if already contain the value
+			for(int i=0 ; i<db.size() ; i++)
+			{
+				if(db.get(i).getPhoneNumber().equals(phone))
+					return db.get(i);
+			}			
+		}
+		return null; 
+	}	
+	
+	
 	public synchronized void removeContactByIndex(int index) 
 	{
 		if(db!=null)

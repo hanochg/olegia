@@ -39,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -378,7 +379,7 @@ public class OnMap extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();	
-		registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
 		
 		
 		if(selectedAddress!=null)
@@ -415,7 +416,7 @@ public class OnMap extends Activity {
 
 	    if (mMessageReceiver != null) 
 	    {
-	        unregisterReceiver(mMessageReceiver);
+	    	LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 	    }
 	}
 
