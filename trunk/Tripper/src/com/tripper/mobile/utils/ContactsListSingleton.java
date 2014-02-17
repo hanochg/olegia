@@ -43,8 +43,14 @@ public class ContactsListSingleton
 
 	static public ContactsListSingleton getInstance()
 	{
-		if(instance==null)
-			instance = new ContactsListSingleton();
+		
+		if (instance == null){
+			synchronized(ContactsListSingleton.class)
+			{
+				if (instance == null)
+					instance = new ContactsListSingleton();
+			}
+		}
 		
 		return instance;
 	}
@@ -55,7 +61,7 @@ public class ContactsListSingleton
 		
 	}
 	
-	public void insertContact(final ContactDataStructure contact) 
+	public synchronized void insertContact(final ContactDataStructure contact) 
 	{
 		if(db!=null)
 		{
@@ -93,7 +99,7 @@ public class ContactsListSingleton
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
 	}
 	
-	public void setContactLocation(String phone, double lon, double lat)
+	public synchronized void setContactLocation(String phone, double lon, double lat)
 	{
 		int index = indexOf(phone);
 		if(index!=(-1))
@@ -117,7 +123,7 @@ public class ContactsListSingleton
 		return (-1); 
 	}
 	
-	public void removeContactByPhoneNum(String phone) 
+	public synchronized void removeContactByPhoneNum(String phone) 
 	{
 		if(db!=null)
 		{
@@ -129,7 +135,7 @@ public class ContactsListSingleton
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
 	}
 	
-	public void removeContactByIndex(int index) 
+	public synchronized void removeContactByIndex(int index) 
 	{
 		if(db!=null)
 		{

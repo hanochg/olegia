@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 public class MyCustomReceiver extends BroadcastReceiver 
 {
@@ -48,11 +49,12 @@ public class MyCustomReceiver extends BroadcastReceiver
 		String user="";
 		try
 	    {    	
-			answer=json.getString("answer");
-			user=json.getString("user");
+			answer=json.get("answer").toString();
+			user=json.get("user").toString();
 	    }
 	    catch (JSONException x) 
 	    {
+	    	Log.e("MyCustomReceiver","ANSWERHandler-JNSON");
 	    	return;
 	    }
 		if(answer=="ok")
