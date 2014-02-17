@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.tripper.mobile.MyCustomReceiver;
 import com.tripper.mobile.R;
 import com.tripper.mobile.activity.FriendsList;
 import com.tripper.mobile.utils.ContactsListSingleton;
@@ -33,8 +34,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Display;
@@ -66,6 +69,8 @@ public class OnMap extends Activity {
     
 	//Externals
 	public static Address selectedAddress=null;
+	
+	private BroadcastReceiver mMessageReceiver;
 	
 	private class contact
 	{
@@ -106,6 +111,14 @@ public class OnMap extends Activity {
 		context=this;
 		getSreenDimanstions();
 		
+		mMessageReceiver = new BroadcastReceiver() {
+			  @Override
+			  public void onReceive(Context context, Intent intent) 
+			  {
+			    Log.d("receiver", "Got message: " );
+			  }
+		};
+				
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
 		// Loading map
@@ -367,7 +380,10 @@ public class OnMap extends Activity {
 	}	
 	@Override
 	protected void onResume() {
-		super.onResume();		
+		super.onResume();	
+		registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
+		
+		
 		if(selectedAddress!=null)
 		{
 			Toast.makeText(this, selectedAddress.getLatitude()+","+selectedAddress.getLongitude(), Toast.LENGTH_SHORT ).show();
@@ -393,6 +409,19 @@ public class OnMap extends Activity {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
 
 	}
+	
+	
+	@Override
+	protected void onPause()
+	{
+	    super.onPause();
+
+	    if (mMessageReceiver != null) 
+	    {
+	        unregisterReceiver(mMessageReceiver);
+	    }
+	}
+
 	
 	//Launch Async Geocode
 	private  void notifyResult(Context context,int markerIndex) {
