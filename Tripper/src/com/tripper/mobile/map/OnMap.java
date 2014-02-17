@@ -109,7 +109,7 @@ public class OnMap extends Activity {
 		setContentView(R.layout.on_map);
 	
 		context=this;
-		getSreenDimanstions();
+		getScreenDimensions();
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override
@@ -183,7 +183,7 @@ public class OnMap extends Activity {
 		});
 		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
 		
-		if(selectedAddress.getLatitude()!=0 && 
+		if(selectedAddress!=null && selectedAddress.getLatitude()!=0 && 
 				selectedAddress.getLongitude()!=0)
 		{
 			Toast.makeText(this, selectedAddress.getLatitude()+","+selectedAddress.getLongitude(), Toast.LENGTH_SHORT ).show();
@@ -344,7 +344,7 @@ public class OnMap extends Activity {
 		
 	}
 	
-	private void getSreenDimanstions()
+	private void getScreenDimensions()
 	{
 		Display display = getWindowManager().getDefaultDisplay();
 		width = display.getWidth(); 
