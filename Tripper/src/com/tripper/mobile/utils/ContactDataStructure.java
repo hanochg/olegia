@@ -8,13 +8,17 @@ public class ContactDataStructure
 	 public enum eAppStatus {
 		   notChecked,noApp,hasApp
 		 }
-	
+	 public enum eAnswer {
+		   notAnswered,no,ok
+		 }
+	 	
 	private String name;
 	private String phoneNumber;
 	private long id;
 	private String lookupkey;
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
+	private eAnswer contactAnswer=eAnswer.notAnswered;
 	private double longtitude, latitude;
 	
 	public ContactDataStructure()
@@ -88,6 +92,14 @@ public class ContactDataStructure
 	{
 		return appStatus;
 	}
+	
+	public eAnswer getContactAnswer() {
+		return contactAnswer;
+	}
+	public void setContactAnswer(eAnswer contactAnswer) {
+		this.contactAnswer = contactAnswer;
+	}
+	
 	public String getPhoneNumberforParse() 
 	{
 		String tempString=phoneNumber;
@@ -99,6 +111,7 @@ public class ContactDataStructure
 		
 		return tempString.replace("-", "");
 	}	
+		
 }
 
 

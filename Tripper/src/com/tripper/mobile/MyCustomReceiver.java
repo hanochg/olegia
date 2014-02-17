@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.tripper.mobile.map.OnMap;
+import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,26 +50,47 @@ public class MyCustomReceiver extends BroadcastReceiver
 	{
 		String answer="";
 		String user="";
+		
+		ContactDataStructure contact=ContactsListSingleton.getInstance().findContactByPhoneNum(user);
+		if (contact==null)
+			return;
+		
 		try
 	    {    	
-			answer=json.get("answer").toString();
-			user=json.get("user").toString();
+			answer=json.getString("answer");
+			user=json.getString("user");
 	    }
 	    catch (JSONException x) 
 	    {
 	    	Log.e("MyCustomReceiver","ANSWERHandler-JNSON");
 	    	return;
 	    }
+		
 		if(answer=="ok")
 		{	
-			//update singelton ok
-		}
-		else
+
+			try
+		    {    	
+				double latitude=json.getDouble("latitude");
+				double longtitude=json.getDouble("longitude");
+				contact.setLatitude(latitude);
+				contact.setLongtitude(longtitude);
+				contact.setContactAnswer(eAnswer.ok);
+		    }
+		    catch (JSONException x) 
+		    {
+		    	Log.e("MyCustomReceiver","ANSWERHandler-ok-JNSON");
+		    	return;
+		    }
+
+		}	
+		else if (answer=="no")
 		{
-			//update singelton no
+			contact.setContactAnswer(eAnswer.no);
 		}
 		
 		Intent intent = new Intent("com.tripper.mobile.UPDATE");
+		
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		return;
 	}
