@@ -50,15 +50,17 @@ public class MyCustomReceiver extends BroadcastReceiver
 	{
 		String answer="";
 		String user="";
-		
-		ContactDataStructure contact=ContactsListSingleton.getInstance().findContactByPhoneNum(user);
-		if (contact==null)
-			return;
+		ContactDataStructure contact;
 		
 		try
 	    {    	
 			answer=json.getString("answer");
 			user=json.getString("user");
+			
+			contact=ContactsListSingleton.getInstance().findContactByPhoneNum(user);
+			//if (contact==null)
+			//	return;
+			
 	    }
 	    catch (JSONException x) 
 	    {
@@ -89,8 +91,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 			contact.setContactAnswer(eAnswer.no);
 		}
 		
-		Intent intent = new Intent("com.tripper.mobile.UPDATE");
-		
+		Intent intent = new Intent("com.tripper.mobile.UPDATE");	
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		return;
 	}
