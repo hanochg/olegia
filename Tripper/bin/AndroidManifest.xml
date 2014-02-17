@@ -81,7 +81,7 @@
 	    </activity>
         <activity
             android:name="com.tripper.mobile.activity.FindAddress"
-            android:label="@string/title_activity_find_address"
+            android:label="@string/title_activity_on_map"
             android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
         </activity>
         <activity
@@ -94,7 +94,6 @@
             android:label="@string/title_activity_contact_list"
             android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
         </activity>
-        
         <activity
             android:name="com.tripper.mobile.activity.NotificationActivity"
             android:label="@string/title_activity_notification" 

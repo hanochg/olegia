@@ -483,11 +483,5 @@ public class OnMap extends Activity {
 			return null;
 		}    
 	}//End Class AsyncTask
-	
-    protected void onNewIntent(Intent intent)
-    {
-        String st=intent.getAction();
-        Toast.makeText(getApplicationContext(), "Gomoooo"+st, Toast.LENGTH_LONG).show();
-    }
 
 }
