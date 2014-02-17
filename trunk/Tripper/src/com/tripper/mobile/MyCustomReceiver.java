@@ -8,6 +8,7 @@ import com.tripper.mobile.map.OnMap;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class MyCustomReceiver extends BroadcastReceiver 
 {
@@ -22,9 +23,11 @@ public class MyCustomReceiver extends BroadcastReceiver
 	{
 		char channel = intent.getExtras().getString("com.parse.Channel").charAt(0);
 		
+		JSONObject json;
+		
 	    try
 	    {    	
-	    	 JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
+	    	json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
 	    }
 	    catch (JSONException x) 
 	    {
@@ -34,9 +37,27 @@ public class MyCustomReceiver extends BroadcastReceiver
 		switch(channel)
 		{
 			case ChannelMode.ANSWER:
-		    	//Intent intent2 = new Intent(context, OnMap.class);	
-		    	//context.startActivity(intent2);
+				ANSWERHandler(json,context);
 		        return ;  	
+		}
+	}
+	
+	public void ANSWERHandler(JSONObject json,Context context)
+	{
+		String answer;
+		try
+	    {    	
+			answer=json.getString("answer");
+	    }
+	    catch (JSONException x) 
+	    {
+	    	return;
+	    }
+		if(answer=="ok")
+		{
+			Intent intent = new Intent("com.tripper.mobile.UPDATE");
+			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+			return;
 		}
 	}
 	
