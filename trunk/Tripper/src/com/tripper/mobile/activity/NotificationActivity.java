@@ -85,15 +85,16 @@ public class NotificationActivity extends Activity {
 		 
 		 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
 			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-		 
-		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		 else if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))  //don't have both
+		 else 
 		 {
 			 mylocationClicked=false;
 			 Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
 			 return;
 		 }
+		 
+		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
 		 mylocationClicked=true;			 
 	}
 	public void OnBtnNoThanksClick(View view)
