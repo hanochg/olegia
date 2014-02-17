@@ -1,8 +1,6 @@
 package com.tripper.mobile.activity;
 
 import java.util.ArrayList;
-import java.util.Locale;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,34 +20,23 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.TextAppearanceSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AlphabetIndexer;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
-import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.QuickContactBadge;
-import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.tripper.mobile.adapter.FilterCursorWrapper;
-import com.tripper.mobile.adapter.FriendsListSelectedAdapter;
-import com.tripper.mobile.adapter.ListViewContactsAdapter;
+import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
+import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.*;
 
@@ -61,12 +48,12 @@ public class FriendsList extends Activity implements
 {
 	ListView mSelectedContactsList;
 	SimpleCursorAdapter mCursorAdapter;
-	private FriendsListSelectedAdapter mAdapter; // The main query adapter
+	private FriendsAutoCompleteAdapter mAutoCompleteAdapter; // The main query adapter
 	Context context;
 	ImageButton contactsButton;
 	AutoCompleteTextView actvContacts;
     String mSearchString=null;
-    ListViewContactsAdapter mListViewContactsAdapter;
+    FriendsSelectedAdapter mFriendsSelectedAdapter;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
 
@@ -80,7 +67,7 @@ public class FriendsList extends Activity implements
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
-        mAdapter = new FriendsListSelectedAdapter(this);
+        mAutoCompleteAdapter = new FriendsAutoCompleteAdapter(this);
 		
 		contactsButton=(ImageButton) findViewById(R.id.contactsButton);
 		contactsButton.setOnClickListener(new OnClickListener() {
@@ -99,12 +86,12 @@ public class FriendsList extends Activity implements
         // Gets the ListView from the View list of the parent activity
 		mSelectedContactsList = (ListView) findViewById(R.id.lvContactList);
         
-        mListViewContactsAdapter=
-        		new ListViewContactsAdapter(this,R.layout.friends_list_row_item,ContactsListSingleton.getInstance().getDB());
-        mSelectedContactsList.setAdapter(mListViewContactsAdapter);
+        mFriendsSelectedAdapter=
+        		new FriendsSelectedAdapter(this,R.layout.friends_list_row_item,ContactsListSingleton.getInstance().getDB());
+        mSelectedContactsList.setAdapter(mFriendsSelectedAdapter);
         
         
-        actvContacts.setAdapter(mAdapter);
+        actvContacts.setAdapter(mAutoCompleteAdapter);
         
 		actvContacts.setOnItemClickListener(
 				new OnItemClickListener() {
@@ -116,7 +103,7 @@ public class FriendsList extends Activity implements
 				ContactDataStructure contact = new ContactDataStructure();
 				
 				// Gets the Cursor object currently bound to the ListView
-		        final Cursor cursor = mAdapter.getCursor();
+		        final Cursor cursor = mAutoCompleteAdapter.getCursor();
 
 		        // Moves to the Cursor row corresponding to the ListView item that was clicked
 		        cursor.moveToPosition(position);
@@ -133,7 +120,7 @@ public class FriendsList extends Activity implements
 		        contact.setUri(uri);
 		        
 		        ContactsListSingleton.getInstance().insertContact(contact);
-		        mListViewContactsAdapter.notifyDataSetChanged();
+		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
 			}
 		});
@@ -147,7 +134,7 @@ public class FriendsList extends Activity implements
 				  Log.d("PROGRAM!!", "Text Changed");
 				  
               	  mSearchString=s.toString();
-              	  mAdapter.setSearchString(mSearchString);
+              	  mAutoCompleteAdapter.setSearchString(mSearchString);
               	
                   // restart the loader
                   getLoaderManager().restartLoader(Queries.LoaderManagerID, null, FriendsList.this);
@@ -176,7 +163,7 @@ public class FriendsList extends Activity implements
 	    }
 	    if(requestCode == CONTACTLIST_REQUEST_CODE && resultCode == RESULT_OK)
 	    {
-	    	mListViewContactsAdapter.notifyDataSetChanged();
+	    	mFriendsSelectedAdapter.notifyDataSetChanged();
 	    	Log.d("onActivityResult","CONTACTLIST_REQUEST_CODE");
 	    }
 	}
@@ -226,7 +213,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		if (Queries.LoaderManagerID == loader.getId())
 		{
 			FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
-			mAdapter.swapCursor(filterCursorWrapper);
+			mAutoCompleteAdapter.swapCursor(filterCursorWrapper);
 		}
 	}
 
@@ -234,7 +221,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// Delete the reference to the existing Cursor
 		if (Queries.LoaderManagerID == loader.getId())
-			mAdapter.swapCursor(null);
+			mAutoCompleteAdapter.swapCursor(null);
 	}
 
 
@@ -242,7 +229,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
     @Override
 	protected void onResume() {
 		super.onResume();
-		//mAdapter.notifyDataSetChanged();
+		mFriendsSelectedAdapter.notifyDataSetChanged();
 		//Log.d("FriendsList","Resumed");
 	}
 
@@ -251,7 +238,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	{		
 		int position = mSelectedContactsList.getPositionForView((View) v.getParent());		
 		ContactsListSingleton.getInstance().removeContactByIndex(position);
-		mListViewContactsAdapter.notifyDataSetChanged();
+		mFriendsSelectedAdapter.notifyDataSetChanged();
 	}
 	
 	
