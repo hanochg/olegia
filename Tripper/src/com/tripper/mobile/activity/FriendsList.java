@@ -120,6 +120,7 @@ public class FriendsList extends Activity implements
 		        contact.setUri(uri);
 		        
 		        ContactsListSingleton.getInstance().insertContact(contact);
+		        
 		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
 			}

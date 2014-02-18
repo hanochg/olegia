@@ -1,12 +1,6 @@
 package com.tripper.mobile.utils;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class ContactDataStructure 
 {
@@ -20,18 +14,18 @@ public class ContactDataStructure
 	
 	private String name;
 	private String phoneNumber;
-	private String internationalPhoneNumber;
+	public String internationalPhoneNumber;
 	private long id;
 	private String lookupkey;
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
 	private eAnswer contactAnswer=eAnswer.notAnswered;
 	private double longtitude, latitude;
-	private String CountryTwoLetters="IL";
-	private AsyncPhoneConverter asyncPhoneConverter;
+	public Object Locker;
+
 	
 	public ContactDataStructure()
-	{
+	{		
 		name=null;
 		phoneNumber=null;
 		id=0;
@@ -39,6 +33,7 @@ public class ContactDataStructure
 		uri=null;
 		longtitude=0;
 		latitude=0;
+		internationalPhoneNumber="";
 	}
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
 	{
@@ -47,10 +42,7 @@ public class ContactDataStructure
 		this.id=id;
 		this.lookupkey=lookupkey;
 		this.uri=uri;		
-		
-		asyncPhoneConverter = new AsyncPhoneConverter(phoneNumber);
-		asyncPhoneConverter.execute();
-
+		this.internationalPhoneNumber="";
 	}
 	
 	public double getLongtitude() {
@@ -94,14 +86,21 @@ public class ContactDataStructure
 	}
 	public void setPhoneNumber(String phoneNumber) {		
 		this.phoneNumber=phoneNumber;
-		asyncPhoneConverter = new AsyncPhoneConverter(phoneNumber);
-		asyncPhoneConverter.execute();
+
 	}
 	
 	public String getInternationalPhoneNumber() {
-		return internationalPhoneNumber;
+		String number;
+		synchronized(internationalPhoneNumber)
+		{
+			number=internationalPhoneNumber;
+		}
+		return number;
 	}
-
+	
+	public void setInternationalPhoneNumber(String number) {
+		this.internationalPhoneNumber=number;
+	}
 	public void UpdateAppStatus(eAppStatus appStatus)
 	{
 		this.appStatus = appStatus;
@@ -121,65 +120,14 @@ public class ContactDataStructure
 	
 	public String getPhoneNumberforParse() 
 	{
-		String tempString=phoneNumber;
+		String tempString=getInternationalPhoneNumber();
 		
-		if(tempString.startsWith("0"))
-			tempString=tempString.replaceFirst("0", "972");		
-		else if(tempString.startsWith("+972"))
+		if(tempString.startsWith("+"))
 			tempString= tempString.substring(1);
 		
 		return tempString.replace("-", "");
 	}	
 		
-	public String convertNumberToInternationalNumber(String phone)
-	{
-		PhoneNumber converedNumber=null;
-
-		PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-		try {
-			converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
-		} catch (Exception e) {
-			Log.e("insertContact","NumberParseException was thrown: " + e.toString());
-			return null;
-		}
-		return phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
-	}
-	
-	private class AsyncPhoneConverter extends AsyncTask<Void, Void, String>
-	{
-		PhoneNumber converedNumber;
-		String phone;
-		
-		AsyncPhoneConverter(String phone) 
-		{
-			super();
-			converedNumber=null;
-			this.phone = phone;
-        }
-		
-		@Override
-		protected String doInBackground(Void... none) {
-			
-			PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-			try {
-				converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
-			} catch (Exception e) {
-				Log.e("insertContact","NumberParseException was thrown: " + e.toString());
-				return null;
-			}
-			return phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if(result==null || result.equals(""))
-				internationalPhoneNumber=phone;
-			else
-				internationalPhoneNumber=result;
-		}
-	}
-
 }
 
 
