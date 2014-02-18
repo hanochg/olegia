@@ -1,5 +1,7 @@
 package com.tripper.mobile.activity;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +28,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -87,7 +90,7 @@ public class NotificationActivity extends Activity implements
 		    	{
 		    		 locationManager.removeUpdates(this);										//not so working
 		    		 Toast.makeText(getApplicationContext(), "Your location was sent back.", Toast.LENGTH_LONG).show();
-		    		 answerHandler(getJSONDataMessage("ok",location));	
+		    		 answerHandler(getJSONDataMessage("ok",location.getLatitude(),location.getLongitude()),phone);	
 		    		 notificationActivity.finish();
 		    		 
 		    	}	
@@ -111,10 +114,11 @@ public class NotificationActivity extends Activity implements
 
 		 mylocationClicked=true;			 
 	}
+	
 	public void OnBtnNoThanksClick(View view)
 	{	
-		JSONObject data = getJSONDataMessage("no",null);
-		answerHandler(data);
+		JSONObject data = getJSONDataMessage("no",0,0);
+		answerHandler(data,phone);
 		Toast.makeText(getApplicationContext(), "Your answer was sent.", Toast.LENGTH_LONG).show();
 		this.finish();
 	}
@@ -125,11 +129,25 @@ public class NotificationActivity extends Activity implements
 	public void OnBtnEnterAdressClick(View view)
 	{	
 		Intent intent = new Intent(this, FindAddress.class);
-		this.finish();
-		startActivity(intent);
+		startActivityForResult(intent, Activity.RESULT_OK);
 	}
 	
-	private JSONObject getJSONDataMessage(String answer,Location location)
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+	    if (requestCode== resultCode && resultCode == RESULT_OK)
+	    {
+	    	double  latitude =  intent.getDoubleExtra(Queries.EXTRA_LATITUDE,0);
+	    	double  longitude = intent.getDoubleExtra(Queries.EXTRA_LONGITUDE,0);
+	    	
+	    	 answerHandler(getJSONDataMessage("ok",latitude,longitude),phone);	
+	    	
+	    	Toast.makeText(getApplicationContext(), "Your answer was sent.", Toast.LENGTH_LONG).show();
+			this.finish();
+	    }
+	}
+	
+	
+	public static JSONObject getJSONDataMessage(String answer,double latitude,double longitude)
 	{
 	    try
 	    {
@@ -137,24 +155,23 @@ public class NotificationActivity extends Activity implements
 	        data.put("action","com.tripper.mobile.Answer");
 	        data.put("user", ParseUser.getCurrentUser().getUsername());
 	        data.put("answer", answer);
-	        if(location!=null)
+	        if(answer!="no")
 	        {
-	        	data.put("latitude",  location.getLongitude());
-	        	data.put("longitude",  location.getLongitude());
+	        	data.put("latitude",  latitude);
+	        	data.put("longitude", longitude);
 	        }
 	        return data;
 	    }
 	    catch(JSONException x)
 	    {
-			Toast.makeText(getApplicationContext(), "The Program has Crushed.", Toast.LENGTH_LONG).show();
 			throw new RuntimeException("Something wrong with JSON", x);
 	    }
 	}
 	
-	private void answerHandler(JSONObject data)
+	public static void answerHandler(JSONObject data, String targetNumber)
 	{		 
 		ParsePush push = new ParsePush();
-		push.setChannel(PhoneToChannel("b",phone)); 
+		push.setChannel(Queries.PhoneToChannel("b",targetNumber)); 
 		
 		push.setExpirationTimeInterval(60*60*24);//one day, till query is relevant
 		
@@ -223,16 +240,6 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 			//mAdapter.swapCursor(null);
 	}
 	
-	
-	private String PhoneToChannel(String channelPrefix, String Phone)	
-	{		
-		String tempString=Phone;
-		
-		if(tempString.startsWith("+"))
-			tempString= tempString.substring(1);
-		
-		return channelPrefix + tempString;
-	}	
 
     
 	/*		

@@ -11,6 +11,13 @@ import android.provider.ContactsContract;
 
 public class Queries {
 	
+	//Extras in intents
+	public static final String EXTRA_PHONE = "PhoneNumber";
+	public static final String EXTRA_LATITUDE = "latitude";
+	public static final String EXTRA_LONGITUDE = "longitude";
+	
+	
+	
     public final static String SORT_ORDER =
     		hasHoneycomb() ? ContactsContract.CommonDataKinds.Phone.SORT_KEY_PRIMARY : ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
 	
@@ -147,4 +154,17 @@ public class Queries {
         }
     }
     
+	public static String PhoneToChannel(String channelPrefix, String Phone)	
+	{		
+		String tempString=Phone;
+		
+		if(tempString.startsWith("+"))
+			tempString= tempString.substring(1);
+		
+		return channelPrefix + tempString;
+	}	
+
+	
+	
+	
 }

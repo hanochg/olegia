@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.tripper.mobile.R;
 import com.tripper.mobile.adapter.AddressAdapter;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -49,7 +50,7 @@ public class FindAddress extends Activity {
 	private static final int TIME_INTERVAL_THRESHOLD=300;
 
 	//Externals
-	public static Address selectedAddress;
+	public static Address selectedAddress=null;
 
 	//Globals
 	private static AsyncGeocode AsyncTasker;
@@ -62,8 +63,6 @@ public class FindAddress extends Activity {
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
-	
-	
 	
 	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
 	@Override
@@ -203,6 +202,9 @@ public class FindAddress extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.nextFA:
+	    	if(selectedAddress==null)
+	    		return true;
+	    	
 			switch (ContactsListSingleton.getInstance().APP_MODE)
 			{
 			case SINGLE_DESTINATION: //MainActivity				
@@ -229,6 +231,11 @@ public class FindAddress extends Activity {
 				break;
 			case NOTIFICATION:	//Notification
 				
+				Intent newintent = new Intent(this, MainActivity.class); 
+				newintent.putExtra(Queries.EXTRA_LATITUDE, selectedAddress.getLatitude());
+				newintent.putExtra(Queries.EXTRA_LONGITUDE, selectedAddress.getLongitude());
+				setResult(Activity.RESULT_OK,newintent);
+				finish();
 				break;					
 			}
 

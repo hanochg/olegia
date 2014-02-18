@@ -4,12 +4,9 @@ package com.tripper.mobile.activity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.parse.LogInCallback;
-import com.parse.Parse;
-import com.parse.ParseInstallation;
 import com.parse.ParseUser;
-import com.parse.ParseException;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.Queries;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -61,7 +58,7 @@ public class SplashScreen extends Activity {
 				else
 				{
 					intent = new Intent(splashActivity, LoginActivity.class);
-					intent.putExtra(LoginActivity.EXTRA_PHONE, mPhoneNumber);
+					intent.putExtra(Queries.EXTRA_PHONE, mPhoneNumber);
 				}
 				startActivity(intent);	
 								
