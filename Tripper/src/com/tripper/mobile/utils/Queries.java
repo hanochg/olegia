@@ -27,7 +27,6 @@ public class Queries {
     	ContactsContract_DISPLAY_NAME()
         };
 	
-    @SuppressLint("InlinedApi")
 	public static final String[] PROJECTION_WITH_BADGE =
         {
     	ContactsContract.CommonDataKinds.Phone._ID,
@@ -35,8 +34,7 @@ public class Queries {
     	ContactsContract_DISPLAY_NAME(),
     	Queries.hasHoneycomb() ? ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI : ContactsContract.CommonDataKinds.Phone._ID,    			
     	SORT_ORDER,
-    	ContactsContract.CommonDataKinds.Phone.NUMBER,
-    	ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER
+    	ContactsContract.CommonDataKinds.Phone.NUMBER
         };
     
     // The query column numbers which map to each value in the projection

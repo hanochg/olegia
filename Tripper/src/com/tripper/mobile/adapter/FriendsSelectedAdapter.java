@@ -29,11 +29,6 @@ public class FriendsSelectedAdapter extends ArrayAdapter<ContactDataStructure>{
 		this.mInflater = LayoutInflater.from(context);						
 	}
 
-	public void refresh()
-	{
-		data=ContactsListSingleton.getInstance().getDB();
-	}
-	
 	public View getView(final int position, View convertView, ViewGroup parent) {		
 		
 		ViewHolder holder = null;		       

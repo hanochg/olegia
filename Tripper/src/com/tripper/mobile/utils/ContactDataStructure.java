@@ -1,6 +1,13 @@
 package com.tripper.mobile.utils;
 
+import java.util.Locale;
+
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 import android.net.Uri;
+import android.util.Log;
 
 public class ContactDataStructure 
 {
@@ -11,7 +18,8 @@ public class ContactDataStructure
 	 public enum eAnswer {
 		   notAnswered,no,ok
 		 }
-	 	
+	
+	Locale locale = Locale.getDefault();//new Locale("iw");
 	private String name;
 	private String phoneNumber;
 	private long id;
@@ -20,6 +28,7 @@ public class ContactDataStructure
 	private eAppStatus appStatus=eAppStatus.notChecked;
 	private eAnswer contactAnswer=eAnswer.notAnswered;
 	private double longtitude, latitude;
+
 	
 	public ContactDataStructure()
 	{
@@ -34,7 +43,9 @@ public class ContactDataStructure
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
 	{
 		this.name=name;
-		this.phoneNumber=phoneNumber;
+		this.phoneNumber=convertNumberToInternationalNumber(phoneNumber);
+		if(this.phoneNumber.equals(""))
+			this.phoneNumber=phoneNumber;
 		this.id=id;
 		this.lookupkey=lookupkey;
 		this.uri=uri;		
@@ -79,8 +90,10 @@ public class ContactDataStructure
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setPhoneNumber(String phoneNumber) {		
+		this.phoneNumber = convertNumberToInternationalNumber(phoneNumber);
+		if(this.phoneNumber.equals(""))
+			this.phoneNumber=phoneNumber;
 	}
 	
 	public void UpdateAppStatus(eAppStatus appStatus)
@@ -112,6 +125,25 @@ public class ContactDataStructure
 		return tempString.replace("-", "");
 	}	
 		
+	public String convertNumberToInternationalNumber(String phone)
+	{
+		PhoneNumber converedNumber=null;
+
+		PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+		try {
+			converedNumber = phoneUtil.parse(phone, "IL");//locale.getCountry()
+		} catch (Exception e) {
+			Log.e("insertContact","NumberParseException was thrown: " + e.toString());
+			return null;
+		}
+		Log.d("convertNumberToInternationalNumber E164",
+				phoneUtil.format(converedNumber, PhoneNumberFormat.E164));
+		Log.d("convertNumberToInternationalNumber International",
+				phoneUtil.format(converedNumber, PhoneNumberFormat.INTERNATIONAL));
+		Log.d("convertNumberToInternationalNumber National",
+				phoneUtil.format(converedNumber, PhoneNumberFormat.NATIONAL));
+		return phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
+	}
 }
 
 
