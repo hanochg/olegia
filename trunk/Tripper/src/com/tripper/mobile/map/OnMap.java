@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.R;
+import com.tripper.mobile.adapter.NavDrawerListAdapter;
+import com.tripper.mobile.drawer.NavDrawerItem;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
@@ -32,14 +34,25 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class OnMap extends Activity {
@@ -53,7 +66,30 @@ public class OnMap extends Activity {
 	private boolean isTravelingToParis = false;
 	private int width, height;
 	
-	
+	/*
+	 * DRAWER VARIABLES
+	 */
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    // nav drawer title
+    private CharSequence mDrawerTitle;
+ 
+    // used to store app title
+    private CharSequence mTitle;
+ 
+    // slide menu items
+    private String[] navMenuTitles;
+    private TypedArray navMenuIcons;
+ 
+    private ArrayList<NavDrawerItem> navDrawerItems;
+    private NavDrawerListAdapter navDrawerListAdapter;
+
+	/*
+	 * END DRAWER VARIABLES
+	 */
+    
 	//Globals
 	private GoogleMap googleMap;
 	List<MyMarkers> markersList;
@@ -64,16 +100,6 @@ public class OnMap extends Activity {
 	public static Address selectedAddress=null;
 	
 	private BroadcastReceiver mMessageReceiver;
-	
-	private class contact
-	{
-		LatLng contactLocation;
-		String locationString;
-		boolean isReplied;
-		boolean manuallyOverride;
-		double radius;
-	}
-	
 	
 	//MyMarkers Struct (in java)
 	private class MyMarkers
@@ -90,11 +116,6 @@ public class OnMap extends Activity {
 	    }
 	 };
 	 
-	 public void showDialog(View view)
-	 {
-		 //Intent intent = new Intent(this,ShowDialog.class);
-		 //startActivity(intent);
-	 }
 	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,54 +130,21 @@ public class OnMap extends Activity {
 			  public void onReceive(Context context, Intent intent) 
 			  {
 				  Log.e("onReceive","aaaaaaaaaaaaaaaaaaaaaaaa");
+				  navDrawerListAdapter.notifyDataSetChanged();
 				  Toast.makeText(getApplicationContext(), "zzzzzzzzzzzzzzzzzzzzz", Toast.LENGTH_LONG).show();
 			  }
 		};
 				
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
-		// Loading map
+		
+		// Initializing Map
 		try {
 			initilizeMap();
 
 		} catch (Exception e) {
-			Log.d("Error#@$#$",e.getMessage());
+			Log.e("OnMap","Error Initializing Map: "+e.getMessage());
 		}
-
-		
-		//defining Long click on map
-		googleMap.setOnMapLongClickListener(new OnMapLongClickListener() {
-			
-			@Override
-			public void onMapLongClick(LatLng arg0) {
-				String longt,lat;
-				
-				longt=String.valueOf(arg0.longitude);
-				lat=String.valueOf(arg0.latitude);
-				
-				//Defind and add the Marker to map and list.
-				MarkerOptions markerOptions = new MarkerOptions().position(arg0).title(lat + ":" + longt);
-				markersList.add(new MyMarkers(markerOptions,null,"Not detected yet or Not next to any street"));				
-				markersList.get(markerCounter).marker=googleMap.addMarker(markerOptions);
-				
-				//launch Async Geocode query
-				notifyResult(getBaseContext(),markerCounter);
-				
-				//increment Markers counter
-				markerCounter++;
-				
-				//Toast
-				Toast.makeText(getBaseContext(), "Marker Added", Toast.LENGTH_SHORT).show();
-			}
-		});
-		
-		//defining click on map actions
-		googleMap.setOnMapClickListener(new OnMapClickListener() {			
-			@Override
-			public void onMapClick(LatLng arg0) {
-
-			}
-		});
 		
 		//defining click on marker on the map
 		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {			
@@ -166,7 +154,6 @@ public class OnMap extends Activity {
 				for (MyMarkers myMarkers : markersList) {
 					if(myMarkers.marker.equals(arg0))					
 					{
-						Log.d("MARKER","IN IF");
 						Toast.makeText(getBaseContext(), myMarkers.markerStreet, Toast.LENGTH_SHORT).show();
 						break;
 					}
@@ -174,6 +161,8 @@ public class OnMap extends Activity {
 				return false;
 			}
 		});
+		
+		//Get single route details
 		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
 		
 		if(selectedAddress!=null && selectedAddress.getLatitude()!=0 && 
@@ -197,77 +186,131 @@ public class OnMap extends Activity {
 			
 		}
 
+		InitializeDrawer();
 		
-		
-		/*
-		 * NAVIGATION
-		 */
-		//GOOGLE
-		Button GoogleNavigate = (Button)findViewById(R.id.navigateGooG);
-		GoogleNavigate.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				selectedAddress=ContactsListSingleton.getSingleRouteAddress();
-				
-				//GoogleMaps Navigation
-				try{					
-					//source location
-				    double latitudeCurr = 31.2718;
-				    double longitudeCurr = 34.78256;
-					
-				    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(
-				    		"http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+selectedAddress.getLatitude()+","+selectedAddress.getLongitude()));
-				    		//can enter a String address after saddr\daddr
-				    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-				    startActivityForResult(intent,5);
-				}catch(Exception e)
-				{
-					Log.e("Google Navigate","Error: "+e.getMessage());
-				}
-		        
-	
-			}
-		});		
-		
-		Button WazeNavigate = (Button)findViewById(R.id.navigateWaze);
-		WazeNavigate.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) 
-			{
-				/*
-				selectedAddress=new Address(Locale.getDefault());
-				selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
-				selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);		        
-				/*  WAZE API
-				 *  search for address: 	waze://?q=<address search term>
-				 *	center map to lat / lon: 	waze://?ll=<lat>,<lon>
-				 *	set zoom (minimum is 6): 	waze://?z=<zoom>
-				 */
-				/*
-		        //Waze Navigation
-				try
-				{
-					//String url = "waze://?ll="+ selectedAddress.getLatitude()+","+selectedAddress.getLongitude();
-					String url = "waze://?q=ביאליק 1 באר שבע";
-				    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-				    startActivityForResult(intent,6);
-				}
-				catch ( ActivityNotFoundException ex  )
-				{
-				  Intent intent =
-				    new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
-				  startActivity(intent);
-				}	*/
-
-				
-			}
-		});
-		
-		//selectedAddress=null;//RETURN THIS COMMENT
+		selectedAddress=null;
 		
 	}
 	
 	
+	private void InitializeDrawer()
+	{
+        mTitle = mDrawerTitle = getTitle();
+        
+        // load slide menu items
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+ 
+        // nav drawer icons from resources
+        navMenuIcons = getResources()
+                .obtainTypedArray(R.array.nav_drawer_icons);
+ 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+ 
+        navDrawerItems = new ArrayList<NavDrawerItem>();
+ 
+        // adding nav drawer items to array
+        // Home
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
+        // Find People
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+        // Photos
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
+        // Communities, Will add a counter here
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
+        // Pages
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
+        // What's hot, We  will add a counter here
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
+         
+ 
+        // Recycle the typed array
+        navMenuIcons.recycle();
+ 
+        // setting the nav drawer list adapter
+        navDrawerListAdapter = new NavDrawerListAdapter(getApplicationContext(),
+                navDrawerItems);
+        mDrawerList.setAdapter(navDrawerListAdapter);
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        
+        // enabling action bar app icon and behaving it as toggle button
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+ 
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_drawer, //nav menu toggle icon
+                R.string.app_name, // nav drawer open - description for accessibility
+                R.string.app_name // nav drawer close - description for accessibility
+        ){
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+ 
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+ 
+    
+	}
+	
+    
+    /**
+     * Slide menu item click listener
+     * */
+    private class SlideMenuClickListener implements
+            				ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                long id) {
+            // display view for selected nav drawer item
+            displayView(position);
+        }
+    }
+
+    /**
+     * Displaying fragment view for selected nav drawer list item
+     * */
+    private void displayView(int position) {
+    	// update the main content by replacing fragments
+    	Fragment fragment = null;
+    	switch (position) {
+    	case 0:
+    		//fragment = new HomeFragment();
+    		break;
+    	case 1:
+    		//fragment = new FindPeopleFragment();
+    		break;
+    	case 2:
+    		//fragment = new PhotosFragment();
+    		break;
+    	case 3:
+    		//fragment = new CommunityFragment();
+    		break;
+    	case 4:
+    		//fragment = new PagesFragment();
+    		break;
+    	case 5:
+    		//fragment = new WhatsHotFragment();
+    		break;
+
+    	default:
+    		break;
+    	}
+
+    	// update selected item and title, then close the drawer
+    	//mDrawerList.setItemChecked(position, true);
+    	//mDrawerList.setSelection(position);
+    	//setTitle(navMenuTitles[position]);
+    	mDrawerLayout.closeDrawer(mDrawerList);
+
+    }    
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==5)
@@ -442,39 +485,60 @@ public class OnMap extends Activity {
 		super.onDestroy();
 		selectedAddress=null;
 	}
-
 	
-/**------------------
- * MENU Definitions
- * ------------------
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+ 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+	
+	/**------------------
+	 * MENU Definitions
+	 * ------------------*/
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.display_address, menu);
+	    inflater.inflate(R.menu.on_map_menu, menu);
 	    return true;
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.addLocation:
-	    	    Intent intent = new Intent(this, AddMarker.class);	
-	    	    startActivity(intent);
-	            return true;	            	           
-	        case R.id.clearAll:
-	        	for (MyMarkers myMarkers : markersList) 
-	        		myMarkers.marker.remove();
-	        	markersList.clear();
-	        	markerCounter=0;
-	            return true;	            
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}*/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // toggle nav drawer on selecting action bar app icon/title
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle action bar actions click
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    /***
+     * Called when invalidateOptionsMenu() is triggered
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
 	/**------------------
 	 * END MENU Definitions
 	 * ------------------*/
+
 	
 	
 	/**--------------------
@@ -517,3 +581,69 @@ public class OnMap extends Activity {
 	}//End Class AsyncTask
 
 }
+
+/*
+ * NAVIGATION
+
+//GOOGLE
+Button GoogleNavigate = (Button)findViewById(R.id.navigateGooG);
+GoogleNavigate.setOnClickListener(new OnClickListener() {
+	@Override
+	public void onClick(View v) {
+		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
+		
+		//GoogleMaps Navigation
+		try{					
+			//source location
+		    double latitudeCurr = 31.2718;
+		    double longitudeCurr = 34.78256;
+			
+		    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(
+		    		"http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+selectedAddress.getLatitude()+","+selectedAddress.getLongitude()));
+		    		//can enter a String address after saddr\daddr
+		    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+		    startActivityForResult(intent,5);
+		}catch(Exception e)
+		{
+			Log.e("Google Navigate","Error: "+e.getMessage());
+		}
+        
+
+	}
+});		
+
+Button WazeNavigate = (Button)findViewById(R.id.navigateWaze);
+WazeNavigate.setOnClickListener(new OnClickListener() {
+	@Override
+	public void onClick(View v) 
+	{
+		/*
+		selectedAddress=new Address(Locale.getDefault());
+		selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
+		selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);		        
+		/*  WAZE API
+		 *  search for address: 	waze://?q=<address search term>
+		 *	center map to lat / lon: 	waze://?ll=<lat>,<lon>
+		 *	set zoom (minimum is 6): 	waze://?z=<zoom>
+		 */
+		/*
+        //Waze Navigation
+		try
+		{
+			//String url = "waze://?ll="+ selectedAddress.getLatitude()+","+selectedAddress.getLongitude();
+			String url = "waze://?q=ביאליק 1 באר שבע";
+		    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+		    startActivityForResult(intent,6);
+		}
+		catch ( ActivityNotFoundException ex  )
+		{
+		  Intent intent =
+		    new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
+		  startActivity(intent);
+		}	
+
+		
+	}
+}); */
+
+
