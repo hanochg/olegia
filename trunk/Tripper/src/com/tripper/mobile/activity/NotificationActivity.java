@@ -13,6 +13,7 @@ import com.parse.ParseUser;
 import com.tripper.mobile.R;
 import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.ContactsListSingleton.AppMode;
 import com.tripper.mobile.utils.Queries;
 
 import android.location.Criteria;
@@ -128,13 +129,14 @@ public class NotificationActivity extends Activity implements
 	}
 	public void OnBtnEnterAdressClick(View view)
 	{	
+		ContactsListSingleton.getInstance().APP_MODE=AppMode.NOTIFICATION;
 		Intent intent = new Intent(this, FindAddress.class);
-		startActivityForResult(intent, Activity.RESULT_OK);
+		startActivityForResult(intent, 123);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
-	    if (requestCode== resultCode && resultCode == RESULT_OK)
+	    if (requestCode == 123 && resultCode == RESULT_OK)
 	    {
 	    	double  latitude =  intent.getDoubleExtra(Queries.EXTRA_LATITUDE,0);
 	    	double  longitude = intent.getDoubleExtra(Queries.EXTRA_LONGITUDE,0);
