@@ -1,6 +1,7 @@
 package com.tripper.mobile.activity;
 
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.Queries;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -38,7 +39,6 @@ public class LoginActivity extends Activity {
 	/**
 	 * The default email to populate the email field with.
 	 */
-	public static final String EXTRA_PHONE = "Phone Number";
 	
 	 private enum eConnectionStatus {
 		   NoConnection, SighUp, PasswordError, SighIn
@@ -72,7 +72,7 @@ public class LoginActivity extends Activity {
 		ParseAnalytics.trackAppOpened(getIntent()); //???
 		
 		mPhoneView = (EditText) findViewById(R.id.phone);
-		mPhoneNumber=getIntent().getStringExtra(EXTRA_PHONE);
+		mPhoneNumber=getIntent().getStringExtra(Queries.EXTRA_PHONE);
 		mPhoneView.setText(mPhoneNumber);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
@@ -350,18 +350,9 @@ public class LoginActivity extends Activity {
 		
 		String userPhone=ParseUser.getCurrentUser().getUsername();
 		
-		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("a",userPhone), NotificationActivity.class);
-		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("b",userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("c",userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("a",userPhone), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("b",userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("c",userPhone), FriendsList.class);
 	}
 	
-	private String PhoneToChannel(String channelPrefix, String Phone)	
-	{		
-		String tempString=Phone;
-		
-		if(tempString.startsWith("+"))
-			tempString= tempString.substring(1);
-		
-		return channelPrefix + tempString;
-	}	
 }

@@ -77,32 +77,7 @@ public class ContactsListSingleton
 
 			asyncPhoneConverter= new AsyncPhoneConverter(contact);
 			asyncPhoneConverter.execute();
-
-			//*Parse*// 
-			ParseQuery<ParseUser> query = ParseUser.getQuery();
-			synchronized(contact.internationalPhoneNumber)
-			{
-				query.whereEqualTo("username",contact.getInternationalPhoneNumber()); 
-
-				query.countInBackground(new CountCallback() 
-				{
-					public void done(int count, ParseException e) 
-					{  
-
-						if (e == null && contact!=null)
-						{
-							if(count!=0)
-								contact.UpdateAppStatus(eAppStatus.hasApp);
-							else
-								contact.UpdateAppStatus(eAppStatus.noApp);
-						} 
-						else if (contact!=null)
-						{
-							// The request failed,connection error
-						}
-					}
-				}); 
-			}
+			
 		}
 		else
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
@@ -151,7 +126,7 @@ public class ContactsListSingleton
 			//check if already contain the value
 			for(int i=0 ; i<db.size() ; i++)
 			{
-				if(db.get(i).getPhoneNumber().equals(phone))
+				if(db.get(i).getInternationalPhoneNumber().equals(phone))
 					return db.get(i);
 			}			
 		}
@@ -230,8 +205,36 @@ public class ContactsListSingleton
 			}
 			return null;
 		}
-		
-		
+
+		@Override
+		protected void onPostExecute(Void result)
+		{
+			//*Parse*// 
+			ParseQuery<ParseUser> query = ParseUser.getQuery();
+				
+			String number= contact.getInternationalPhoneNumber();
+				
+			query.whereEqualTo("username",number); 
+
+			query.countInBackground(new CountCallback() 
+				{
+					public void done(int count, ParseException e) 
+					{  
+
+						if (e == null && contact!=null)
+						{
+							if(count!=0)
+								contact.UpdateAppStatus(eAppStatus.hasApp);
+							else
+								contact.UpdateAppStatus(eAppStatus.noApp);
+						} 
+						else if (contact!=null)
+						{
+							// The request failed,connection error
+						}
+					}
+				}); 
+		}				
 	}
 	
 }

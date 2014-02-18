@@ -125,7 +125,7 @@ public class ContactDataStructure
 		if(tempString.startsWith("+"))
 			tempString= tempString.substring(1);
 		
-		return tempString;
+		return channelPrefix+tempString;
 	}	
 }
 
