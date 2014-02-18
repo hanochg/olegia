@@ -26,12 +26,14 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
@@ -335,11 +337,24 @@ public class OnMap extends Activity {
 		
 	}
 	
+	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
 	private void getScreenDimensions()
 	{
-		Display display = getWindowManager().getDefaultDisplay();
-		width = display.getWidth(); 
-		height = display.getHeight(); 
+		 if (  Integer.valueOf(android.os.Build.VERSION.SDK_INT) < 13 ) 
+		 {
+	         Display display = getWindowManager().getDefaultDisplay(); 
+	         width = display.getWidth();
+	         height = display.getHeight();
+	     } 
+		 else 
+	     {
+	          Display display = getWindowManager().getDefaultDisplay();
+	          Point size = new Point();
+	          display.getSize(size);
+	          width = size.x;
+	          height = size.y;
+	     }        
 	}
 	
 	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation, LatLng secondLocation)

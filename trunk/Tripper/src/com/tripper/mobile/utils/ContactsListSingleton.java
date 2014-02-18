@@ -1,12 +1,17 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
+
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.parse.CountCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import android.location.Address;
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class ContactsListSingleton 
@@ -18,7 +23,8 @@ public class ContactsListSingleton
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
 	private Address singleRouteCoordinates;
-
+	private AsyncPhoneConverter asyncPhoneConverter;
+	private String CountryTwoLetters="IL";
 	
 	public static void setSingleRouteAddress(Address address)
 	{
@@ -67,30 +73,36 @@ public class ContactsListSingleton
 				return;
 			//if its not already contained in the list
 			db.add(contact);
-			
+
+
+			asyncPhoneConverter= new AsyncPhoneConverter(contact);
+			asyncPhoneConverter.execute();
+
 			//*Parse*// 
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
-			query.whereEqualTo("username","+"+ contact.getPhoneNumberforParse()); 
-	    	
-	    	query.countInBackground(new CountCallback() 
-	    	{
-	    		  public void done(int count, ParseException e) 
-	    		  {  
-	    		    if (e == null && contact!=null)
-	    		    {
-	    		      if(count!=0)
-	    		    	  contact.UpdateAppStatus(eAppStatus.hasApp);
-	    		      else
-	    		    	  contact.UpdateAppStatus(eAppStatus.noApp);
-	    		    } 
-	    		    else if (contact!=null)
-	    		    {
-	    		      // The request failed,connection error
-	    		    }
-	    		  }
-	    	}); 
-		
-			
+			synchronized(contact.internationalPhoneNumber)
+			{
+				query.whereEqualTo("username",contact.getInternationalPhoneNumber()); 
+
+				query.countInBackground(new CountCallback() 
+				{
+					public void done(int count, ParseException e) 
+					{  
+
+						if (e == null && contact!=null)
+						{
+							if(count!=0)
+								contact.UpdateAppStatus(eAppStatus.hasApp);
+							else
+								contact.UpdateAppStatus(eAppStatus.noApp);
+						} 
+						else if (contact!=null)
+						{
+							// The request failed,connection error
+						}
+					}
+				}); 
+			}
 		}
 		else
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
@@ -180,5 +192,46 @@ public class ContactsListSingleton
 		return phones;
 	}
 
+	
+	private class AsyncPhoneConverter extends AsyncTask<Void, Void, Void>
+	{
+
+		
+		PhoneNumber converedNumber;
+		String phone;
+		ContactDataStructure contact;
+		String result=null;
+		
+		AsyncPhoneConverter(ContactDataStructure contact) 
+		{
+			super();
+			this.contact = contact;
+			converedNumber=null;
+			this.phone = contact.getPhoneNumber();
+        }
+		
+		@Override
+		protected Void doInBackground(Void... none) {
+			synchronized(contact.internationalPhoneNumber)
+			{
+				PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+				try {
+					converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
+					result=phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
+				} catch (Exception e) {
+					Log.e("insertContact","NumberParseException was thrown: " + e.toString());
+					result = null;
+				}
+
+				if(result==null || result.equals(""))
+					contact.setInternationalPhoneNumber(phone);
+				else
+					contact.setInternationalPhoneNumber(result);
+			}
+			return null;
+		}
+		
+		
+	}
 	
 }
