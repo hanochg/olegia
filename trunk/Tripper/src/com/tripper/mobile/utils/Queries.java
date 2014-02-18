@@ -146,4 +146,5 @@ public class Queries {
             StrictMode.setVmPolicy(vmPolicyBuilder.build());
         }
     }
+    
 }
