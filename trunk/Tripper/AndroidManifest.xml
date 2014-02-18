@@ -101,7 +101,8 @@
 			
         </activity>
              
-        <receiver android:name="com.tripper.mobile.MyCustomReceiver" android:exported="false">
+        <receiver android:name="com.tripper.mobile.MyCustomReceiver"
+            	  android:exported="false">
   			<intent-filter>
     			<action android:name="com.tripper.mobile.Answer" />
   			</intent-filter>

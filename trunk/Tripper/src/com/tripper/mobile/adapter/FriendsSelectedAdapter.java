@@ -3,6 +3,8 @@ package com.tripper.mobile.adapter;
 import java.util.ArrayList;
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,13 @@ public class FriendsSelectedAdapter extends ArrayAdapter<ContactDataStructure>{
 			// Get the ViewHolder back to get fast access to the TextView
 			// and the ImageView.
 			holder = (ViewHolder) convertView.getTag();
+			
+			if (data.get(position).getAppStatus()==eAppStatus.noApp)
+				convertView.setBackgroundColor(0x20ff0000);
+			else if(data.get(position).getAppStatus()==eAppStatus.hasApp)
+				convertView.setBackgroundColor(0x3000ff00);
+			else
+				convertView.setBackgroundColor(0x00000000);
 		}
 		
 

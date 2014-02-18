@@ -3,5 +3,7 @@
 5. to delete previous installation when new user is getting sign in or sign up - Oleg
 6. to check activities with screen lock
 
+7.need to pass  mFriendsSelectedAdapter  to Contact list to use in "insertContact"
+
 11. get enum APP_MODE out of the singleton and into intent extras.
 12. check if cursor is closed when accessing it in FriendsList
