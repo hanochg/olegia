@@ -332,7 +332,7 @@ public class LoginActivity extends Activity {
 		
 		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("a"), NotificationActivity.class);
 		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("b"), FriendsList.class);
-		//PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("c"), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("c"), FriendsList.class);
 	}
 	
 	private String israelPhoneToChannel(String channelPrefix)	

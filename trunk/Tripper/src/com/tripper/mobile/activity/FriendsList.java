@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.SendCallback;
 import com.tripper.mobile.R;
 import android.net.Uri;
 import android.os.Bundle;
@@ -263,6 +265,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    	
 	    	Intent intent = new Intent(this, OnMap.class);	
 	    	startActivity(intent);
+	    	
 	    	sendNotifications();
 	        return true;            
 	    }
