@@ -39,7 +39,6 @@ import android.widget.Toast;
 import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
-import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.*;
 
 

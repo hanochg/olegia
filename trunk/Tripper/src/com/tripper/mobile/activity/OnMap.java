@@ -1,4 +1,4 @@
-package com.tripper.mobile.map;
+package com.tripper.mobile.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.R;
 import com.tripper.mobile.adapter.NavDrawerListAdapter;
-import com.tripper.mobile.drawer.NavDrawerItem;
+import com.tripper.mobile.map.GMapV2Direction;
+import com.tripper.mobile.map.GetDirectionsAsyncTask;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
@@ -83,7 +84,6 @@ public class OnMap extends Activity {
     private String[] navMenuTitles;
     private TypedArray navMenuIcons;
  
-    private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navDrawerListAdapter;
 
 	/*
@@ -200,11 +200,8 @@ public class OnMap extends Activity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
  
-        navDrawerItems = new ArrayList<NavDrawerItem>();
- 
         // setting the nav drawer list adapter
-        navDrawerListAdapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
+        navDrawerListAdapter = new NavDrawerListAdapter(getApplicationContext());
         mDrawerList.setAdapter(navDrawerListAdapter);
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
         

@@ -76,7 +76,7 @@
 			
         </activity>
         <activity
-            android:name="com.tripper.mobile.map.OnMap"
+            android:name="com.tripper.mobile.activity.OnMap"
             android:label="@string/title_activity_friends_list" >            
 	    </activity>
         <activity
