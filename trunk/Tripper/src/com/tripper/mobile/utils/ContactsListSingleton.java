@@ -2,6 +2,8 @@ package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.parse.CountCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -17,7 +19,7 @@ public class ContactsListSingleton
 {
 	public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
 	public AppMode APP_MODE;
-	
+
 	
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
@@ -63,6 +65,7 @@ public class ContactsListSingleton
 	
 	public synchronized void insertContact(final ContactDataStructure contact) 
 	{
+
 		if(db!=null)
 		{
 			//check if already contain the value

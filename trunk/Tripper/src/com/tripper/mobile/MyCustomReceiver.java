@@ -3,7 +3,6 @@ package com.tripper.mobile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.tripper.mobile.map.OnMap;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactsListSingleton;
@@ -58,8 +57,8 @@ public class MyCustomReceiver extends BroadcastReceiver
 			user=json.getString("user");
 			
 			contact=ContactsListSingleton.getInstance().findContactByPhoneNum(user);
-			//if (contact==null)
-			//	return;
+			if (contact==null)
+				return;
 			
 	    }
 	    catch (JSONException x) 
