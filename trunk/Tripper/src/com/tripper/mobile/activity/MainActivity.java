@@ -26,6 +26,12 @@ public class MainActivity extends FragmentActivity  {
 		return true;
 	}	
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ContactsListSingleton.getInstance().close();
+	}
+
 	public void OnBtnMultipleDestinationClick(View view)
 	{	
 		//define single destination mode:

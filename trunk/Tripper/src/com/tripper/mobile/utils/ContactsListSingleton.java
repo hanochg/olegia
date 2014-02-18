@@ -26,6 +26,13 @@ public class ContactsListSingleton
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters="IL";
 	
+	public void close()
+	{
+			db.clear();
+			db=null;
+			instance=null;
+	}
+	
 	public static void setSingleRouteAddress(Address address)
 	{
 			getInstance().singleRouteCoordinates=address;
