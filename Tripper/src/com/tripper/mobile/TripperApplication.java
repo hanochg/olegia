@@ -23,4 +23,7 @@ public class TripperApplication extends android.app.Application {
    
 	//PushService.setDefaultPushCallback(this, com.tripper.mobile.activity.NotificationActivity.class);
   }
+
+
+  
 }

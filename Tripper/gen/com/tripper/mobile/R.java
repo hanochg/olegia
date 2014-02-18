@@ -8,15 +8,6 @@
 package com.tripper.mobile;
 
 public final class R {
-    public static final class array {
-        /**  Nav Drawer List Item Icons 
- Keep them in order as the titles are in 
-         */
-        public static final int nav_drawer_icons=0x7f090001;
-        /**  Nav Drawer Menu Items 
-         */
-        public static final int nav_drawer_items=0x7f090000;
-    }
     public static final class attr {
         /** 
     The size of the ad. It must be one of BANNER, FULL_BANNER, LEADERBOARD,
@@ -223,87 +214,89 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_light=0x7f020017;
         public static final int counter_bg=0x7f020018;
         public static final int glass=0x7f020019;
-        public static final int ic_communities=0x7f02001a;
-        public static final int ic_contact_picture_holo_light=0x7f02001b;
-        public static final int ic_drawer=0x7f02001c;
-        public static final int ic_home=0x7f02001d;
-        public static final int ic_launcher=0x7f02001e;
-        public static final int ic_pages=0x7f02001f;
-        public static final int ic_people=0x7f020020;
-        public static final int ic_photos=0x7f020021;
-        public static final int ic_plusone_medium_off_client=0x7f020022;
-        public static final int ic_plusone_small_off_client=0x7f020023;
-        public static final int ic_plusone_standard_off_client=0x7f020024;
-        public static final int ic_plusone_tall_off_client=0x7f020025;
-        public static final int ic_whats_hot=0x7f020026;
-        public static final int list_item_bg_normal=0x7f020027;
-        public static final int list_item_bg_pressed=0x7f020028;
-        public static final int list_selector=0x7f020029;
-        public static final int mic=0x7f02002a;
-        public static final int phone_book_1=0x7f02002b;
-        public static final int plus_sign=0x7f02002c;
-        public static final int remove=0x7f02002d;
-        public static final int rounded_corner=0x7f02002e;
-        public static final int splashscreen=0x7f02002f;
+        public static final int green_circle=0x7f02001a;
+        public static final int ic_communities=0x7f02001b;
+        public static final int ic_contact_picture_holo_light=0x7f02001c;
+        public static final int ic_drawer=0x7f02001d;
+        public static final int ic_home=0x7f02001e;
+        public static final int ic_launcher=0x7f02001f;
+        public static final int ic_pages=0x7f020020;
+        public static final int ic_people=0x7f020021;
+        public static final int ic_photos=0x7f020022;
+        public static final int ic_plusone_medium_off_client=0x7f020023;
+        public static final int ic_plusone_small_off_client=0x7f020024;
+        public static final int ic_plusone_standard_off_client=0x7f020025;
+        public static final int ic_plusone_tall_off_client=0x7f020026;
+        public static final int ic_whats_hot=0x7f020027;
+        public static final int list_item_bg_normal=0x7f020028;
+        public static final int list_item_bg_pressed=0x7f020029;
+        public static final int list_selector=0x7f02002a;
+        public static final int mic=0x7f02002b;
+        public static final int phone_book_1=0x7f02002c;
+        public static final int plus_sign=0x7f02002d;
+        public static final int question_mark=0x7f02002e;
+        public static final int red_circle=0x7f02002f;
+        public static final int remove=0x7f020030;
+        public static final int rounded_corner=0x7f020031;
+        public static final int splashscreen=0x7f020032;
     }
     public static final class id {
         public static final int CL_list=0x7f050007;
-        public static final int ListTextView=0x7f05001e;
-        public static final int acContactName=0x7f050018;
-        public static final int action_settings=0x7f050035;
+        public static final int ListTextView=0x7f05001d;
+        public static final int acContactName=0x7f050017;
+        public static final int action_settings=0x7f050034;
         public static final int activateSpeech=0x7f05000a;
-        public static final int addressItem=0x7f050016;
-        public static final int addressList=0x7f050014;
-        public static final int addressRadioButton=0x7f050017;
-        public static final int atcvAddress=0x7f050013;
-        public static final int btnEnterAdress=0x7f05002d;
-        public static final int btnMultipleDestination=0x7f050029;
-        public static final int btnMyLocation=0x7f05002c;
-        public static final int btnNoThanks=0x7f05002b;
-        public static final int btnProfileAddress=0x7f05002e;
-        public static final int btnSingleDestination=0x7f050026;
+        public static final int addressItem=0x7f050015;
+        public static final int addressList=0x7f050013;
+        public static final int addressRadioButton=0x7f050016;
+        public static final int atcvAddress=0x7f050012;
+        public static final int btnEnterAdress=0x7f05002c;
+        public static final int btnMultipleDestination=0x7f050028;
+        public static final int btnMyLocation=0x7f05002b;
+        public static final int btnNoThanks=0x7f05002a;
+        public static final int btnProfileAddress=0x7f05002d;
+        public static final int btnSingleDestination=0x7f050025;
         public static final int cbSelected=0x7f05000d;
         public static final int contactBadge=0x7f05000b;
         public static final int contactName=0x7f050005;
         public static final int contactNumber=0x7f050006;
-        public static final int contactsButton=0x7f050019;
-        public static final int counter=0x7f050011;
-        public static final int doneCL=0x7f050033;
-        public static final int doneFL=0x7f050036;
-        public static final int drawer_layout=0x7f050030;
-        public static final int enter_destination=0x7f050012;
-        public static final int etAddressSearch=0x7f050015;
+        public static final int contactsButton=0x7f050018;
+        public static final int doneCL=0x7f050032;
+        public static final int doneFL=0x7f050035;
+        public static final int drawer_layout=0x7f05002f;
+        public static final int enter_destination=0x7f050011;
+        public static final int etAddressSearch=0x7f050014;
         public static final int etSearchCL=0x7f050008;
-        public static final int exit=0x7f050038;
-        public static final int frame_container=0x7f050031;
+        public static final int exit=0x7f050037;
+        public static final int frame_container=0x7f050030;
         public static final int hybrid=0x7f050004;
         public static final int icon=0x7f05000f;
-        public static final int list_slidermenu=0x7f050032;
-        public static final int login=0x7f050024;
-        public static final int login_form=0x7f050021;
-        public static final int login_status=0x7f05001f;
-        public static final int login_status_message=0x7f050020;
-        public static final int logo=0x7f050028;
-        public static final int lvContactList=0x7f05001a;
-        public static final int map=0x7f05002f;
+        public static final int list_slidermenu=0x7f050031;
+        public static final int login=0x7f050023;
+        public static final int login_form=0x7f050020;
+        public static final int login_status=0x7f05001e;
+        public static final int login_status_message=0x7f05001f;
+        public static final int logo=0x7f050027;
+        public static final int lvContactList=0x7f050019;
+        public static final int map=0x7f05002e;
         public static final int nameCL=0x7f05000e;
-        public static final int nameFL=0x7f05001d;
-        public static final int nextFA=0x7f050034;
+        public static final int nameFL=0x7f05001c;
+        public static final int nextFA=0x7f050033;
         public static final int noResults=0x7f050009;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int password=0x7f050023;
-        public static final int phone=0x7f050022;
+        public static final int password=0x7f050022;
+        public static final int phone=0x7f050021;
         public static final int phoneNumCL=0x7f05000c;
-        public static final int phoneNumFL=0x7f05001c;
-        public static final int removeButtonFL=0x7f05001b;
+        public static final int phoneNumFL=0x7f05001b;
+        public static final int removeButtonFL=0x7f05001a;
         public static final int satellite=0x7f050002;
-        public static final int settings=0x7f050037;
-        public static final int sign_in_button=0x7f050025;
+        public static final int settings=0x7f050036;
+        public static final int sign_in_button=0x7f050024;
         public static final int terrain=0x7f050003;
         public static final int title=0x7f050010;
-        public static final int tvMessage=0x7f05002a;
-        public static final int view=0x7f050027;
+        public static final int tvMessage=0x7f050029;
+        public static final int view=0x7f050026;
     }
     public static final class integer {
         public static final int MainActivityOrigin=0x7f070002;
@@ -330,14 +323,14 @@ containing a value of this type.
         public static final int splash_screen=0x7f03000e;
     }
     public static final class menu {
-        public static final int contact_list_menu=0x7f0b0000;
-        public static final int find_address_menu=0x7f0b0001;
-        public static final int friends_list_menu=0x7f0b0002;
-        public static final int login_menu=0x7f0b0003;
-        public static final int main_menu=0x7f0b0004;
-        public static final int notification=0x7f0b0005;
-        public static final int on_map_menu=0x7f0b0006;
-        public static final int splash_screen=0x7f0b0007;
+        public static final int contact_list_menu=0x7f0a0000;
+        public static final int find_address_menu=0x7f0a0001;
+        public static final int friends_list_menu=0x7f0a0002;
+        public static final int login_menu=0x7f0a0003;
+        public static final int main_menu=0x7f0a0004;
+        public static final int notification=0x7f0a0005;
+        public static final int on_map_menu=0x7f0a0006;
+        public static final int splash_screen=0x7f0a0007;
     }
     public static final class string {
         public static final int Back=0x7f06002b;
@@ -509,13 +502,13 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f0a0000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f0a0001;
-        public static final int LoginFormContainer=0x7f0a0003;
-        public static final int searchTextHiglight=0x7f0a0002;
+        public static final int AppTheme=0x7f090001;
+        public static final int LoginFormContainer=0x7f090003;
+        public static final int searchTextHiglight=0x7f090002;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.
