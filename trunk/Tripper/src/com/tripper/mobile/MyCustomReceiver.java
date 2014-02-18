@@ -67,7 +67,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 	    	return;
 	    }
 		
-		if(answer=="ok")
+		if(answer.equals("ok"))
 		{	
 
 			try
@@ -85,7 +85,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 		    }
 
 		}	
-		else if (answer=="no")
+		else if (answer.equals("no"))
 		{
 			contact.setContactAnswer(eAnswer.no);
 		}

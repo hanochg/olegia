@@ -1,6 +1,7 @@
 package com.tripper.mobile.utils;
 
 import android.net.Uri;
+import android.util.Log;
 
 public class ContactDataStructure 
 {
@@ -112,9 +113,11 @@ public class ContactDataStructure
 	}
 	
 	public eAnswer getContactAnswer() {
+		
 		return contactAnswer;
 	}
 	public void setContactAnswer(eAnswer contactAnswer) {
+		Log.d("setContactAnswer","answer: " + contactAnswer.toString());
 		this.contactAnswer = contactAnswer;
 	}
 	

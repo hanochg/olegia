@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <ListView
         android:id="@+id/CL_list"
@@ -17,30 +16,30 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:text="No Contacts"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-         />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ImageButton
-            android:id="@+id/activateSpeech"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/CL_list"
-            android:adjustViewBounds="true"
-            android:background="#FFFFFF"
-            android:maxHeight="30dp"
-            android:maxWidth="30dp"
-            android:onClick="speechActivation"
-            android:scaleType="fitCenter"
-            android:src="@drawable/mic" />
+    <ImageButton
+        android:id="@+id/activateSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/CL_list"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:background="#FFFFFF"
+        android:maxHeight="30dp"
+        android:maxWidth="30dp"
+        android:onClick="speechActivation"
+        android:scaleType="fitCenter"
+        android:src="@drawable/mic" />
 
-        <EditText
-            android:id="@+id/etSearchCL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/activateSpeech"
-            android:ems="10"
-            android:hint="enter contacts name" />
+    <EditText
+        android:id="@+id/etSearchCL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/activateSpeech"
+        android:ems="10"
+        android:hint="enter contacts name" />
 
 </RelativeLayout>
