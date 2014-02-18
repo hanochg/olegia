@@ -9,6 +9,7 @@ import com.parse.CountCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import android.location.Address;
 import android.os.AsyncTask;
@@ -70,7 +71,7 @@ public class ContactsListSingleton
 		
 	}
 	
-	public synchronized void insertContact(final ContactDataStructure contact) 
+	public synchronized void insertContact(final ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter) 
 	{
 
 		if(db!=null)
@@ -82,7 +83,7 @@ public class ContactsListSingleton
 			db.add(contact);
 
 
-			asyncPhoneConverter= new AsyncPhoneConverter(contact);
+			asyncPhoneConverter= new AsyncPhoneConverter(contact,mFriendsSelectedAdapter);
 			asyncPhoneConverter.execute();
 			
 		}
@@ -183,13 +184,15 @@ public class ContactsListSingleton
 		String phone;
 		ContactDataStructure contact;
 		String result=null;
+		FriendsSelectedAdapter mFriendsSelectedAdapter;
 		
-		AsyncPhoneConverter(ContactDataStructure contact) 
+		AsyncPhoneConverter(ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter) 
 		{
 			super();
 			this.contact = contact;
 			converedNumber=null;
 			this.phone = contact.getPhoneNumber();
+			this.mFriendsSelectedAdapter=mFriendsSelectedAdapter;
         }
 		
 		@Override
@@ -234,6 +237,9 @@ public class ContactsListSingleton
 								contact.UpdateAppStatus(eAppStatus.hasApp);
 							else
 								contact.UpdateAppStatus(eAppStatus.noApp);
+							
+							if(mFriendsSelectedAdapter!=null)
+								mFriendsSelectedAdapter.notifyDataSetChanged();
 						} 
 						else if (contact!=null)
 						{

@@ -188,7 +188,7 @@ public class ContactsList extends Activity implements
 		        	contact.setName(displayName);
 		        	contact.setPhoneNumber(phoneNum);
 		        	contact.setUri(uri);
-		        	ContactsListSingleton.getInstance().insertContact(contact);
+		        	ContactsListSingleton.getInstance().insertContact(contact,null);
 		        }
 		        else
 		        {

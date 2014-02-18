@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.SendCallback;
 import com.tripper.mobile.R;
 import android.net.Uri;
 import android.os.Bundle;
@@ -120,7 +118,7 @@ public class FriendsList extends Activity implements
 		        contact.setPhoneNumber(cursor.getString(Queries.PHONE_NUM));
 		        contact.setUri(uri);
 		        
-		        ContactsListSingleton.getInstance().insertContact(contact);
+		        ContactsListSingleton.getInstance().insertContact(contact,mFriendsSelectedAdapter);
 		        
 		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
