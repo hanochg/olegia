@@ -1,17 +1,11 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
-
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.parse.CountCallback;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
-
-import android.content.Intent;
 import android.location.Address;
 import android.util.Log;
 

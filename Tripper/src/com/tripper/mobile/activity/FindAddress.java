@@ -52,7 +52,7 @@ public class FindAddress extends Activity {
 	public static Address selectedAddress;
 
 	//Globals
-	private AsyncGeocode AsyncTasker;
+	private static AsyncGeocode AsyncTasker;
 	private MessageHandler msgHandler;
 	private Message message;
 	private ListView listView;
@@ -96,6 +96,8 @@ public class FindAddress extends Activity {
 		setContentView(R.layout.find_address);
 		
 		activityContext=this;
+		AsyncTasker = new AsyncGeocode(activityContext);
+		
 		
 		addressSearch=(EditText) findViewById(R.id.etAddressSearch);
 		
@@ -142,7 +144,8 @@ public class FindAddress extends Activity {
 				{	
 					//clean the message queue
 					msgHandler.removeMessages(MESSAGE_TYPE);
-
+					//get new async tasker for the request
+					AsyncTasker = new AsyncGeocode(activityContext);
 					//create a new message and send it
 					message=msgHandler.obtainMessage(MESSAGE_TYPE);
 					Bundle bundle=new Bundle();
@@ -235,10 +238,10 @@ public class FindAddress extends Activity {
 	    return super.onOptionsItemSelected(item);
 	}
 	
-	private  void notifyResult(String value,Context context) {
+	private static void notifyResult(String value,Context context) {
 		Log.d("App!!!","notifyResult");
 		try{
-			AsyncTasker = new AsyncGeocode(context);
+			//AsyncTasker = new AsyncGeocode(context);
 			AsyncTasker.execute(value);			
 		}catch(Exception ex){
 			Log.d("Error#@$#$",ex.getMessage());
@@ -248,7 +251,7 @@ public class FindAddress extends Activity {
 	//Class extends AsyncTask for defining the AsyncTask function 
 	private class AsyncGeocode extends AsyncTask<String, Void, Void> {
 		private Context context;
-		List<Address> GeoResultsList,GeoResultsList1;
+		List<Address> GeoResultsList;
 		
 		public AsyncGeocode(Context context) {
 			super();
@@ -310,7 +313,7 @@ public class FindAddress extends Activity {
 
 	//HANDLER 
 	//Will handle the messages and the delay between them
-	private class MessageHandler extends Handler {
+	private static class MessageHandler extends Handler {
 
 		private Context context;
 
