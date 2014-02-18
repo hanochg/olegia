@@ -118,16 +118,15 @@ public class ContactDataStructure
 		this.contactAnswer = contactAnswer;
 	}
 	
-	public String getPhoneNumberforParse() 
+	public String getChannelforParse(String channelPrefix) 
 	{
 		String tempString=getInternationalPhoneNumber();
 		
 		if(tempString.startsWith("+"))
 			tempString= tempString.substring(1);
 		
-		return tempString.replace("-", "");
+		return tempString;
 	}	
-		
 }
 
 

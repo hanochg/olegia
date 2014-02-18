@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -230,6 +233,22 @@ public class LoginActivity extends Activity {
 		protected eConnectionStatus doInBackground(Void... params)
 		{
 			// TODO: attempt authentication against a network service.
+			
+			PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+			String converedNumber="";
+			try {
+				converedNumber=phoneUtil.format(phoneUtil.parse(mPhoneNumber, "IL"), PhoneNumberFormat.E164);
+			} catch (Exception e) {
+				Log.e("insertContact","NumberParseException was thrown: " + e.toString());
+				converedNumber = "";
+			}
+
+			if(converedNumber.equals(""))
+				mPhoneNumber = mPhoneNumber.replace("-", "");
+			else
+				mPhoneNumber = converedNumber;
+			
+			
 			try
 			{				
 				ParseUser.logIn(mPhoneNumber, mPassword);
@@ -329,21 +348,20 @@ public class LoginActivity extends Activity {
 		//installation.put("user",ParseUser.getCurrentUser());			
 		installation.save();
 		
+		String userPhone=ParseUser.getCurrentUser().getUsername();
 		
-		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("a"), NotificationActivity.class);
-		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("b"), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),israelPhoneToChannel("c"), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("a",userPhone), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("b",userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),PhoneToChannel("c",userPhone), FriendsList.class);
 	}
 	
-	private String israelPhoneToChannel(String channelPrefix)	
-	{
+	private String PhoneToChannel(String channelPrefix, String Phone)	
+	{		
+		String tempString=Phone;
 		
-		String channelName= ParseUser.getCurrentUser().getUsername();
-		if(channelName.startsWith("+972"))
-			channelName=channelPrefix +channelName.substring(1);
-		else if(channelName.startsWith("0"))
-			channelName=channelName.replaceFirst("0", channelPrefix + "972");		
-			
-		return channelName.replace("-", "");	
+		if(tempString.startsWith("+"))
+			tempString= tempString.substring(1);
+		
+		return channelPrefix + tempString;
 	}	
 }

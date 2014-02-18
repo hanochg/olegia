@@ -154,7 +154,7 @@ public class NotificationActivity extends Activity implements
 	private void answerHandler(JSONObject data)
 	{		 
 		ParsePush push = new ParsePush();
-		push.setChannel("b"+phone.substring(1)); 
+		push.setChannel(PhoneToChannel("b",phone)); 
 		
 		push.setExpirationTimeInterval(60*60*24);//one day, till query is relevant
 		
@@ -222,6 +222,17 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		//if (Queries.LoaderManagerID == loader.getId())
 			//mAdapter.swapCursor(null);
 	}
+	
+	
+	private String PhoneToChannel(String channelPrefix, String Phone)	
+	{		
+		String tempString=Phone;
+		
+		if(tempString.startsWith("+"))
+			tempString= tempString.substring(1);
+		
+		return channelPrefix + tempString;
+	}	
 
     
 	/*		

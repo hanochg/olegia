@@ -186,7 +186,7 @@ public class ContactsListSingleton
 			{
 				tempContact=db.get(i);
 				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp)
-					phones.add(channelPrefix + tempContact.getPhoneNumberforParse());
+					phones.add(tempContact.getChannelforParse(channelPrefix));
 			}
 		}	
 		return phones;
@@ -224,7 +224,7 @@ public class ContactsListSingleton
 				}
 
 				if(result==null || result.equals(""))
-					contact.setInternationalPhoneNumber(phone);
+					contact.setInternationalPhoneNumber(phone.replace("-", ""));
 				else
 					contact.setInternationalPhoneNumber(result);
 			}
