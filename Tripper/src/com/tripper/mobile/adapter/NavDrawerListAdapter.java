@@ -4,7 +4,6 @@ package com.tripper.mobile.adapter;
 import java.util.ArrayList;
 
 import com.tripper.mobile.R;
-import com.tripper.mobile.drawer.NavDrawerItem; 
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
@@ -21,12 +20,10 @@ import android.widget.TextView;
 public class NavDrawerListAdapter extends BaseAdapter {
      
     private Context context;
-    private ArrayList<NavDrawerItem> navDrawerItems;
     private ArrayList<ContactDataStructure> contactsDB;
     
-    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
+    public NavDrawerListAdapter(Context context){
         this.context = context;
-        this.navDrawerItems = navDrawerItems;
         contactsDB = ContactsListSingleton.getInstance().getDB();
     }
  

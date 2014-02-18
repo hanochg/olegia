@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import org.w3c.dom.Document;
 import com.google.android.gms.maps.model.LatLng;
+import com.tripper.mobile.activity.OnMap;
+
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
