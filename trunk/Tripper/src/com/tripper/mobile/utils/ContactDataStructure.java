@@ -1,12 +1,11 @@
 package com.tripper.mobile.utils;
 
-import java.util.Locale;
-
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class ContactDataStructure 
@@ -19,16 +18,17 @@ public class ContactDataStructure
 		   notAnswered,no,ok
 		 }
 	
-	Locale locale = Locale.getDefault();//new Locale("iw");
 	private String name;
 	private String phoneNumber;
+	private String internationalPhoneNumber;
 	private long id;
 	private String lookupkey;
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
 	private eAnswer contactAnswer=eAnswer.notAnswered;
 	private double longtitude, latitude;
-
+	private String CountryTwoLetters="IL";
+	private AsyncPhoneConverter asyncPhoneConverter;
 	
 	public ContactDataStructure()
 	{
@@ -43,12 +43,14 @@ public class ContactDataStructure
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
 	{
 		this.name=name;
-		this.phoneNumber=convertNumberToInternationalNumber(phoneNumber);
-		if(this.phoneNumber.equals(""))
-			this.phoneNumber=phoneNumber;
+		this.phoneNumber=phoneNumber;
 		this.id=id;
 		this.lookupkey=lookupkey;
 		this.uri=uri;		
+		
+		asyncPhoneConverter = new AsyncPhoneConverter(phoneNumber);
+		asyncPhoneConverter.execute();
+
 	}
 	
 	public double getLongtitude() {
@@ -91,11 +93,15 @@ public class ContactDataStructure
 		return phoneNumber;
 	}
 	public void setPhoneNumber(String phoneNumber) {		
-		this.phoneNumber = convertNumberToInternationalNumber(phoneNumber);
-		if(this.phoneNumber.equals(""))
-			this.phoneNumber=phoneNumber;
+		this.phoneNumber=phoneNumber;
+		asyncPhoneConverter = new AsyncPhoneConverter(phoneNumber);
+		asyncPhoneConverter.execute();
 	}
 	
+	public String getInternationalPhoneNumber() {
+		return internationalPhoneNumber;
+	}
+
 	public void UpdateAppStatus(eAppStatus appStatus)
 	{
 		this.appStatus = appStatus;
@@ -131,19 +137,49 @@ public class ContactDataStructure
 
 		PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 		try {
-			converedNumber = phoneUtil.parse(phone, "IL");//locale.getCountry()
+			converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
 		} catch (Exception e) {
 			Log.e("insertContact","NumberParseException was thrown: " + e.toString());
 			return null;
 		}
-		Log.d("convertNumberToInternationalNumber E164",
-				phoneUtil.format(converedNumber, PhoneNumberFormat.E164));
-		Log.d("convertNumberToInternationalNumber International",
-				phoneUtil.format(converedNumber, PhoneNumberFormat.INTERNATIONAL));
-		Log.d("convertNumberToInternationalNumber National",
-				phoneUtil.format(converedNumber, PhoneNumberFormat.NATIONAL));
 		return phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
 	}
+	
+	private class AsyncPhoneConverter extends AsyncTask<Void, Void, String>
+	{
+		PhoneNumber converedNumber;
+		String phone;
+		
+		AsyncPhoneConverter(String phone) 
+		{
+			super();
+			converedNumber=null;
+			this.phone = phone;
+        }
+		
+		@Override
+		protected String doInBackground(Void... none) {
+			
+			PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+			try {
+				converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
+			} catch (Exception e) {
+				Log.e("insertContact","NumberParseException was thrown: " + e.toString());
+				return null;
+			}
+			return phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if(result==null || result.equals(""))
+				internationalPhoneNumber=phone;
+			else
+				internationalPhoneNumber=result;
+		}
+	}
+
 }
 
 

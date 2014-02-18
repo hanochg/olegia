@@ -3,7 +3,6 @@ package com.tripper.mobile.utils;
 import java.util.List;
 
 import com.tripper.mobile.R;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Address;
@@ -27,7 +26,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
-
 import android.support.v4.app.DialogFragment;
 
 public class EnterDestinationDialog extends DialogFragment implements OnEditorActionListener {

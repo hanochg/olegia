@@ -3,8 +3,6 @@ package com.tripper.mobile.adapter;
 import java.util.ArrayList;
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactDataStructure;
-import com.tripper.mobile.utils.ContactsListSingleton;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
