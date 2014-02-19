@@ -30,6 +30,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ public class NotificationActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.notification_screen);
+		//getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		notificationActivity=this;
 		
 		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.NOTIFICATION;
@@ -65,7 +68,7 @@ public class NotificationActivity extends Activity implements
 			this.finish();
 		}
 		
-		setContentView(R.layout.notification_screen);
+
 		tvMessage = (TextView) findViewById(R.id.tvMessage);
 		tvMessage.setText("User "+ phone + " is inviting you to the trip.");
 

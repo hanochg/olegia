@@ -5,7 +5,7 @@
     android:paddingLeft="5dp"
     android:paddingRight="10dp"
     android:paddingBottom="5dp"
-    android:background="#58FAD0"
+    android:background="#0F2B00FF"
     tools:context=".FriendsList" >
 
     <AutoCompleteTextView
@@ -25,7 +25,6 @@
         android:id="@+id/lvContactList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/checkBox1"
         android:layout_below="@+id/acContactName" >
 
     </ListView>
@@ -59,15 +58,5 @@
         android:onClick="speechActivation"
         android:scaleType="fitCenter"
         android:src="@drawable/mic" />
-
-    <CheckBox
-        android:id="@+id/checkBox1"
-        android:layout_width="wrap_content"
-        android:background="@drawable/borders"
-        android:layout_height="wrap_content"       
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:text="Notify my friends when I arrive to destination" />
 
 </RelativeLayout>
