@@ -402,7 +402,7 @@ public class OnMap extends Activity {
 		super.onResume();	
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
 		navDrawerListAdapter.notifyDataSetChanged();
-		
+		/*
 		if(selectedAddress!=null)
 		{
 			Toast.makeText(this, selectedAddress.getLatitude()+","+selectedAddress.getLongitude(), Toast.LENGTH_SHORT ).show();
@@ -426,7 +426,7 @@ public class OnMap extends Activity {
 		//MAP ROUTE 
     	latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
-
+*/
 	}
 	
 	
