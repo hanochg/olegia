@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 
 
 
@@ -42,7 +43,7 @@ public class DistanceService extends IntentService
 
 			mylocation = getLastKnownLocation();
 
-			//Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
+			Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
 
 			if(mylocation!=null && db!=null)
 			{
