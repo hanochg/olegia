@@ -77,6 +77,7 @@ public class FindAddress extends Activity {
 		
 		//define locale
 		GeoCodeLocale = new Locale(languageFromSettings);
+		//AsyncTasker = new AsyncGeocode(activityContext);
 	}
 
 	@Override
@@ -228,7 +229,7 @@ public class FindAddress extends Activity {
 
 	@Override
 	protected void onStop() {
-		session=null;
+		//session=null;
 		super.onStop();
 	}
 	

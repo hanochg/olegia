@@ -124,6 +124,8 @@
             </intent-filter>
         </receiver>
 
+        <service android:name="com.tripper.mobile.DistanceService" 
+            android:exported="false"/>
         <!-- Parse -->
         <service android:name="com.parse.PushService" />
 
