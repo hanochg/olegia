@@ -65,8 +65,20 @@ public class FindAddress extends Activity {
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
+	public static FindAddress session=null;
 	
 	private Locale GeoCodeLocale;
+	
+
+	public void refreshGeoCodeLocale() {
+		//reading Settings
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list, "");
+		
+		//define locale
+		GeoCodeLocale = new Locale(languageFromSettings);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -95,6 +107,8 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
+		
+
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		
@@ -206,6 +220,27 @@ public class FindAddress extends Activity {
 	}
 	
 	
+	@Override
+	protected void onDestroy() {
+		session=null;
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onStop() {
+		session=null;
+		super.onStop();
+	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		//session is alive (used for refreshing the geocode)
+		session=this;
+		super.onResume();
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

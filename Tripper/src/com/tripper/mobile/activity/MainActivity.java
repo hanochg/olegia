@@ -2,8 +2,10 @@ package com.tripper.mobile.activity;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +15,8 @@ import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
-public class MainActivity extends FragmentActivity  {
+public class MainActivity extends Activity
+				{
 
 
 	@Override
@@ -89,11 +92,12 @@ public class MainActivity extends FragmentActivity  {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
-
-
 	}
+
+
+
+
     
 }
 
