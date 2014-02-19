@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="5dp"
     android:paddingRight="10dp"
+    android:paddingBottom="5dp"
     android:background="#58FAD0"
     tools:context=".FriendsList" >
 
@@ -24,8 +25,9 @@
         android:id="@+id/lvContactList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_above="@+id/checkBox1"
         android:layout_below="@+id/acContactName" >
+
     </ListView>
 
     <ImageButton
@@ -57,5 +59,15 @@
         android:onClick="speechActivation"
         android:scaleType="fitCenter"
         android:src="@drawable/mic" />
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:background="@drawable/borders"
+        android:layout_height="wrap_content"       
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="Notify my friends when I arrive to destination" />
 
 </RelativeLayout>

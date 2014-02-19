@@ -96,7 +96,7 @@ public class ContactsListSingleton
 		int index = indexOf(phone);
 		if(index!=(-1))
 		{
-			db.get(index).setLongtitude(lon);
+			db.get(index).setLongitude(lon);
 			db.get(index).setLatitude(lat);			
 		}
 	}
