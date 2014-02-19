@@ -26,6 +26,7 @@ public class ContactsListSingleton
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters="IL";
+	public FriendsSelectedAdapter mFriendsSelectedAdapter;
 	
 	public void close()
 	{
