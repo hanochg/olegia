@@ -26,7 +26,7 @@
         android:layout_above="@+id/CL_list"
         android:layout_alignParentTop="true"
         android:adjustViewBounds="true"
-        android:background="#FFFFFF"
+        android:background="#00000000"
         android:maxHeight="30dp"
         android:maxWidth="30dp"
         android:onClick="speechActivation"
