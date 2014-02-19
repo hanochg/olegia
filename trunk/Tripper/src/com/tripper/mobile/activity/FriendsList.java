@@ -91,6 +91,7 @@ public class FriendsList extends Activity implements
         		new FriendsSelectedAdapter(this,R.layout.friends_list_row_item,ContactsListSingleton.getInstance().getDB());
         mSelectedContactsList.setAdapter(mFriendsSelectedAdapter);
         
+        ContactsListSingleton.getInstance().mFriendsSelectedAdapter=mFriendsSelectedAdapter;
         
         actvContacts.setAdapter(mAutoCompleteAdapter);
         
@@ -259,9 +260,10 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    	
 	    	ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();    	
 	    	if(db==null || db.isEmpty())
-	    		return true;
-	    	
-	    	
+	    	{
+	    		Toast.makeText(this, "Please add contacts.", Toast.LENGTH_LONG).show();
+	    		return true;    	
+	    	}
 	    	Intent intent = new Intent(this, OnMap.class);	
 	    	startActivity(intent);
 	    	
