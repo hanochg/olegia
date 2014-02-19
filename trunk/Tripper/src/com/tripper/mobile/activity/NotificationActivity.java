@@ -90,7 +90,7 @@ public class NotificationActivity extends Activity implements
 		    	if(location.getAccuracy()<100)
 		    	{
 		    		 progressDialog.dismiss();
-		    		 locationManager.removeUpdates(this);										//not so working
+		    		 locationManager.removeUpdates(this);			//not so working
 		    		 Toast.makeText(notificationActivity, "Your location was sent back.", Toast.LENGTH_LONG).show();
 		    		 answerHandler(getJSONDataMessage(Net.AnswerIsOK,location.getLatitude(),location.getLongitude()),phone);	
 		    		 notificationActivity.finish();
@@ -102,17 +102,19 @@ public class NotificationActivity extends Activity implements
 		    public void onProviderDisabled(String provider) {}
 		 };
 		 
-		 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
-			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-		 else 
+		 
+		 if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) 
 		 {
 			 mylocationClicked=false;
-			 Toast.makeText(getApplicationContext(), "Please turn on the GPS and try again", Toast.LENGTH_LONG).show();
+			 Toast.makeText(getApplicationContext(), "Please turn on the GPS on high accuracy and try again", Toast.LENGTH_LONG).show();
 			 return;
 		 }
-		 
-		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		 else
+		 {
+			 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+			 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		 }
+		 			
 		 
 		 progressDialog = new ProgressDialog(this);
 
@@ -186,9 +188,9 @@ public class NotificationActivity extends Activity implements
 	}
 	
     @Override
-    protected void onPause() 
+    protected void onDestroy() 
     {
-    	super.onPause();
+    	super.onDestroy();
     	if(locationManager!=null)
     		locationManager.removeUpdates(locationListener);
     }

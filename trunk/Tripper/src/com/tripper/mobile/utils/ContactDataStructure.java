@@ -17,7 +17,7 @@ public class ContactDataStructure
 		   notChecked,noApp,hasApp
 		 }
 	 public enum eAnswer {
-		   notAnswered,no,ok
+		   notAnswered,none,no,ok
 		 }
 	
 	private String name;
@@ -27,7 +27,7 @@ public class ContactDataStructure
 	private String lookupkey;
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
-	private eAnswer contactAnswer=eAnswer.notAnswered;
+	private eAnswer contactAnswer=eAnswer.none;
 	private double longitude, latitude;
 	private double radius;
 	private Marker marker; 
