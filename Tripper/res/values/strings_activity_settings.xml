@@ -6,6 +6,7 @@
     <string name="pref_location_summery">Used to identify the local area code</string>
     <string name="pref_location_dialog_title">Choose Location</string>
     <string name="pref_title_location">Location</string>
+    <string name="pref_default_value_location">IL</string>
 
     <string-array name="pref_location_list_titles">
         <item>Israel</item>
@@ -21,7 +22,8 @@
     <string name="pref_language_dialog_title">Choose Language</string>
     <string name="pref_language_summery">Choose application\'s language</string>
     <string name="pref_title_language">Language</string>
-
+    <string name="pref_default_value_language">iw</string>
+    
     <string-array name="pref_language_list_titles">
         <item>Hebrew</item>
         <item>English</item>
@@ -36,7 +38,7 @@
 <string name="pref_default_radius">Default Radius Size</string>
     <string name="pref_default_radius_dialog_title">Default Radius Size (in meters)</string>
     <string name="pref_default_radius_summery">The default proximity redius (in Meters) that activate the message sending</string>
- 	<string name="pref_default_radius_value">50</string>
+ 	<string name="pref_default_radius_value">50.0</string>
  	
     <!-- SMS -->
     <string name="pref_title_sms_allow">Allow Sending SMS Messages</string>

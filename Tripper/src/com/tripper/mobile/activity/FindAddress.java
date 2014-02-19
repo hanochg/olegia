@@ -95,7 +95,9 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
-
+		
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		
 		//reading Settings
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list, "");
@@ -244,10 +246,11 @@ public class FindAddress extends Activity {
 				finish();
 				break;					
 			}
+			break;
 		case R.id.SettingsFA:
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
-			return true;
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

@@ -60,12 +60,14 @@
 
         <activity
             android:name="com.tripper.mobile.activity.MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.SplashScreen"
             android:label="@string/splash_screen"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,31 +78,42 @@
         <activity
             android:name="com.tripper.mobile.activity.FriendsList"
             android:label="@string/title_activity_friends_list"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.OnMap"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_friends_list" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.FindAddress"
             android:label="@string/title_activity_on_map"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.LoginActivity"
             android:label="@string/title_activity_login"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.ContactsList"
             android:label="@string/title_activity_contact_list"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.NotificationActivity"
             android:label="@string/title_activity_notification"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name="com.tripper.mobile.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_settings" >
         </activity>
 
         <receiver
@@ -131,10 +144,7 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name="com.tripper.mobile.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
+
     </application>
 
 </manifest>
