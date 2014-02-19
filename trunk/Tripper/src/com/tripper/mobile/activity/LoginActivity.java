@@ -1,7 +1,9 @@
 package com.tripper.mobile.activity;
 
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.Queries;
+import com.tripper.mobile.utils.Queries.Extra;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -72,7 +74,7 @@ public class LoginActivity extends Activity {
 		ParseAnalytics.trackAppOpened(getIntent()); //???
 		
 		mPhoneView = (EditText) findViewById(R.id.phone);
-		mPhoneNumber=getIntent().getStringExtra(Queries.EXTRA_PHONE);
+		mPhoneNumber=getIntent().getStringExtra(Extra.PHONE);
 		mPhoneView.setText(mPhoneNumber);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
@@ -350,9 +352,9 @@ public class LoginActivity extends Activity {
 		
 		String userPhone=ParseUser.getCurrentUser().getUsername();
 		
-		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("a",userPhone), NotificationActivity.class);
-		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("b",userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),Queries.PhoneToChannel("c",userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), FriendsList.class);
 	}
 	
 }

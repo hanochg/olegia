@@ -15,6 +15,8 @@ import com.tripper.mobile.R;
 import com.tripper.mobile.adapter.AddressAdapter;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
+import com.tripper.mobile.utils.Queries.Extra;
+import com.tripper.mobile.utils.Queries.Net;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -232,8 +234,8 @@ public class FindAddress extends Activity {
 			case NOTIFICATION:	//Notification
 				
 				Intent newintent = new Intent(this, MainActivity.class); 
-				newintent.putExtra(Queries.EXTRA_LATITUDE, selectedAddress.getLatitude());
-				newintent.putExtra(Queries.EXTRA_LONGITUDE, selectedAddress.getLongitude());
+				newintent.putExtra(Extra.LATITUDE, selectedAddress.getLatitude());
+				newintent.putExtra(Extra.LONGITUDE, selectedAddress.getLongitude());
 				setResult(Activity.RESULT_OK,newintent);
 				finish();
 				break;					

@@ -121,7 +121,7 @@ public class ContactDataStructure
 		this.contactAnswer = contactAnswer;
 	}
 	
-	public String getChannelforParse(String channelPrefix) 
+	public String getChannelforParse(char channelPrefix) 
 	{
 		String tempString=getInternationalPhoneNumber();
 		

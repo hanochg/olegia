@@ -38,6 +38,8 @@ import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.*;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 
 
@@ -273,7 +275,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	public void sendNotifications()
 	{	 
 		ParsePush push = new ParsePush();
-		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse("a");
+		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse(ChannelMode.INVITATION);
 		push.setChannels(phones);
 		
 		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
@@ -282,12 +284,11 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    try
 	    {
 	    		data.put("alert", "Gooomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
-	    		data.put("user", ParseUser.getCurrentUser().getUsername());
+	    		data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
 	    }
 	    catch(JSONException x)
 	    {
-	    	Toast.makeText(getApplicationContext(), "The Program has Crushed.", Toast.LENGTH_LONG).show();
 	    	throw new RuntimeException("Something wrong with JSON", x);
 	    }
 		push.setData(data);
