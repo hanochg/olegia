@@ -3,7 +3,7 @@
         android:key="pref_key_location_language"
         android:title="@string/title_pref_category_language_location" >
         <ListPreference
-            android:defaultValue="1"
+
             android:entries="@array/pref_language_list_titles"
             android:entryValues="@array/pref_language_list_values"
             android:key="language_list"
@@ -11,9 +11,10 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:summary="@string/pref_language_summery"
+            android:defaultValue="@string/pref_default_value_language"
             android:title="@string/pref_title_language" />
         <ListPreference
-            android:defaultValue="0"
+            
             android:entries="@array/pref_location_list_titles"
             android:entryValues="@array/pref_location_list_values"
              android:summary="@string/pref_location_summery"
@@ -21,6 +22,7 @@
             android:dialogTitle="@string/pref_location_dialog_title"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
+            android:defaultValue="@string/pref_default_value_location"
             android:title="@string/pref_title_location" />
     </PreferenceCategory>
     

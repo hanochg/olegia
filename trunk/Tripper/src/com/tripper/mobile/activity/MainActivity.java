@@ -21,7 +21,7 @@ public class MainActivity extends FragmentActivity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);	
 		SplashScreen.splashActivity.finish();
-		
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		//reading Settings
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
@@ -84,5 +84,16 @@ public class MainActivity extends FragmentActivity  {
     public void onFinishEditDialog(String inputText) {
         Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
     }
+
+
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+
+
+	}
+    
 }
 
