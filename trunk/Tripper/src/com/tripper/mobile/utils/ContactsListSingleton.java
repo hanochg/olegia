@@ -9,10 +9,14 @@ import com.parse.CountCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
+
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class ContactsListSingleton 
@@ -25,7 +29,18 @@ public class ContactsListSingleton
 	static private ContactsListSingleton instance=null;
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
-	private String CountryTwoLetters="IL";
+	private String CountryTwoLetters;
+	
+	
+	public String getCountryTwoLetters() {
+		return CountryTwoLetters;
+	}
+
+	public void setCountryTwoLetters(String countryTwoLetters) {
+		CountryTwoLetters = countryTwoLetters;
+	}
+
+
 	public FriendsSelectedAdapter mFriendsSelectedAdapter;
 	
 	public void close()
@@ -202,6 +217,8 @@ public class ContactsListSingleton
 			{
 				PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 				try {
+
+					
 					converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
 					result=phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
 				} catch (Exception e) {

@@ -1,0 +1,55 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:key="pref_key_location_language"
+        android:title="@string/title_pref_category_language_location" >
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_language_list_titles"
+            android:entryValues="@array/pref_language_list_values"
+            android:key="language_list"
+            android:dialogTitle="@string/pref_language_dialog_title"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_language_summery"
+            android:title="@string/pref_title_language" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_location_list_titles"
+            android:entryValues="@array/pref_location_list_values"
+             android:summary="@string/pref_location_summery"
+            android:key="location_list"
+            android:dialogTitle="@string/pref_location_dialog_title"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_location" />
+    </PreferenceCategory>
+    
+        <PreferenceCategory
+        android:key="pref_key_default_radius"
+        android:title="@string/pref_category_default_radius" >
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_radius_value"
+            android:inputType="numberDecimal"
+            android:key="default_radius_text"
+            android:maxLines="1"
+            android:dialogTitle="@string/pref_default_radius_dialog_title"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_default_radius_summery"
+            android:title="@string/pref_default_radius" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:key="pref_key_sms_category"
+        android:title="SMS Usage" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_key_sms_allow"
+            android:summary="@string/pref_sms_allow_summery"
+            android:title="@string/pref_title_sms_allow" />
+
+    </PreferenceCategory>
+  
+    
+
+</PreferenceScreen>
