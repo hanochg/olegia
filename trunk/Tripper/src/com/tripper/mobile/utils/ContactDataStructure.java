@@ -1,5 +1,7 @@
 package com.tripper.mobile.utils;
 
+import com.google.android.gms.maps.model.Marker;
+
 import android.net.Uri;
 import android.util.Log;
 
@@ -21,10 +23,13 @@ public class ContactDataStructure
 	private Uri uri;
 	private eAppStatus appStatus=eAppStatus.notChecked;
 	private eAnswer contactAnswer=eAnswer.notAnswered;
-	private double longtitude, latitude;
-	public Object Locker;
+	private double longitude, latitude;
+	private double radius;
+	private Marker marker; 
 
 	
+
+
 	public ContactDataStructure()
 	{		
 		name=null;
@@ -32,9 +37,11 @@ public class ContactDataStructure
 		id=0;
 		lookupkey=null;
 		uri=null;
-		longtitude=0;
-		latitude=0;
+		longitude=-1;
+		latitude=-1;
 		internationalPhoneNumber="";
+		radius=20;
+		marker=null;
 	}
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
 	{
@@ -43,14 +50,31 @@ public class ContactDataStructure
 		this.id=id;
 		this.lookupkey=lookupkey;
 		this.uri=uri;		
+		this.longitude=-1;
+		this.latitude=-1;
 		this.internationalPhoneNumber="";
+		this.marker=null;
 	}
 	
-	public double getLongtitude() {
-		return longtitude;
+	public Marker getMarker() {
+		return marker;
 	}
-	public void setLongtitude(double longtitude) {
-		this.longtitude = longtitude;
+	public void setMarker(Marker marker) {
+		this.marker = marker;
+	}
+	
+	public double getRadius() {
+		return radius;
+	}
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+	
+	public double getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 	public double getLatitude() {
 		return latitude;

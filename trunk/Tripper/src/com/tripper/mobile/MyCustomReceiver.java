@@ -72,7 +72,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 				double latitude=json.getDouble(Net.LATITUDE);
 				double longtitude=json.getDouble(Net.LONGITUDE);
 				contact.setLatitude(latitude);
-				contact.setLongtitude(longtitude);
+				contact.setLongitude(longtitude);
 				contact.setContactAnswer(eAnswer.ok);
 		    }
 		    catch (JSONException x) 

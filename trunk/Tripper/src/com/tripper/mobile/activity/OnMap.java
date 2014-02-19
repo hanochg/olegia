@@ -7,8 +7,7 @@ import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -20,13 +19,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.R;
 import com.tripper.mobile.adapter.NavDrawerListAdapter;
-import com.tripper.mobile.map.GMapV2Direction;
-import com.tripper.mobile.map.GetDirectionsAsyncTask;
+import com.tripper.mobile.map.*;
+import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -40,8 +38,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -50,9 +46,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -67,6 +61,7 @@ public class OnMap extends Activity {
 	private boolean isTravelingToParis = false;
 	private int width, height;
 	
+	
 	/*
 	 * DRAWER VARIABLES
 	 */
@@ -80,10 +75,6 @@ public class OnMap extends Activity {
     // used to store app title
     private CharSequence mTitle;
  
-    // slide menu items
-    private String[] navMenuTitles;
-    private TypedArray navMenuIcons;
- 
     private NavDrawerListAdapter navDrawerListAdapter;
 
 	/*
@@ -91,10 +82,11 @@ public class OnMap extends Activity {
 	 */
     
 	//Globals
-	private GoogleMap googleMap;
+    private GoogleMap googleMap;
 	List<MyMarkers> markersList;
     int markerCounter=0;
     Context context;
+    Marker singleRouteMarker=null;
     
 	//Externals
 	public static Address selectedAddress=null;
@@ -106,13 +98,11 @@ public class OnMap extends Activity {
 	{	
 		public MarkerOptions markerOptions;
 	    public Marker marker; 
-	    public String markerStreet;
 	    
 	    MyMarkers(MarkerOptions markerOptions,Marker marker,String marker_street)
 	    {
 	    	this.markerOptions=markerOptions;
-	    	this.marker=marker;
-	    	this.markerStreet=marker_street;	    	
+	    	this.marker=marker;    	
 	    }
 	 };
 	 
@@ -131,67 +121,63 @@ public class OnMap extends Activity {
 			  {
 				  Log.e("onReceive","aaaaaaaaaaaaaaaaaaaaaaaa");
 				  navDrawerListAdapter.notifyDataSetChanged();
+				  addContactsMarkers();
 				  Toast.makeText(getApplicationContext(), "zzzzzzzzzzzzzzzzzzzzz", Toast.LENGTH_LONG).show();
 			  }
 		};
-				
+
 		//initialize markers
 		markersList = new ArrayList<MyMarkers>();
-		
+
 		// Initializing Map
-		try {
-			initilizeMap();
 
-		} catch (Exception e) {
-			Log.e("OnMap","Error Initializing Map: "+e.getMessage());
-		}
+		initilizeMap();
+
+		initializeMarkers();
 		
-		//defining click on marker on the map
-		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {			
-			@Override
-			public boolean onMarkerClick(Marker arg0) {
-				Log.d("MARKER","ON MARKER CLICK");
-				for (MyMarkers myMarkers : markersList) {
-					if(myMarkers.marker.equals(arg0))					
-					{
-						Toast.makeText(getBaseContext(), myMarkers.markerStreet, Toast.LENGTH_SHORT).show();
-						break;
-					}
-				}
-				return false;
-			}
-		});
-		
-		//Get single route details
-		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
-		
-		if(selectedAddress!=null && selectedAddress.getLatitude()!=0 && 
-				selectedAddress.getLongitude()!=0)
-		{
-			Toast.makeText(this, selectedAddress.getLatitude()+","+selectedAddress.getLongitude(), Toast.LENGTH_SHORT ).show();
-
-			// create marker from previous form
-			MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude())).title(selectedAddress.getLatitude() + ":" + selectedAddress.getLongitude());		
-
-			markersList.add(new MyMarkers(markerOptions,null,"Not detected yet or Not next to any street"));
-
-			// adding marker
-			markersList.get(markerCounter).marker=googleMap.addMarker(markersList.get(markerCounter).markerOptions);
-
-			//launch Async Geocode query
-			notifyResult(this,markerCounter);
-			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(markersList.get(markerCounter).markerOptions.getPosition(), 14, 0, 0)),3000,null);
-			//increment markers counter
-			markerCounter++;
-			
-		}
-
 		InitializeDrawer();
-		
-		selectedAddress=null;
 		
 	}
 	
+	
+	private void initializeMarkers() 
+	{
+		addSingleRouteMarker();
+		addContactsMarkers();
+			
+	}
+
+	private void addSingleRouteMarker()
+	{
+		//Get single route details
+		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
+
+		if(selectedAddress!=null && selectedAddress.getLatitude()!=-1 && 
+				selectedAddress.getLongitude()!=-1)
+		{
+			LatLng latLng=new LatLng(selectedAddress.getLatitude(),selectedAddress.getLongitude());
+			MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Destination!!");				
+			singleRouteMarker=googleMap.addMarker(markerOptions);
+		}
+	}
+
+	private void addContactsMarkers()
+	{
+		ArrayList<ContactDataStructure> contactsDB = ContactsListSingleton.getInstance().getDB();
+		ContactDataStructure curContact;
+		for(int i=0 ; i<contactsDB.size() ; i++)
+		{
+			curContact=contactsDB.get(i);
+			if(curContact.getLatitude()!=-1 && curContact.getLongitude()!=-1 && 
+					curContact.getMarker()==null)
+			{
+				LatLng latLng=new LatLng(curContact.getLatitude(),curContact.getLongitude());
+				Log.d("ContactMarker","MarkerName: "+curContact.getName());
+				MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(curContact.getName());				
+				curContact.setMarker(googleMap.addMarker(markerOptions));
+			}
+		}	
+	}
 	
 	private void InitializeDrawer()
 	{
@@ -240,9 +226,9 @@ public class OnMap extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
-            // display view for selected nav drawer item
-            //displayView(position);
+        	
         	mDrawerLayout.closeDrawer(mDrawerList);
+        	
         }
     }
 
@@ -250,31 +236,6 @@ public class OnMap extends Activity {
      * Displaying fragment view for selected nav drawer list item
      * */
     private void displayView(int position) {
-    	// update the main content by replacing fragments
-    	Fragment fragment = null;
-    	switch (position) {
-    	case 0:
-    		//fragment = new HomeFragment();
-    		break;
-    	case 1:
-    		//fragment = new FindPeopleFragment();
-    		break;
-    	case 2:
-    		//fragment = new PhotosFragment();
-    		break;
-    	case 3:
-    		//fragment = new CommunityFragment();
-    		break;
-    	case 4:
-    		//fragment = new PagesFragment();
-    		break;
-    	case 5:
-    		//fragment = new WhatsHotFragment();
-    		break;
-
-    	default:
-    		break;
-    	}
 
     	// update selected item and title, then close the drawer
     	//mDrawerList.setItemChecked(position, true);
@@ -297,10 +258,15 @@ public class OnMap extends Activity {
 	 * */
 	private void initilizeMap() {
 		if (googleMap == null) {
-			googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-			//googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-			
-			googleMap.setMyLocationEnabled(true);
+			try{
+				googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+				//googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+				googleMap.setMyLocationEnabled(true);
+			}
+			catch(Exception e){
+				Log.e("OnMap","Error Initializing Map: "+e.getMessage());
+			}
 			// check if map is created successfully or not
 			if (googleMap == null) {
 				Toast.makeText(getApplicationContext(),
@@ -308,6 +274,23 @@ public class OnMap extends Activity {
 						.show();
 				return;
 			}
+
+			//defining click on marker on the map
+			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {			
+				@Override
+				public boolean onMarkerClick(Marker arg0) {
+					return false;
+				}
+			});
+			googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+			googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+				
+				@Override
+				public void onInfoWindowClick(Marker arg0) {
+					//Toast.makeText(this, marker.getTitle(), Toast.LENGTH_LONG).show();
+					
+				}
+			});
 		}
 	}
 	
@@ -402,27 +385,7 @@ public class OnMap extends Activity {
 		super.onResume();	
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
 		navDrawerListAdapter.notifyDataSetChanged();
-		/*
-		if(selectedAddress!=null)
-		{
-			Toast.makeText(this, selectedAddress.getLatitude()+","+selectedAddress.getLongitude(), Toast.LENGTH_SHORT ).show();
-
-			// create marker from previous form
-			MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude())).title(selectedAddress.getLatitude() + ":" + selectedAddress.getLongitude());		
-
-			markersList.add(new MyMarkers(markerOptions,null,"Not detected yet or Not next to any street"));
-
-			// adding marker
-			markersList.get(markerCounter).marker=googleMap.addMarker(markersList.get(markerCounter).markerOptions);
-
-			//launch Async Geocode query
-			notifyResult(this,markerCounter);
-
-			//increment markers counter
-			markerCounter++;
-			selectedAddress=null;
-		}
-		
+/*
 		//MAP ROUTE 
     	latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
@@ -543,7 +506,7 @@ public class OnMap extends Activity {
 				{
 					Address address= addressList.get(0);
 					String addressString=address.getAddressLine(2)+","+ address.getAddressLine(1)+","+address.getAddressLine(0);
-					markersList.get(markerIndex).markerStreet=addressString;	
+					//markersList.get(markerIndex).markerStreet=addressString;	
 				}
 				
 			} catch (Exception ex) {
