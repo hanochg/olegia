@@ -157,7 +157,7 @@ public class ContactsListSingleton
 				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
 	}
 	
-	public ArrayList<String> getAllChannelsForParse(String channelPrefix)
+	public ArrayList<String> getAllChannelsForParse(char channelPrefix)
 	{
 		ArrayList<String> phones = null; 
 		if(db!=null && !db.isEmpty())

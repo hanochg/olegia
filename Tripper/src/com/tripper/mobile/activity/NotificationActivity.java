@@ -1,22 +1,19 @@
 package com.tripper.mobile.activity;
 
-import java.util.ArrayList;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.parse.ParseAnalytics;
-import com.parse.ParseInstallation;
 import com.parse.ParsePush;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
-import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ContactsListSingleton.AppMode;
 import com.tripper.mobile.utils.Queries;
+import com.tripper.mobile.utils.Queries.Extra;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,18 +21,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class NotificationActivity extends Activity implements
 								LoaderManager.LoaderCallbacks<Cursor>{
@@ -43,10 +40,10 @@ public class NotificationActivity extends Activity implements
 	private TextView tvMessage;
 	private String phone="";
 	private LocationManager locationManager=null;
-	LocationListener locationListener;
-	Boolean mylocationClicked=false;
+	private LocationListener locationListener;
+	private Boolean mylocationClicked=false;
 	private Activity notificationActivity;
-
+	private ProgressDialog progressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -60,7 +57,7 @@ public class NotificationActivity extends Activity implements
 		
 		try {
 			JSONObject json = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
-			phone= json.get("user").toString();
+			phone= json.get(Net.USER).toString();
 			
 			
 		} catch (JSONException e) {
@@ -89,9 +86,10 @@ public class NotificationActivity extends Activity implements
 		    {
 		    	if(location.getAccuracy()<100)
 		    	{
+		    		 progressDialog.dismiss();
 		    		 locationManager.removeUpdates(this);										//not so working
-		    		 Toast.makeText(getApplicationContext(), "Your location was sent back.", Toast.LENGTH_LONG).show();
-		    		 answerHandler(getJSONDataMessage("ok",location.getLatitude(),location.getLongitude()),phone);	
+		    		 Toast.makeText(notificationActivity, "Your location was sent back.", Toast.LENGTH_LONG).show();
+		    		 answerHandler(getJSONDataMessage(Net.AnswerIsOK,location.getLatitude(),location.getLongitude()),phone);	
 		    		 notificationActivity.finish();
 		    		 
 		    	}	
@@ -112,38 +110,41 @@ public class NotificationActivity extends Activity implements
 		 
 		 if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		 
+		 progressDialog = new ProgressDialog(this);
 
+		 progressDialog.setTitle("Retrieving GPS coordinates");
+		 progressDialog.setMessage("Please wait.."); 
+		 progressDialog.show();	 
+		 
 		 mylocationClicked=true;			 
 	}
 	
 	public void OnBtnNoThanksClick(View view)
 	{	
-		JSONObject data = getJSONDataMessage("no",0,0);
+		JSONObject data = getJSONDataMessage(Net.AnswerIsNo,0,0);
 		answerHandler(data,phone);
-		Toast.makeText(getApplicationContext(), "Your answer was sent.", Toast.LENGTH_LONG).show();
+		Toast.makeText(notificationActivity, "Your answer was sent.", Toast.LENGTH_LONG).show();
 		this.finish();
 	}
-	public void OnBtnProfileAddressClick(View view)
-	{	
-		
-	}
+	
 	public void OnBtnEnterAdressClick(View view)
 	{	
 		ContactsListSingleton.getInstance().APP_MODE=AppMode.NOTIFICATION;
 		Intent intent = new Intent(this, FindAddress.class);
-		startActivityForResult(intent, 123);
+		startActivityForResult(intent, Extra.NOTIFICATION_RESULTCODE);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
-	    if (requestCode == 123 && resultCode == RESULT_OK)
+	    if (requestCode == Extra.NOTIFICATION_RESULTCODE && resultCode == RESULT_OK)
 	    {
-	    	double  latitude =  intent.getDoubleExtra(Queries.EXTRA_LATITUDE,0);
-	    	double  longitude = intent.getDoubleExtra(Queries.EXTRA_LONGITUDE,0);
+	    	double  latitude =  intent.getDoubleExtra(Extra.LATITUDE,0);
+	    	double  longitude = intent.getDoubleExtra(Extra.LONGITUDE,0);
 	    	
-	    	 answerHandler(getJSONDataMessage("ok",latitude,longitude),phone);	
+	    	 answerHandler(getJSONDataMessage(Net.AnswerIsOK,latitude,longitude),phone);	
 	    	
-	    	Toast.makeText(getApplicationContext(), "Your answer was sent.", Toast.LENGTH_LONG).show();
+	    	Toast.makeText(notificationActivity, "Your answer was sent.", Toast.LENGTH_LONG).show();
 			this.finish();
 	    }
 	}
@@ -155,12 +156,12 @@ public class NotificationActivity extends Activity implements
 	    {
 	        JSONObject data = new JSONObject();
 	        data.put("action","com.tripper.mobile.Answer");
-	        data.put("user", ParseUser.getCurrentUser().getUsername());
-	        data.put("answer", answer);
-	        if(answer!="no")
+	        data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+	        data.put(Net.ANSWER, answer);
+	        if(answer!=Net.AnswerIsNo)
 	        {
-	        	data.put("latitude",  latitude);
-	        	data.put("longitude", longitude);
+	        	data.put(Net.LATITUDE,  latitude);
+	        	data.put(Net.LONGITUDE, longitude);
 	        }
 	        return data;
 	    }
@@ -173,7 +174,7 @@ public class NotificationActivity extends Activity implements
 	public static void answerHandler(JSONObject data, String targetNumber)
 	{		 
 		ParsePush push = new ParsePush();
-		push.setChannel(Queries.PhoneToChannel("b",targetNumber)); 
+		push.setChannel(Net.PhoneToChannel(ChannelMode.ANSWER,targetNumber)); 
 		
 		push.setExpirationTimeInterval(60*60*24);//one day, till query is relevant
 		

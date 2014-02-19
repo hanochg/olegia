@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.Queries;
+import com.tripper.mobile.utils.Queries.Extra;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -58,7 +58,7 @@ public class SplashScreen extends Activity {
 				else
 				{
 					intent = new Intent(splashActivity, LoginActivity.class);
-					intent.putExtra(Queries.EXTRA_PHONE, mPhoneNumber);
+					intent.putExtra(Extra.PHONE, mPhoneNumber);
 				}
 				startActivity(intent);	
 								

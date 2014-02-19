@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,12 +17,7 @@ import android.util.Log;
 
 public class MyCustomReceiver extends BroadcastReceiver 
 {
-	public class ChannelMode
-	{	
-        public static final char INVITATION='a';
-        public static final char ANSWER='b';
-        public static final char GETDOWN='c';
-	}
+
 	
 	public void onReceive(Context context, Intent intent)
 	{
@@ -45,6 +42,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 		}
 	}
 	
+	
 	public void ANSWERHandler(JSONObject json,Context context)
 	{
 		String answer="";
@@ -53,8 +51,8 @@ public class MyCustomReceiver extends BroadcastReceiver
 		
 		try
 	    {    	
-			answer=json.getString("answer");
-			user=json.getString("user");
+			answer=json.getString(Net.ANSWER);
+			user=json.getString(Net.USER);
 			
 			contact=ContactsListSingleton.getInstance().findContactByPhoneNum(user);
 			if (contact==null)
@@ -67,13 +65,12 @@ public class MyCustomReceiver extends BroadcastReceiver
 	    	return;
 	    }
 		
-		if(answer.equals("ok"))
+		if(answer.equals(Net.AnswerIsOK))
 		{	
-
 			try
 		    {    	
-				double latitude=json.getDouble("latitude");
-				double longtitude=json.getDouble("longitude");
+				double latitude=json.getDouble(Net.LATITUDE);
+				double longtitude=json.getDouble(Net.LONGITUDE);
 				contact.setLatitude(latitude);
 				contact.setLongtitude(longtitude);
 				contact.setContactAnswer(eAnswer.ok);
@@ -85,7 +82,7 @@ public class MyCustomReceiver extends BroadcastReceiver
 		    }
 
 		}	
-		else if (answer.equals("no"))
+		else if (answer.equals(Net.AnswerIsNo))
 		{
 			contact.setContactAnswer(eAnswer.no);
 		}

@@ -12,10 +12,42 @@ import android.provider.ContactsContract;
 public class Queries {
 	
 	//Extras in intents
-	public static final String EXTRA_PHONE = "PhoneNumber";
-	public static final String EXTRA_LATITUDE = "latitude";
-	public static final String EXTRA_LONGITUDE = "longitude";
+	public static final class Extra
+	{
+		public static final String PHONE = "PhoneNumber";
+		public static final int NOTIFICATION_RESULTCODE = 123;
+		//From NotificationActivity to FindAddresActivity
+		public static final String LATITUDE = "latitude";
+		public static final String LONGITUDE = "longitude";
+	}
 	
+	public static final class Net
+	{
+		public static final String AnswerIsNo = "no";
+		public static final String AnswerIsOK = "ok";
+			
+		public static final String LATITUDE = "la";
+		public static final String LONGITUDE = "lo";
+		public static final String USER = "ur";
+		public static final String ANSWER = "an";
+		
+		public static final class ChannelMode
+		{	
+	        public static final char INVITATION='a';
+	        public static final char ANSWER='b';
+	        public static final char GETDOWN='c';
+		}
+		
+		public static String PhoneToChannel(char channelPrefix, String Phone)	
+		{		
+			String tempString=Phone;
+			
+			if(tempString.startsWith("+"))
+				tempString= tempString.substring(1);
+			
+			return channelPrefix + tempString;
+		}	
+	}
 	
 	
     public final static String SORT_ORDER =
@@ -153,18 +185,5 @@ public class Queries {
             StrictMode.setVmPolicy(vmPolicyBuilder.build());
         }
     }
-    
-	public static String PhoneToChannel(String channelPrefix, String Phone)	
-	{		
-		String tempString=Phone;
-		
-		if(tempString.startsWith("+"))
-			tempString= tempString.substring(1);
-		
-		return channelPrefix + tempString;
-	}	
-
-	
-	
 	
 }
