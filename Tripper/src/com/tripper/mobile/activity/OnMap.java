@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.tripper.mobile.DistanceService;
 import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.NavDrawerListAdapter;
@@ -115,6 +116,10 @@ public class OnMap extends Activity {
 	
 		context=this;
 		getScreenDimensions();
+		
+		
+	    Intent i=new Intent(this, DistanceService.class);
+	    startService(i);
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override

@@ -11,6 +11,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
 import android.content.SharedPreferences;
@@ -184,8 +185,11 @@ public class ContactsListSingleton
 			for(int i=0 ; i<db.size() ; i++)
 			{
 				tempContact=db.get(i);
-				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp)
+				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+				{
 					phones.add(tempContact.getChannelforParse(channelPrefix));
+					tempContact.setContactAnswer(eAnswer.notAnswered);
+				}
 			}
 		}	
 		return phones;
