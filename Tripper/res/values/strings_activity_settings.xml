@@ -1,0 +1,54 @@
+<resources>
+    <!-- Strings related to Settings --><string name="title_activity_settings">Settings</string>
+
+    <!-- LOCATION -->
+    <string name="title_pref_category_language_location">Language &amp; Location</string>
+    <string name="pref_location_summery">Used to identify the local area code</string>
+    <string name="pref_location_dialog_title">Choose Location</string>
+    <string name="pref_title_location">Location</string>
+
+    <string-array name="pref_location_list_titles">
+        <item>Israel</item>
+        <item>USA</item>
+        <item>-Autodetect-\ncan cause inaccuracy in phone number\'s international area code</item>
+    </string-array>
+    <string-array name="pref_location_list_values">
+        <item>IL</item>
+        <item>US</item>
+        <item>AUTO</item>
+    </string-array>
+    <!-- LANGUAGES -->
+    <string name="pref_language_dialog_title">Choose Language</string>
+    <string name="pref_language_summery">Choose application\'s language</string>
+    <string name="pref_title_language">Language</string>
+
+    <string-array name="pref_language_list_titles">
+        <item>Hebrew</item>
+        <item>English</item>
+    </string-array>
+    <string-array name="pref_language_list_values">
+        <item>iw</item>
+        <item>en</item>
+    </string-array>
+
+    <!-- RADIUS -->
+    <string name="pref_category_default_radius">Radius Size</string>
+<string name="pref_default_radius">Default Radius Size</string>
+    <string name="pref_default_radius_dialog_title">Default Radius Size (in meters)</string>
+    <string name="pref_default_radius_summery">The default proximity redius (in Meters) that activate the message sending</string>
+ 	<string name="pref_default_radius_value">50</string>
+ 	
+    <!-- SMS -->
+    <string name="pref_title_sms_allow">Allow Sending SMS Messages</string>
+    <string name="pref_sms_allow_summery">This will allow the application to send SMS messages to friends who don\'t have this application installed.\n\nWARNING: If SMS is not allowed friends without the application will not get messages!</string>
+    
+  
+    
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+
+</resources>

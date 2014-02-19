@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
+import com.tripper.mobile.SettingsActivity;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
@@ -40,9 +42,6 @@ import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.*;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
-
-
-
 
 public class FriendsList extends Activity implements
 						LoaderManager.LoaderCallbacks<Cursor>
@@ -102,7 +101,7 @@ public class FriendsList extends Activity implements
 		    public void onItemClick(
 		            AdapterView<?> parent, View item, int position, long rowID) {
 		        
-				ContactDataStructure contact = new ContactDataStructure();
+				ContactDataStructure contact = new ContactDataStructure(context);
 				
 				// Gets the Cursor object currently bound to the ListView
 		        final Cursor cursor = mAutoCompleteAdapter.getCursor();
@@ -255,20 +254,24 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
-	    switch(item.getItemId()){
-	    case R.id.doneFL:
-	    	
+		Intent intent;
+		switch(item.getItemId()){
+	    case R.id.doneFL:	    	
 	    	ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();    	
 	    	if(db==null || db.isEmpty())
 	    	{
 	    		Toast.makeText(this, "Please add contacts.", Toast.LENGTH_LONG).show();
 	    		return true;    	
 	    	}
-	    	Intent intent = new Intent(this, OnMap.class);	
+	    	intent = new Intent(this, OnMap.class);	
 	    	startActivity(intent);
 	    	
 	    	sendNotifications();
-	        return true;            
+	        return true;     
+		case R.id.SettingsFL:
+			intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
 	    }
 	    return false;
 	}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import com.tripper.mobile.BuildConfig;
 import com.tripper.mobile.R;
+import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.ContactsAdapter;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
@@ -15,6 +16,7 @@ import com.tripper.mobile.utils.Queries;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -64,6 +66,7 @@ public class ContactsList extends Activity implements
     private EditText searchEditText;
     private ListView listView;
     private TextView mEmptyView;
+    private Context context;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
     
@@ -71,7 +74,6 @@ public class ContactsList extends Activity implements
 	{
 	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
 	    {
-	    	String address = "";
 	        // Populate the wordsList with the String values the recognition engine thought it heard
 	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 	        searchEditText.setText(matches.get(0));
@@ -90,7 +92,7 @@ public class ContactsList extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_list);
-		
+		context=this;
 		
 		//NO back arrow to previous activity!
 		/*ActionBar actionBar = getActionBar();
@@ -182,7 +184,7 @@ public class ContactsList extends Activity implements
 		        if(!checked.isChecked())
 		        {
 		        	checked.setChecked(true);
-		        	ContactDataStructure contact = new ContactDataStructure();
+		        	ContactDataStructure contact = new ContactDataStructure(context);
 		        	contact.setId(contactID);
 		        	contact.setLookupkey(lookupKey);
 		        	contact.setName(displayName);
@@ -227,12 +229,18 @@ public class ContactsList extends Activity implements
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
-	    switch(item.getItemId()){
+		Intent intent;
+		switch(item.getItemId()){
 	    case R.id.doneCL:
-	    	Intent intent = new Intent(this, MainActivity.class);
+	    	intent = new Intent(this, MainActivity.class);
 	    	setResult(Activity.RESULT_OK,intent);
 	    	finish();
-	        return true;            
+	        return true; 
+	    case R.id.SettingsCL:
+	    	intent = new Intent(this, SettingsActivity.class);
+	    	startActivity(intent);
+	    	return true;
+	    	
 	    }
 	    return false;
 	}

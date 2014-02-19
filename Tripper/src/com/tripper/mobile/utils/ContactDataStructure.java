@@ -1,8 +1,13 @@
 package com.tripper.mobile.utils;
 
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
+import com.tripper.mobile.SettingsActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class ContactDataStructure 
@@ -26,12 +31,18 @@ public class ContactDataStructure
 	private double longitude, latitude;
 	private double radius;
 	private Marker marker; 
+	private Circle radiusOnMap;
 
 	
 
 
-	public ContactDataStructure()
+
+	public ContactDataStructure(Context context)
 	{		
+		//reading Settings
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		float radiusFromSettings = sharedPref.getFloat(SettingsActivity.default_radius_text, 0);
+		
 		name=null;
 		phoneNumber=null;
 		id=0;
@@ -40,11 +51,16 @@ public class ContactDataStructure
 		longitude=-1;
 		latitude=-1;
 		internationalPhoneNumber="";
-		radius=20;
+		radius=radiusFromSettings;
 		marker=null;
+		radiusOnMap=null;
 	}
-	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri)
+	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri,Context context)
 	{
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		float radiusFromSettings = sharedPref.getFloat(SettingsActivity.default_radius_text, 0);
+		
+		this.radius=radiusFromSettings;
 		this.name=name;
 		this.phoneNumber=phoneNumber;
 		this.id=id;
@@ -54,6 +70,14 @@ public class ContactDataStructure
 		this.latitude=-1;
 		this.internationalPhoneNumber="";
 		this.marker=null;
+		this.radiusOnMap=null;
+	}
+	
+	public Circle getRadiusOnMap() {
+		return radiusOnMap;
+	}
+	public void setRadiusOnMap(Circle radiusOnMap) {
+		this.radiusOnMap = radiusOnMap;
 	}
 	
 	public Marker getMarker() {

@@ -12,22 +12,22 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.tripper.mobile.R;
+import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.AddressAdapter;
 import com.tripper.mobile.utils.ContactsListSingleton;
-import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
-import com.tripper.mobile.utils.Queries.Net;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -66,7 +66,7 @@ public class FindAddress extends Activity {
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
 	
-	private Locale GeoCodeLocale= new Locale("iw");//change to "en" or default 
+	private Locale GeoCodeLocale;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -95,6 +95,13 @@ public class FindAddress extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
+
+		//reading Settings
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list, "");
+		
+		//define locale
+		GeoCodeLocale = new Locale(languageFromSettings);
 		
 		activityContext=this;
 		AsyncTasker = new AsyncGeocode(activityContext);
@@ -116,8 +123,6 @@ public class FindAddress extends Activity {
 		msgHandler=new MessageHandler(this);
 
 		//Define AutoComplete Adapter
-		//autoCompleteAdapter = new ArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);//android.R.layout.simple_dropdown_item_1line);
-		//autoCompleteAdapter.setNotifyOnChange(false);
 		addressDB = new ArrayList<Address>();
 		
 		//Define ListAdapter
@@ -131,7 +136,6 @@ public class FindAddress extends Activity {
 		
 		//Define AutoComplete TextView	    
 		addressSearch.addTextChangedListener(new TextWatcher() {
-
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
 			{
@@ -202,11 +206,11 @@ public class FindAddress extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.nextFA:
-	    	if(selectedAddress==null)
-	    		return true;
-	    	
+		switch (item.getItemId()) {
+		case R.id.nextFA:
+			if(selectedAddress==null)
+				return true;
+
 			switch (ContactsListSingleton.getInstance().APP_MODE)
 			{
 			case SINGLE_DESTINATION: //MainActivity				
@@ -226,13 +230,13 @@ public class FindAddress extends Activity {
 
 				//get selected address
 				//selectedAddress = listViewAdapter.getItem(position);
-				
+
 				//get longitude and latitude and send it to user's data
 				ContactsListSingleton.getInstance().setContactLocation(
 						phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
 				break;
 			case NOTIFICATION:	//Notification
-				
+
 				Intent newintent = new Intent(this, MainActivity.class); 
 				newintent.putExtra(Extra.LATITUDE, selectedAddress.getLatitude());
 				newintent.putExtra(Extra.LONGITUDE, selectedAddress.getLongitude());
@@ -240,11 +244,12 @@ public class FindAddress extends Activity {
 				finish();
 				break;					
 			}
-
-	    	
-	
-	    }
-	    return super.onOptionsItemSelected(item);
+		case R.id.SettingsFA:
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private static void notifyResult(String value,Context context) {

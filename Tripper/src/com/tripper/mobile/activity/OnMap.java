@@ -10,7 +10,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.R;
+import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.NavDrawerListAdapter;
 import com.tripper.mobile.map.*;
 import com.tripper.mobile.utils.ContactDataStructure;
@@ -34,7 +36,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -119,10 +120,10 @@ public class OnMap extends Activity {
 			  @Override
 			  public void onReceive(Context context, Intent intent) 
 			  {
-				  Log.e("onReceive","aaaaaaaaaaaaaaaaaaaaaaaa");
+				  Log.e("onReceive","RECEIVED!!");
 				  navDrawerListAdapter.notifyDataSetChanged();
 				  addContactsMarkers();
-				  Toast.makeText(getApplicationContext(), "zzzzzzzzzzzzzzzzzzzzz", Toast.LENGTH_LONG).show();
+				  Toast.makeText(getApplicationContext(), "MSG RECEIVED!", Toast.LENGTH_LONG).show();
 			  }
 		};
 
@@ -130,23 +131,58 @@ public class OnMap extends Activity {
 		markersList = new ArrayList<MyMarkers>();
 
 		// Initializing Map
-
 		initilizeMap();
-
-		initializeMarkers();
 		
+		//Initialize the Drawer
 		InitializeDrawer();
 		
 	}
 	
-	
-	private void initializeMarkers() 
-	{
-		addSingleRouteMarker();
-		addContactsMarkers();
-			
-	}
+	/**
+	 * function to load map. If map is not created it will create it for you
+	 * */
+	private void initilizeMap() {
+		if (googleMap == null) {
+			try{
+				googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+				//googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
+				googleMap.setMyLocationEnabled(true);
+			}
+			catch(Exception e){
+				Log.e("OnMap","Error Initializing Map: "+e.getMessage());
+			}
+			// check if map is created successfully or not
+			if (googleMap == null) {
+				Toast.makeText(getApplicationContext(),
+						"Sorry! unable to create maps", Toast.LENGTH_SHORT)
+						.show();
+				return;
+			}
+
+			//defining click on marker on the map
+			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {			
+				@Override
+				public boolean onMarkerClick(Marker arg0) {
+					return false;
+				}
+			});
+			googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+			googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+				
+				@Override
+				public void onInfoWindowClick(Marker arg0) {
+					//Toast.makeText(this, marker.getTitle(), Toast.LENGTH_LONG).show();
+					
+				}
+			});
+			
+			//MARKERS
+			addSingleRouteMarker();
+			addContactsMarkers();
+		}
+	}
+	
 	private void addSingleRouteMarker()
 	{
 		//Get single route details
@@ -156,7 +192,7 @@ public class OnMap extends Activity {
 				selectedAddress.getLongitude()!=-1)
 		{
 			LatLng latLng=new LatLng(selectedAddress.getLatitude(),selectedAddress.getLongitude());
-			MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Destination!!");				
+			MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Destination!!").icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag1));				
 			singleRouteMarker=googleMap.addMarker(markerOptions);
 		}
 	}
@@ -165,16 +201,28 @@ public class OnMap extends Activity {
 	{
 		ArrayList<ContactDataStructure> contactsDB = ContactsListSingleton.getInstance().getDB();
 		ContactDataStructure curContact;
+		double curContactLong,curContactLat;
+		
 		for(int i=0 ; i<contactsDB.size() ; i++)
 		{
 			curContact=contactsDB.get(i);
-			if(curContact.getLatitude()!=-1 && curContact.getLongitude()!=-1 && 
+			curContactLong=curContact.getLongitude();
+			curContactLat=curContact.getLatitude();
+			if(curContactLat!=-1 && curContactLong!=-1 && 
 					curContact.getMarker()==null)
 			{
-				LatLng latLng=new LatLng(curContact.getLatitude(),curContact.getLongitude());
+				LatLng latLng=new LatLng(curContactLat,curContactLong);
 				Log.d("ContactMarker","MarkerName: "+curContact.getName());
-				MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(curContact.getName());				
+				MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(curContact.getName());
+				curContact.setRadiusOnMap(googleMap.addCircle(new CircleOptions()
+			     .center(latLng)
+			     .radius(curContact.getRadius())
+			     .strokeColor(Color.DKGRAY)
+			     .strokeWidth(2)
+			     //.fillColor(Color.BLUE)
+			     .fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
 				curContact.setMarker(googleMap.addMarker(markerOptions));
+				
 			}
 		}	
 	}
@@ -226,24 +274,11 @@ public class OnMap extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
-        	
+
         	mDrawerLayout.closeDrawer(mDrawerList);
         	
         }
-    }
-
-    /**
-     * Displaying fragment view for selected nav drawer list item
-     * */
-    private void displayView(int position) {
-
-    	// update selected item and title, then close the drawer
-    	//mDrawerList.setItemChecked(position, true);
-    	//mDrawerList.setSelection(position);
-    	//setTitle(navMenuTitles[position]);
-    	mDrawerLayout.closeDrawer(mDrawerList);
-
-    }    
+    }  
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -253,47 +288,7 @@ public class OnMap extends Activity {
 			Toast.makeText(this, "Waze "+resultCode, Toast.LENGTH_LONG).show();
 	}
 
-	/**
-	 * function to load map. If map is not created it will create it for you
-	 * */
-	private void initilizeMap() {
-		if (googleMap == null) {
-			try{
-				googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-				//googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-				googleMap.setMyLocationEnabled(true);
-			}
-			catch(Exception e){
-				Log.e("OnMap","Error Initializing Map: "+e.getMessage());
-			}
-			// check if map is created successfully or not
-			if (googleMap == null) {
-				Toast.makeText(getApplicationContext(),
-						"Sorry! unable to create maps", Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
-
-			//defining click on marker on the map
-			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {			
-				@Override
-				public boolean onMarkerClick(Marker arg0) {
-					return false;
-				}
-			});
-			googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
-			googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-				
-				@Override
-				public void onInfoWindowClick(Marker arg0) {
-					//Toast.makeText(this, marker.getTitle(), Toast.LENGTH_LONG).show();
-					
-				}
-			});
-		}
-	}
-	
 	/*
 	 * MAP ROUTE FUNCTIONS
 	 */
@@ -454,8 +449,10 @@ public class OnMap extends Activity {
         }
         // Handle action bar actions click
         switch (item.getItemId()) {
-        case R.id.action_settings:
-            return true;
+        case R.id.SettingsOM:
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -468,7 +465,7 @@ public class OnMap extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        menu.findItem(R.id.SettingsOM).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 	/**------------------
