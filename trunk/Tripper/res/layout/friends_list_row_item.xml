@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
+                android:background="#00000000"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_height="?android:attr/listPreferredItemHeight">
 
     <ImageButton 
         android:id="@+id/removeButtonFL"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/remove"
+        android:background="#00000000"
+        android:src="@drawable/x_1"
         android:contentDescription="bla"
         android:onClick="removeContactButtonClick"
         />
@@ -23,6 +28,7 @@
         android:fontFamily="sans-serif"
         android:singleLine="true"
         android:ellipsize="marquee"
+        android:background="#00000000"
         android:gravity="right"
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
@@ -33,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/phoneNumFL"
         android:layout_alignParentRight="true"
+        android:background="#00000000"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:layout_toRightOf="@android:id/icon"

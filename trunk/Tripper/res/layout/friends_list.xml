@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="5dp"
+    android:paddingRight="10dp"
+    android:background="#58FAD0"
     tools:context=".FriendsList" >
 
     <AutoCompleteTextView
@@ -34,7 +37,7 @@
         android:layout_alignParentTop="true"
         android:adjustViewBounds="true"
         android:background="#00000000"
-        android:contentDescription="plusSign"
+        android:contentDescription=""
         android:maxHeight="50dp"
         android:maxWidth="30dp"
         android:scaleType="fitCenter"
