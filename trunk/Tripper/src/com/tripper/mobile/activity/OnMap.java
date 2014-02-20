@@ -124,6 +124,7 @@ public class OnMap extends Activity {
 		
 	    Intent i=new Intent(this, DistanceService.class);
 	    startService(i);
+
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override
@@ -471,9 +472,13 @@ public class OnMap extends Activity {
 	}
 	
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		super.onDestroy();
 		selectedAddress=null;
+	    Intent i=new Intent(this, DistanceService.class);
+	    stopService(i);
+		
 	}
 	
     @Override

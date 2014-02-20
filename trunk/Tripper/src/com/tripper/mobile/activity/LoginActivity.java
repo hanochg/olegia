@@ -354,7 +354,7 @@ public class LoginActivity extends Activity {
 		
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), FriendsList.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), NotificationActivity.class);
 	}
 	
 }

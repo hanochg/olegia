@@ -2,9 +2,17 @@ package com.tripper.mobile;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.parse.ParsePush;
+import com.parse.ParseUser;
 import com.tripper.mobile.activity.OnMap;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -23,6 +31,8 @@ public class DistanceService extends IntentService
 {
 
 	private LocationManager locationManager=null;
+	Notification note;
+	PendingIntent pi;
 
 	public DistanceService() {
 		super("DistanceService");
@@ -32,32 +42,50 @@ public class DistanceService extends IntentService
 	protected void onHandleIntent(Intent intent) 
 	{	
 		setNotification();
-		long endTime = System.currentTimeMillis() + 20000;
+		
 		Location mylocation=null;
 		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
 		Location targetlocation;
-		
-		
+
+		long endTime = System.currentTimeMillis() + 40000;
 		while (System.currentTimeMillis() < endTime) 
 		{
 
 			mylocation = getLastKnownLocation();
 
-			Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
+			//Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
 
 			if(mylocation!=null && db!=null)
 			{
-				for (int i=0;i<db.size();i++)
+				ContactDataStructure contact;
+				synchronized(db)
 				{
-					targetlocation = new Location(mylocation);
-					targetlocation.setLatitude(db.get(i).getLatitude());
-					targetlocation.setLongitude(db.get(i).getLongitude());
-
-					if(db.get(i).getRadius()> mylocation.distanceTo(targetlocation))
+					for (int i=0;i<db.size();i++)
 					{
-						///
+						contact=db.get(i);
+						
+						targetlocation = new Location(mylocation);
+						targetlocation.setLatitude(contact.getLatitude());
+						targetlocation.setLongitude(contact.getLongitude());
+						
+						if(contact.isSelected()==true)
+						{
+							
+							note.setLatestEventInfo(this, "Tripper", "On the way to "+ contact.getName(), pi);
+							startForeground(1337, note);
+							
+						}
+												
+						if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
+						{
+							note.tickerText="Message down was sent to "+ contact.getName();
+							//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
+							startForeground(1337, note);
+							sendGetDownMessage(contact.getName());
+							db.remove(contact.getId());
+						}
+						
 					}
-					
 				}
 			}
 
@@ -69,6 +97,9 @@ public class DistanceService extends IntentService
 			{
 
 			}			
+			//note.tickerText="sdasdasdasd";
+			//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
+			//startForeground(1337, note);
 		}
 
 		stopSelf();
@@ -78,14 +109,14 @@ public class DistanceService extends IntentService
 	@SuppressWarnings("deprecation")
 	private void  setNotification()
 	{	
-		Notification note=new Notification(R.drawable.ic_launcher,"Checking Radius?",System.currentTimeMillis());
+		note=new Notification(R.drawable.ic_launcher,"Checking Radius?",System.currentTimeMillis());
 		Intent i=new Intent(this, OnMap.class);
 
 
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
 				Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-		PendingIntent pi=PendingIntent.getActivity(this, 0,i, 0);
+		pi=PendingIntent.getActivity(this, 0,i, 0);
 
 		note.setLatestEventInfo(this, "Tripper","Now Tripping: \"Ummmm, Nothing\"",pi);
 		note.flags|=Notification.FLAG_NO_CLEAR;
@@ -128,4 +159,28 @@ public class DistanceService extends IntentService
 		super.onDestroy();
 		stopForeground(true);
 	}
+
+
+	public void sendGetDownMessage(String targetNumber)
+	{	 
+		ParsePush push = new ParsePush();
+		push.setChannel(Net.PhoneToChannel(ChannelMode.GETDOWN,targetNumber)); 
+
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+
+		JSONObject data = new JSONObject();		
+		try
+		{
+			data.put("alert", "Get Down: " + ParseUser.getCurrentUser().getUsername());
+			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+
+		}
+		catch(JSONException x)
+		{
+			throw new RuntimeException("Something wrong with JSON", x);
+		}
+		push.setData(data);
+		push.sendInBackground();
+	}
+
 }
