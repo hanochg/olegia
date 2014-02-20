@@ -1,8 +1,8 @@
 package com.tripper.mobile;
 
-import com.tripper.mobile.activity.FindAddress;
 import com.tripper.mobile.utils.ContactsListSingleton;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -32,7 +32,8 @@ public class SettingsActivity extends PreferenceActivity {
 		bindPreferenceSummaryToValue(findPreference(default_radius_text));
 		bindPreferenceSummaryToValue(findPreference(pref_key_sms_allow));
 	}
-
+	
+	
 	/**
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.

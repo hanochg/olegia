@@ -1,6 +1,7 @@
 package com.tripper.mobile;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
+import com.tripper.mobile.utils.Queries.Net.Messeges;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -22,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 
@@ -33,6 +36,7 @@ public class DistanceService extends IntentService
 	private LocationManager locationManager=null;
 	Notification note;
 	PendingIntent pi;
+	TextToSpeech ttobj;
 
 	public DistanceService() {
 		super("DistanceService");
@@ -42,16 +46,32 @@ public class DistanceService extends IntentService
 	protected void onHandleIntent(Intent intent) 
 	{	
 		setNotification();
+		boolean flag;
+		
 		
 		Location mylocation=null;
 		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
 		Location targetlocation;
+		
+		
+	      ttobj=new TextToSpeech(getApplicationContext(), 
+	    	      new TextToSpeech.OnInitListener() {
+	    	      @Override
+	    	      public void onInit(int status) {
+	    	         if(status != TextToSpeech.ERROR)
+	    	         {
+	    	             ttobj.setLanguage(Locale.UK);
+	    	            }				
+	    	         }
+	    	      });
 
-		long endTime = System.currentTimeMillis() + 40000;
-		while (System.currentTimeMillis() < endTime) 
+		//long endTime = System.currentTimeMillis() + 120000;
+		while (db!=null && !db.isEmpty()) 
 		{
+			flag=false;
 
 			mylocation = getLastKnownLocation();
+			
 
 			//Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
 
@@ -70,23 +90,29 @@ public class DistanceService extends IntentService
 						
 						if(contact.isSelected()==true)
 						{
-							
 							note.setLatestEventInfo(this, "Tripper", "On the way to "+ contact.getName(), pi);
 							startForeground(1337, note);
+							flag=true;
 							
 						}
 												
 						if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
 						{
-							note.tickerText="Message down was sent to "+ contact.getName();
+							note.tickerText="Message to get down was sent to "+ contact.getName();
 							//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
 							startForeground(1337, note);
-							sendGetDownMessage(contact.getName());
-							db.remove(contact.getId());
-						}
-						
-					}
+							sendGetDownMessage(contact.getInternationalPhoneNumber());
+							db.remove(i);
+							ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
+						}					
+					}//for contacts
+				}//syncronize
+				if(flag==false)
+				{
+					note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
+					startForeground(1337, note);
 				}
+				
 			}
 
 			try 
@@ -101,7 +127,11 @@ public class DistanceService extends IntentService
 			//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
 			//startForeground(1337, note);
 		}
-
+	      if(ttobj !=null){
+	          ttobj.stop();
+	          ttobj.shutdown();
+	      }
+		
 		stopSelf();
 	}
 
@@ -109,7 +139,8 @@ public class DistanceService extends IntentService
 	@SuppressWarnings("deprecation")
 	private void  setNotification()
 	{	
-		note=new Notification(R.drawable.ic_launcher,"Checking Radius?",System.currentTimeMillis());
+		note=new Notification(R.drawable.ic_launcher,"New Trip started.",System.currentTimeMillis());
+		note.flags|=Notification.FLAG_NO_CLEAR;
 		Intent i=new Intent(this, OnMap.class);
 
 
@@ -118,8 +149,8 @@ public class DistanceService extends IntentService
 
 		pi=PendingIntent.getActivity(this, 0,i, 0);
 
-		note.setLatestEventInfo(this, "Tripper","Now Tripping: \"Ummmm, Nothing\"",pi);
-		note.flags|=Notification.FLAG_NO_CLEAR;
+		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
+		
 		startForeground(1337, note);
 
 	}
@@ -171,7 +202,7 @@ public class DistanceService extends IntentService
 		JSONObject data = new JSONObject();		
 		try
 		{
-			data.put("alert", "Get Down: " + ParseUser.getCurrentUser().getUsername());
+			data.put("alert", Messeges.GETDOWN + ParseUser.getCurrentUser().getUsername());
 			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
 		}
