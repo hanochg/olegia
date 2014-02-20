@@ -25,6 +25,7 @@ import com.tripper.mobile.adapter.NavDrawerListAdapter;
 import com.tripper.mobile.map.*;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries.Extra;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -32,8 +33,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -44,6 +47,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -125,10 +129,24 @@ public class OnMap extends Activity {
 			  @Override
 			  public void onReceive(Context context, Intent intent) 
 			  {
-				  Log.e("onReceive","RECEIVED!!");
-				  navDrawerListAdapter.notifyDataSetChanged();
-				  addContactsMarkers();
-				  Toast.makeText(getApplicationContext(), "MSG RECEIVED!", Toast.LENGTH_LONG).show();
+				  String intentAction=intent.getAction();
+				  if(intentAction.equals("com.tripper.mobile.MESSAGE"))
+				  {
+					  Log.d("onReceive","RECEIVED!!");
+					  navDrawerListAdapter.notifyDataSetChanged();
+					  addContactsMarkers();
+					  Toast.makeText(getApplicationContext(), "MSG RECEIVED!", Toast.LENGTH_LONG).show();					  
+				  }
+				  else if(intentAction.equals("com.tripper.mobile.UPDATE"))
+				  {
+					  Log.d("onReceive","List update received");
+					  navDrawerListAdapter.notifyDataSetChanged();
+				  }
+				  else if(intentAction.equals("com.tripper.mobile.EXIT"))
+				  {
+					  Log.d("onReceive","EXIT");
+					  finish();
+				  }
 			  }
 		};
 
@@ -141,6 +159,33 @@ public class OnMap extends Activity {
 		//Initialize the Drawer
 		InitializeDrawer();
 		
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	
+	    	new AlertDialog.Builder(this)
+	        .setTitle("Exit Map")
+	        .setMessage("Exiting the map will end the trip.\nAre you sure you wish to exit?")
+	        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) { 
+	                //clear the singleton
+	            	ContactsListSingleton.getInstance().close();
+	            	ContactsListSingleton.getInstance();
+	            	finish();
+	            }
+	         })
+	        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) { 	                
+	            	return;
+	            }
+	         })
+	         .show(); 
+	        return true;
+	    }
+
+	    return super.onKeyDown(keyCode, event);
 	}
 	
 	/**
@@ -254,12 +299,14 @@ public class OnMap extends Activity {
         ){
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
+                navDrawerListAdapter.notifyDataSetChanged();
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
  
             public void onDrawerOpened(View drawerView) {
                 getActionBar().setTitle(mDrawerTitle);
+                navDrawerListAdapter.notifyDataSetChanged();
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
             }
@@ -383,7 +430,11 @@ public class OnMap extends Activity {
 	protected void onResume() {
 		super.onResume();	
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.MESSAGE"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 		addContactsMarkers();
+
+
 		navDrawerListAdapter.notifyDataSetChanged();
 /*
 		//MAP ROUTE 
@@ -452,15 +503,26 @@ public class OnMap extends Activity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        Intent intent;
         // Handle action bar actions click
         switch (item.getItemId()) {
         case R.id.SettingsOM:
-			Intent intent = new Intent(this, SettingsActivity.class);
-			startActivity(intent);
-			return true;
+			intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);			
+			break;
+        case R.id.exitOM:        	
+        	//intent = new Intent("com.tripper.mobile.EXIT");	
+    		//LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        	break;
+        case R.id.editContacts:
+            intent = new Intent(this,FriendsList.class);
+            startActivity(intent);
+            finish();
+            break;
         default:
             return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
     
     /***

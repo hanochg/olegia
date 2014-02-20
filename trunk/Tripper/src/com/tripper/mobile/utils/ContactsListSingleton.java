@@ -14,10 +14,13 @@ import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class ContactsListSingleton 
@@ -31,8 +34,17 @@ public class ContactsListSingleton
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
+	Context context;
 	
 	
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
 	public String getCountryTwoLetters() {
 		return CountryTwoLetters;
 	}
@@ -262,11 +274,14 @@ public class ContactsListSingleton
 							
 							if(mFriendsSelectedAdapter!=null)
 								mFriendsSelectedAdapter.notifyDataSetChanged();
+							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
+							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 						} 
 						else if (contact!=null)
 						{
 							// The request failed,connection error
 						}
+						
 					}
 				}); 
 		}				

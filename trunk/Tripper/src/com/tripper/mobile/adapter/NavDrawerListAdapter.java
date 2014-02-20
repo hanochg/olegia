@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 
 import android.app.Activity;
 import android.content.Context;
@@ -58,18 +59,24 @@ public class NavDrawerListAdapter extends BaseAdapter {
         
         curContact = getItem(position);
         Log.d("getView","answer: " + curContact.getContactAnswer().toString());
-        switch (curContact.getContactAnswer())
-        {
-        case notAnswered:
-        	imgIcon.setImageResource(R.drawable.question_mark);
-        	break;
-        case no:
-        	imgIcon.setImageResource(R.drawable.red_circle);
-        	break;
-        case ok:
-        	imgIcon.setImageResource(R.drawable.green_circle);
-        	break;        
-        }
+        
+        if (curContact.getAppStatus()==eAppStatus.noApp)
+        	imgIcon.setImageResource(R.drawable.warning_sign);
+        else
+        	switch (curContact.getContactAnswer())
+        	{
+        	case notAnswered:
+        		imgIcon.setImageResource(R.drawable.question_mark);
+        		break;
+        	case no:
+        		imgIcon.setImageResource(R.drawable.red_circle);
+        		break;
+        	case ok:
+        		imgIcon.setImageResource(R.drawable.green_circle);
+        		break;
+			default:
+				break;        
+        	}
         txtTitle.setText(curContact.getName());
          
 

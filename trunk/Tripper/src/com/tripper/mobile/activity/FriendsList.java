@@ -15,12 +15,15 @@ import android.provider.ContactsContract.Contacts;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.speech.RecognizerIntent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -56,6 +59,7 @@ public class FriendsList extends Activity implements
     FriendsSelectedAdapter mFriendsSelectedAdapter;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
+	private BroadcastReceiver mMessageReceiver;
 
 
 	@Override
@@ -152,6 +156,19 @@ public class FriendsList extends Activity implements
 		
         // Initializes the loader
         getLoaderManager().initLoader(Queries.LoaderManagerID, null,  this);
+        
+		mMessageReceiver = new BroadcastReceiver() {
+			  @Override
+			  public void onReceive(Context context, Intent intent) 
+			  {
+				  String intentAction=intent.getAction();
+				  if(intentAction.equals("com.tripper.mobile.EXIT"))
+				  {
+					  Log.d("onReceive","EXIT");
+					  finish();
+				  }
+			  }
+		};
       }
 	
 	//##Google speech##
@@ -231,6 +248,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
     @Override
 	protected void onResume() {
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 		mFriendsSelectedAdapter.notifyDataSetChanged();
 		//Log.d("FriendsList","Resumed");
 	}
@@ -265,6 +283,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    	}
 	    	intent = new Intent(this, OnMap.class);	
 	    	startActivity(intent);
+	    	finish();
 	    	
 	    	sendNotifications();
 	        return true;     
