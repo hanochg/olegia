@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -83,6 +84,7 @@ public class SplashScreen extends Activity {
 		
 		if(currentUser==null)
 		{
+			try{
 			mPhoneNumber = ((TelephonyManager)getSystemService(TELEPHONY_SERVICE)).getLine1Number();
 			if(mPhoneNumber.isEmpty())
 			{
@@ -94,8 +96,12 @@ public class SplashScreen extends Activity {
 					mPhoneNumber="+" + accounts[0].name;
 				}
 			}	
+			}catch(Exception e){
+				Log.e("SPLASH","NUMBER ERROR");
+			}
+			
+			}
 		}
-	}
 	
 	private boolean isNetworkAvailable()
 	{
