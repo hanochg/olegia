@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
@@ -87,7 +88,8 @@ public class MyCustomReceiver extends BroadcastReceiver
 			contact.setContactAnswer(eAnswer.no);
 		}
 		
-		Intent intent = new Intent("com.tripper.mobile.UPDATE");	
+		Intent intent = new Intent("com.tripper.mobile.MESSAGE");	
+		intent.putExtra(Extra.USERNAME, contact.getName());
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		return;
 	}

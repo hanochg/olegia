@@ -90,7 +90,7 @@ public class NotificationActivity extends Activity implements
 		    	if(location.getAccuracy()<100)
 		    	{
 		    		 progressDialog.dismiss();
-		    		 locationManager.removeUpdates(this);			//not so working
+		    		 locationManager.removeUpdates(locationListener);			//not so working
 		    		 Toast.makeText(notificationActivity, "Your location was sent back.", Toast.LENGTH_LONG).show();
 		    		 answerHandler(getJSONDataMessage(Net.AnswerIsOK,location.getLatitude(),location.getLongitude()),phone);	
 		    		 notificationActivity.finish();

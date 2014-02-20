@@ -19,6 +19,7 @@ public class Queries {
 		//From NotificationActivity to FindAddresActivity
 		public static final String LATITUDE = "latitude";
 		public static final String LONGITUDE = "longitude";
+		public static final String USERNAME= "username";
 	}
 	
 	public static final class Net
