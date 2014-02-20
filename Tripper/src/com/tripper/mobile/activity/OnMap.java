@@ -325,8 +325,11 @@ public class OnMap extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                 long id) {
-
-        	mDrawerLayout.closeDrawer(mDrawerList);
+        	boolean currentSelection=
+        			ContactsListSingleton.getInstance().getDB().get(position).isSelected();
+        	ContactsListSingleton.getInstance().getDB().get(position).setSelected(!currentSelection);
+        	navDrawerListAdapter.notifyDataSetChanged();
+        	//mDrawerLayout.closeDrawer(mDrawerList);
         	
         }
     }  

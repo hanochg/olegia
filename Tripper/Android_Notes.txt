@@ -6,3 +6,4 @@
 11. get enum APP_MODE out of the singleton and into intent extras. add the app_mode to queries.extra
 12. check if cursor is closed when accessing it in FriendsList
 13. get sms messages code and send to oleg
+14. fix- in OnMap while on edit friendslist going back in friendsList get back to menu
