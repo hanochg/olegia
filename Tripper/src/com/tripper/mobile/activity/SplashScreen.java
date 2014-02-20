@@ -113,6 +113,12 @@ public class SplashScreen extends Activity {
 
 
 	@Override
+	protected void onDestroy() {
+		splashActivity=null;
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.splash_screen, menu);

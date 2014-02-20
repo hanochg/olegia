@@ -25,10 +25,13 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.speech.RecognizerIntent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -65,20 +68,11 @@ public class FindAddress extends Activity {
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
-	public static FindAddress session=null;
+	private BroadcastReceiver mMessageReceiver;
 	
 	private Locale GeoCodeLocale;
 	
 
-	public void refreshGeoCodeLocale() {
-		//reading Settings
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list, "");
-		
-		//define locale
-		GeoCodeLocale = new Locale(languageFromSettings);
-		AsyncTasker = new AsyncGeocode(activityContext);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -218,18 +212,31 @@ public class FindAddress extends Activity {
 			}
 		});
 	
+		
+		mMessageReceiver = new BroadcastReceiver() {
+			  @Override
+			  public void onReceive(Context context, Intent intent) 
+			  {
+				  String intentAction=intent.getAction();
+				  if(intentAction.equals("com.tripper.mobile.EXIT"))
+				  {
+					  Log.d("onReceive","EXIT");
+					  finish();
+				  }
+			  }
+		};
 	}
 	
 	
 	@Override
 	protected void onDestroy() {
-		session=null;
+
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onStop() {
-		//session=null;
+
 		super.onStop();
 	}
 	
@@ -237,8 +244,7 @@ public class FindAddress extends Activity {
 
 	@Override
 	protected void onResume() {
-		//session is alive (used for refreshing the geocode)
-		session=this;
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 		super.onResume();
 	}
 
@@ -260,6 +266,7 @@ public class FindAddress extends Activity {
 				//launch FriendsList						
 				Intent intent = new Intent(activityContext, FriendsList.class);
 				startActivity(intent);
+				finish();
 				break;
 			case MULTI_DESTINATION:	//Manual
 

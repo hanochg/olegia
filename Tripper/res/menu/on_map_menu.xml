@@ -4,5 +4,13 @@
         android:id="@+id/SettingsOM"
         android:showAsAction="never"
         android:title="@string/settings"/> 
+     <item
+        android:id="@+id/editContacts"
+        android:showAsAction="always"
+        android:title="@string/edit_contacts"/>
+     <item
+        android:id="@+id/exitOM"
+        android:showAsAction="never"
+        android:title="@string/exit"/>
 
 </menu>

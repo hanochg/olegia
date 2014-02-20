@@ -43,13 +43,15 @@ public class SettingsActivity extends PreferenceActivity {
 			Log.d("settings","OnPreferenceChangeListener");
 			if(preference.getKey().equals(language_list))
 			{
-				if(FindAddress.session!=null)
-					FindAddress.session.refreshGeoCodeLocale();
+				//used in FindAddress
+
 
 				return true;
 			}
 			if(preference.getKey().equals(location_list))
 			{
+				//used in ContactsListSingleton
+				
 				String countryTwoLetters=value.toString();
 				
 				ContactsListSingleton.getInstance().setCountryTwoLetters(countryTwoLetters);
@@ -57,12 +59,12 @@ public class SettingsActivity extends PreferenceActivity {
 			}
 			if(preference.getKey().equals(default_radius_text))
 			{
-				
+				//used in ContactDataStructure
 				return true;
 			}
 			if(preference.getKey().equals(pref_key_sms_allow))
 			{
-
+				//will be used by service in OnMap
 				return true;
 			}
 			return true;

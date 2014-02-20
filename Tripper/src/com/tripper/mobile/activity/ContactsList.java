@@ -16,6 +16,7 @@ import com.tripper.mobile.utils.Queries;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -67,6 +68,7 @@ public class ContactsList extends Activity implements
     private ListView listView;
     private TextView mEmptyView;
     private Context context;
+	private BroadcastReceiver mMessageReceiver;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
     
@@ -218,6 +220,19 @@ public class ContactsList extends Activity implements
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
         });
           
+        
+		mMessageReceiver = new BroadcastReceiver() {
+			  @Override
+			  public void onReceive(Context context, Intent intent) 
+			  {
+				  String intentAction=intent.getAction();
+				  if(intentAction.equals("com.tripper.mobile.EXIT"))
+				  {
+					  Log.d("onReceive","EXIT");
+					  finish();
+				  }
+			  }
+		};
     }
 	
 	@Override

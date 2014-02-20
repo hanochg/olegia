@@ -4,6 +4,7 @@
     <string name="app_name">Tripper</string>
     <string name="splash_screen">Triper</string>
     <string name="settings">Settings</string>
+    <string name="edit_contacts">Edit Contacts</string>
     <string name="exit">Exit</string>
     <string name="Choice">Choice</string>
     <string name="btnSingleDestination">Notify On Arrival</string>
