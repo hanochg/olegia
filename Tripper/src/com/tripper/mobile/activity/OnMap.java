@@ -184,7 +184,6 @@ public class OnMap extends Activity {
 			
 			//MARKERS
 			addSingleRouteMarker();
-			addContactsMarkers();
 		}
 	}
 	
@@ -384,6 +383,7 @@ public class OnMap extends Activity {
 	protected void onResume() {
 		super.onResume();	
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
+		addContactsMarkers();
 		navDrawerListAdapter.notifyDataSetChanged();
 /*
 		//MAP ROUTE 
