@@ -32,11 +32,18 @@ public class ContactDataStructure
 	private double radius;
 	private Marker marker; 
 	private Circle radiusOnMap;
+	private boolean isSelected=true;
 
 	
 
 
 
+	public boolean isSelected() {
+		return isSelected;
+	}
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 	public ContactDataStructure(Context context)
 	{		
 		//reading Settings

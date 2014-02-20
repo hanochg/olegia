@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="140dp"
     android:background="@drawable/list_selector">
  
 
- 
+     <TextView
+        android:id="@+id/title2"
+        android:text="blabla"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:paddingRight="40dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textColor="@color/list_item_title" />
 </RelativeLayout>

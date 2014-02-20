@@ -47,18 +47,24 @@ public class NavDrawerListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
     	ContactDataStructure curContact=null;
     	
-    	if (convertView == null) {
+    	curContact = getItem(position);
+    	//if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
-        }
-          
+            
+            if(curContact.isSelected())
+            	convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+            else
+            	convertView = mInflater.inflate(R.layout.drawer_list_item_big, null);
+        //}
+    	if(curContact.isSelected())
+    	{
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-
+    	
         
-        curContact = getItem(position);
-        Log.d("getView","answer: " + curContact.getContactAnswer().toString());
+        
+        //Log.d("getView","answer: " + curContact.getContactAnswer().toString());
         
         if (curContact.getAppStatus()==eAppStatus.noApp)
         	imgIcon.setImageResource(R.drawable.warning_sign);
@@ -78,7 +84,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				break;        
         	}
         txtTitle.setText(curContact.getName());
-         
+    	}
 
         
         //DEPRECATED
