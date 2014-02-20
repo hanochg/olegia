@@ -31,6 +31,7 @@ public class ContactsListSingleton
 	
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
+	
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
