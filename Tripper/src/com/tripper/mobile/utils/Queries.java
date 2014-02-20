@@ -39,6 +39,14 @@ public class Queries {
 	        public static final char GETDOWN='c';
 		}
 		
+		public static final class Messeges
+		{	
+	        public static final String INVITATION="New Trip Invitation!";
+	      //  public static final String ANSWER='b';
+	        public static final String GETDOWN="Get Down!";
+		}
+		
+		
 		public static String PhoneToChannel(char channelPrefix, String Phone)	
 		{		
 			String tempString=Phone;

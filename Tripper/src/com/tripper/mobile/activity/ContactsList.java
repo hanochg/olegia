@@ -192,7 +192,7 @@ public class ContactsList extends Activity implements
 		        	contact.setName(displayName);
 		        	contact.setPhoneNumber(phoneNum);
 		        	contact.setUri(uri);
-		        	ContactsListSingleton.getInstance().insertContact(contact,ContactsListSingleton.getInstance().mFriendsSelectedAdapter);
+		        	ContactsListSingleton.getInstance().insertContact(contact,ContactsListSingleton.getInstance().mFriendsSelectedAdapter,getApplicationContext());
 		        }
 		        else
 		        {

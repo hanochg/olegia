@@ -45,6 +45,7 @@ import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.*;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
+import com.tripper.mobile.utils.Queries.Net.Messeges;
 
 public class FriendsList extends Activity implements
 						LoaderManager.LoaderCallbacks<Cursor>
@@ -124,7 +125,7 @@ public class FriendsList extends Activity implements
 		        contact.setPhoneNumber(cursor.getString(Queries.PHONE_NUM));
 		        contact.setUri(uri);
 		        
-		        ContactsListSingleton.getInstance().insertContact(contact,mFriendsSelectedAdapter);
+		        ContactsListSingleton.getInstance().insertContact(contact,mFriendsSelectedAdapter,getApplicationContext());
 		        
 		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
@@ -307,7 +308,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		JSONObject data = new JSONObject();		
 	    try
 	    {
-	    		data.put("alert", "Gooomo Tripper from: " + ParseUser.getCurrentUser().getUsername());
+	    		data.put("alert", Messeges.INVITATION ); // ParseUser.getCurrentUser().getUsername());
 	    		data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
 	    }

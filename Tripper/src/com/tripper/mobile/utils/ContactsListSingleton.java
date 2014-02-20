@@ -35,16 +35,6 @@ public class ContactsListSingleton
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
-	Context context;
-	
-	
-	public Context getContext() {
-		return context;
-	}
-
-	public void setContext(Context context) {
-		this.context = context;
-	}
 
 	public String getCountryTwoLetters() {
 		return CountryTwoLetters;
@@ -53,7 +43,14 @@ public class ContactsListSingleton
 	public void setCountryTwoLetters(String countryTwoLetters) {
 		CountryTwoLetters = countryTwoLetters;
 	}
-
+	
+	public void setCountryTwoLettersFromContex( Context context)
+	{	
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
+		CountryTwoLetters = countryTwoLetters;
+	}
+	
 
 	public FriendsSelectedAdapter mFriendsSelectedAdapter;
 	
@@ -101,7 +98,7 @@ public class ContactsListSingleton
 		
 	}
 	
-	public synchronized void insertContact(final ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter) 
+	public synchronized void insertContact(final ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter,Context context) 
 	{
 
 		if(db!=null)
@@ -113,7 +110,7 @@ public class ContactsListSingleton
 			db.add(contact);
 
 
-			asyncPhoneConverter= new AsyncPhoneConverter(contact,mFriendsSelectedAdapter);
+			asyncPhoneConverter= new AsyncPhoneConverter(contact,mFriendsSelectedAdapter,context);
 			asyncPhoneConverter.execute();
 			
 		}
@@ -218,14 +215,16 @@ public class ContactsListSingleton
 		ContactDataStructure contact;
 		String result=null;
 		FriendsSelectedAdapter mFriendsSelectedAdapter;
+		Context context;
 		
-		AsyncPhoneConverter(ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter) 
+		AsyncPhoneConverter(ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter, Context context) 
 		{
 			super();
 			this.contact = contact;
 			converedNumber=null;
 			this.phone = contact.getPhoneNumber();
 			this.mFriendsSelectedAdapter=mFriendsSelectedAdapter;
+			this.context=context;
         }
 		
 		@Override

@@ -1,5 +1,6 @@
 package com.tripper.mobile.activity;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -173,7 +174,7 @@ public class OnMap extends Activity {
 	            public void onClick(DialogInterface dialog, int which) { 
 	                //clear the singleton
 	            	ContactsListSingleton.getInstance().close();
-	            	ContactsListSingleton.getInstance();
+	            	ContactsListSingleton.getInstance().setCountryTwoLettersFromContex(getApplicationContext());
 	            	finish();
 	            }
 	         })

@@ -35,11 +35,9 @@ public class MainActivity extends Activity
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		//reading Settings
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
+				
+		ContactsListSingleton.getInstance().setCountryTwoLettersFromContex(this);
 		
-		ContactsListSingleton.getInstance().setCountryTwoLetters(countryTwoLetters);
-		ContactsListSingleton.getInstance().setContext(getApplicationContext());
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override
 			  public void onReceive(Context context, Intent intent) 
