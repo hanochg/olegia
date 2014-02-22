@@ -7,8 +7,8 @@
     <string name="edit_contacts">Edit Contacts</string>
     <string name="exit">Exit</string>
     <string name="Choice">Choice</string>
-    <string name="btnSingleDestination">Notify On Arrival</string>
-    <string name="btnMultipleDestination">Create A Trip</string>
+    <string name="btnSingleDestination"></string>
+    <string name="btnMultipleDestination"></string>
     <string name="Enter_Destination_dialog_title">Enter Address</string>
     <string name="Enter_Destination_dialog_text">Enter Destination</string>
     <string name="Enter_Destination_dialog_confirm_button">Confirm</string>
