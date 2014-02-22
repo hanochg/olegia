@@ -15,6 +15,7 @@ import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.AddressAdapter;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 import android.location.Address;
 import android.location.Geocoder;
@@ -38,7 +39,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -69,41 +69,18 @@ public class FindAddress extends Activity {
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
 	private BroadcastReceiver mMessageReceiver;
-	
+	private int APP_MODE=-1;
 	private Locale GeoCodeLocale;
 	
 
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.find_address_menu, menu);
-		return true;
-	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
-	    {
-	        // Populate the wordsList with the String values the recognition engine thought it heard
-	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-	        addressSearch.setText(matches.get(0));
-	    }
-	}
-	public void speechActivation(View view)
-	{
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the address...");
-		startActivityForResult(intent, SPEECH_REQUEST_CODE);
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.find_address);
 		
-
+		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		
@@ -141,7 +118,7 @@ public class FindAddress extends Activity {
 		listViewAdapter.setNotifyOnChange(false);	
 		
 		// Show soft keyboard automatically
-		//addressSearch.requestFocus();
+		addressSearch.requestFocus();
 		//getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		
 		
@@ -199,15 +176,22 @@ public class FindAddress extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 			{				
+
+
 				if(lastCheckedRadioButton!=null)
 					lastCheckedRadioButton.setChecked(false);
-				
+
 				lastCheckedRadioButton=(RadioButton) view.findViewById(R.id.addressRadioButton);
 				lastCheckedRadioButton.setChecked(true);
 				listViewAdapter.setLastCheckPosition(position);
 				selectedAddress=addressDB.get(position);
 
 				Log.d("App!!!","onItemSelected");
+
+				
+				//if there is only 1 item on the list, select it.
+				if(addressDB.size()==1)
+					onOptionsItemSelected(null);
 
 			}
 		});
@@ -226,6 +210,31 @@ public class FindAddress extends Activity {
 			  }
 		};
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.find_address_menu, menu);
+		return true;
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	        // Populate the wordsList with the String values the recognition engine thought it heard
+	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	        addressSearch.setText(matches.get(0));
+	    }
+	}
+	public void speechActivation(View view)
+	{
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the address...");
+		startActivityForResult(intent, SPEECH_REQUEST_CODE);
+	}
+
 	
 	
 	@Override
@@ -250,38 +259,44 @@ public class FindAddress extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+		int itemId=0;
+		
+		if(item==null)
+			itemId=R.id.nextFA;
+		else
+			itemId=item.getItemId();
+		
+		switch (itemId) {
 		case R.id.nextFA:
 			if(selectedAddress==null)
 				return true;
-
-			switch (ContactsListSingleton.getInstance().APP_MODE)
+			
+			switch (APP_MODE)
 			{
-			case SINGLE_DESTINATION: //MainActivity				
+			case Queries.Extra.SINGLE_DESTINATION: //MainActivity				
 				//get selected address
 				ContactsListSingleton.setSingleRouteAddress(selectedAddress);
 
-				Toast.makeText(activityContext, selectedAddress.getAddressLine(1)+ "," +selectedAddress.getAddressLine(0)+","+selectedAddress.getAddressLine(2), Toast.LENGTH_SHORT).show();
-
 				//launch FriendsList						
 				Intent intent = new Intent(activityContext, FriendsList.class);
+				intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
 				startActivity(intent);
 				finish();
 				break;
-			case MULTI_DESTINATION:	//Manual
+				
+			case Queries.Extra.MULTI_DESTINATION:	//Manual
 
 				//get number from intent
-				String phone="";
 
-				//get selected address
-				//selectedAddress = listViewAdapter.getItem(position);
+				String phone=getIntent().getExtras().getString(Queries.Extra.MANUAL_ADDRESS);
 
 				//get longitude and latitude and send it to user's data
 				ContactsListSingleton.getInstance().setContactLocation(
 						phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
 				break;
-			case NOTIFICATION:	//Notification
-
+				
+			case Queries.Extra.NOTIFICATION:	//Notification
+				
 				Intent newintent = new Intent(this, MainActivity.class); 
 				newintent.putExtra(Extra.LATITUDE, selectedAddress.getLatitude());
 				newintent.putExtra(Extra.LONGITUDE, selectedAddress.getLongitude());

@@ -7,8 +7,6 @@ import com.parse.ParseAnalytics;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.ContactsListSingleton;
-import com.tripper.mobile.utils.ContactsListSingleton.AppMode;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
@@ -30,7 +28,6 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +50,6 @@ public class NotificationActivity extends Activity implements
 		setContentView(R.layout.notification_screen);
 		//getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		notificationActivity=this;
-		
-		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.NOTIFICATION;
 		
 		ParseAnalytics.trackAppOpened(getIntent());	
 		
@@ -135,8 +130,9 @@ public class NotificationActivity extends Activity implements
 	
 	public void OnBtnEnterAdressClick(View view)
 	{	
-		ContactsListSingleton.getInstance().APP_MODE=AppMode.NOTIFICATION;
+		
 		Intent intent = new Intent(this, FindAddress.class);
+		intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.NOTIFICATION);
 		startActivityForResult(intent, Extra.NOTIFICATION_RESULTCODE);
 	}
 	

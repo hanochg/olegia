@@ -61,6 +61,7 @@ public class FriendsList extends Activity implements
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
 	private BroadcastReceiver mMessageReceiver;
+	private int APP_MODE=-1;
 
 
 	@Override
@@ -68,6 +69,8 @@ public class FriendsList extends Activity implements
 		super.onCreate(savedInstanceState);
 		context = this;
 		setContentView(R.layout.friends_list);		
+		
+		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -281,13 +284,17 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    	{
 	    		Toast.makeText(this, "Please add contacts.", Toast.LENGTH_LONG).show();
 	    		return true;    	
-	    	}
-	    	intent = new Intent(this, OnMap.class);	
+	    	}	    	
+	    		    		    
+	    	intent = new Intent(this, OnMap.class);		    		
+	    	intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
 	    	startActivity(intent);
 	    	finish();
 	    	
-	    	sendNotifications();
-	        return true;     
+	    	if(APP_MODE!=Queries.Extra.SINGLE_DESTINATION)
+	    		sendNotifications();
+	        return true;
+	        
 		case R.id.SettingsFL:
 			intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);

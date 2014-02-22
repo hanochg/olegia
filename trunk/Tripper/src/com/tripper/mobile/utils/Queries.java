@@ -20,6 +20,14 @@ public class Queries {
 		public static final String LATITUDE = "latitude";
 		public static final String LONGITUDE = "longitude";
 		public static final String USERNAME= "username";
+		public static final String APP_MODE = "activity";
+		public static final int SINGLE_DESTINATION = 0;
+		public static final int MULTI_DESTINATION = 1;
+		public static final int  NOTIFICATION = 2;
+		public static final int  ON_MAP = 3;
+		public static final String  RESTORE_APP_MODE="restore_app_mode";
+		public static final String MANUAL_ADDRESS = "manual_address";
+		
 	}
 	
 	public static final class Net
