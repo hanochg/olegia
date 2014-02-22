@@ -5,7 +5,8 @@
     android:paddingLeft="5dp"
     android:paddingRight="10dp"
     android:paddingBottom="5dp"
-    android:background="#0F2B00FF"
+    android:background="@drawable/background"
+    
     tools:context=".FriendsList" >
 
     <AutoCompleteTextView

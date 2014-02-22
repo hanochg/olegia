@@ -141,8 +141,8 @@ public class FindAddress extends Activity {
 		listViewAdapter.setNotifyOnChange(false);	
 		
 		// Show soft keyboard automatically
-		addressSearch.requestFocus();
-		getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		//addressSearch.requestFocus();
+		//getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		
 		
 		//Define AutoComplete TextView	    

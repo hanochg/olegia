@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
 
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/tripr_main"
+     >
 
     <Button
         android:id="@+id/btnSingleDestination"
@@ -14,7 +16,7 @@
         android:layout_below="@+id/logo"
         android:onClick="OnBtnSingleDestinationClick"
         android:text="@string/btnSingleDestination" 
-        style="?android:attr/buttonBarButtonStyle"
+        android:background="@drawable/notify_button_theme"
          />
 
     <Button
@@ -27,6 +29,7 @@
         android:layout_toRightOf="@+id/view"
         android:onClick="OnBtnMultipleDestinationClick"
         android:text="@string/btnMultipleDestination"
+        android:background="@drawable/create_trip_button_theme"
         style="?android:attr/buttonBarButtonStyle" 
         />
     <View
@@ -36,11 +39,12 @@
         android:layout_centerHorizontal="true" />
     
     <ImageView
+        android:scaleType="fitCenter"
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/splashscreen" />
+         />
 
 </RelativeLayout>
