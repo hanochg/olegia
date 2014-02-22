@@ -5,6 +5,7 @@
     android:paddingLeft="5dp"
     android:paddingRight="10dp"
     android:paddingBottom="5dp"
+    android:paddingTop="7dp"
     android:background="@drawable/background"
     
     tools:context=".FriendsList" >
@@ -12,12 +13,12 @@
     <AutoCompleteTextView
         android:id="@+id/acContactName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/contactsButton"
         android:layout_toRightOf="@+id/activateSpeech"
         android:ems="10"
-        android:hint="Enter Contact&apos;s Name" >
+        android:hint="enter contact&apos;s name" >
 
         <requestFocus />
     </AutoCompleteTextView>
