@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    android:background="@drawable/tripr_main"
+    
      >
 
     <Button
@@ -40,12 +40,14 @@
         android:layout_centerHorizontal="true" />
     
     <ImageView
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
         android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_width="fill_parent"
+        android:layout_height="320dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:src="@drawable/tripr_main_1"
          />
 
 </RelativeLayout>
