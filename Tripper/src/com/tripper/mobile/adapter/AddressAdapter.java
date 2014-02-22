@@ -3,9 +3,14 @@ package com.tripper.mobile.adapter;
 import java.util.List;
 
 import com.tripper.mobile.R;
+import com.tripper.mobile.SettingsActivity;
+import com.tripper.mobile.utils.ContactsListSingleton;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Address;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +62,16 @@ public class AddressAdapter extends ArrayAdapter<Address>{
 			holder = (ViewHolder) convertView.getTag();			
 		}
 		
-		holder.address.setText(data.get(position).getAddressLine(2)+ "," +data.get(position).getAddressLine(1)+","+data.get(position).getAddressLine(0));
+		//reading Settings
+		String languageFromSettings = ContactsListSingleton.getInstance().getLanguageFromSettings();
+		//check if language set to hebrew
+		if(languageFromSettings.equals(getContext().getResources().getString(R.string.HebrewLanguage)))
+			holder.address.setText(data.get(position).getAddressLine(0)+ "," +data.get(position).getAddressLine(1)+","+data.get(position).getAddressLine(2));
+		else if(languageFromSettings.equals(getContext().getResources().getString(R.string.EnglishLanguage)))
+			holder.address.setText(data.get(position).getAddressLine(2)+ "," +data.get(position).getAddressLine(1)+","+data.get(position).getAddressLine(0));
+		else
+			Log.e("AddressAdapter","Language not recognized!");
+		
 		if(position==lastCheckedPosition)
 			holder.checked.setChecked(true);
 		else

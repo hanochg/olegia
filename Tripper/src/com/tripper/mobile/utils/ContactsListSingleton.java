@@ -25,8 +25,8 @@ import android.util.Log;
 
 public class ContactsListSingleton 
 {
-	public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
-	public AppMode APP_MODE;
+	//public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
+	//public AppMode APP_MODE;
 
 	
 	static private ArrayList<ContactDataStructure> db=null;
@@ -35,6 +35,15 @@ public class ContactsListSingleton
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
+	private String LanguageFromSettings;
+
+	public String getLanguageFromSettings() {
+		return LanguageFromSettings;
+	}
+
+	public void setLanguageFromSettings(String languageFromSettings) {
+		LanguageFromSettings = languageFromSettings;
+	}
 
 	public String getCountryTwoLetters() {
 		return CountryTwoLetters;
@@ -44,11 +53,13 @@ public class ContactsListSingleton
 		CountryTwoLetters = countryTwoLetters;
 	}
 	
-	public void setCountryTwoLettersFromContex( Context context)
+	public void setRegionalSettingsFromContex( Context context)
 	{	
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
+		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list,"");
 		CountryTwoLetters = countryTwoLetters;
+		LanguageFromSettings = languageFromSettings;
 	}
 	
 

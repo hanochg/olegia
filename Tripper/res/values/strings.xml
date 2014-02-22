@@ -21,6 +21,10 @@
     <string name="Done">Done</string>
     <string name="Back">Back</string>
     <string name="Next">Next</string>
+    
+    <string name="HebrewLanguage">iw</string>
+    <string name="EnglishLanguage">en</string>
+
     <!--
          Used for the AlphabetIndexer in ContactsListFragment to provide quick navigation by
          alphabet using ListView fast scroll.
@@ -28,6 +32,7 @@
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="title_activity_contact_list">Contact_List</string>
 
+    
      
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>

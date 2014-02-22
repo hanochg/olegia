@@ -20,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 
 public class MainActivity extends Activity
 				{
@@ -34,9 +35,9 @@ public class MainActivity extends Activity
 			SplashScreen.splashActivity.finish();
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-		//reading Settings
-				
-		ContactsListSingleton.getInstance().setCountryTwoLettersFromContex(this);
+
+		//reading Settings				
+		ContactsListSingleton.getInstance().setRegionalSettingsFromContex(this);
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override
@@ -80,33 +81,25 @@ public class MainActivity extends Activity
 
 	public void OnBtnMultipleDestinationClick(View view)
 	{	
-		//define single destination mode:
-		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.MULTI_DESTINATION;
-		/*
-		//open Intent		
-		Intent intent = new Intent(this, NavigationActivity.class);
-		startActivity(intent);
-		*/	
-		
 		//open Intent		
 		Intent intent = new Intent(this, FriendsList.class);
+		
+		//define single destination mode:
+		intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.MULTI_DESTINATION);
 		startActivity(intent);
 		
 	}
 	
 	public void OnBtnSingleDestinationClick(View view)
 	{	
-		//define single destination mode:
-		ContactsListSingleton.getInstance().APP_MODE=ContactsListSingleton.AppMode.SINGLE_DESTINATION;
-		
 		//open Intent
 		Intent intent = new Intent(this, FindAddress.class);
+		
+		//define single destination mode:
+		intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.SINGLE_DESTINATION);
 		startActivity(intent);     
 	}
-	
-    public void onFinishEditDialog(String inputText) {
-        Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
-    }
+
 
 
 

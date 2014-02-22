@@ -35,43 +35,42 @@ public class NavDrawerListAdapter extends BaseAdapter {
  
     @Override
     public ContactDataStructure getItem(int position) {      
-        return contactsDB.get(position);
+    	return contactsDB.get(position);
     }
- 
+
     @Override
     public long getItemId(int position) {
-        return position;
+    	return position;
     }
- 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
     	ContactDataStructure curContact=null;
-    	
+
     	curContact = getItem(position);
-    	//if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            
-            if(curContact.isSelected())
-            	convertView = mInflater.inflate(R.layout.drawer_list_item, null);
-            else
-            	convertView = mInflater.inflate(R.layout.drawer_list_item_big, null);
-        //}
+
+    	LayoutInflater mInflater = (LayoutInflater)
+    			context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
     	if(curContact.isSelected())
-    	{
-        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+    		convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+    	else
+    		convertView = mInflater.inflate(R.layout.drawer_list_item_big, null);
     	
+    	TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+        txtTitle.setText(curContact.getName());
         
-        
-        //Log.d("getView","answer: " + curContact.getContactAnswer().toString());
-        
-        if (curContact.getAppStatus()==eAppStatus.noApp)
-        	imgIcon.setImageResource(R.drawable.warning_sign);
-        else
-        	switch (curContact.getContactAnswer())
-        	{
-        	case notAnswered:
+        //set image according to contact status
+    	//if(curContact.isSelected())
+    	//{
+    		ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+    		
+    		if (curContact.getAppStatus()==eAppStatus.noApp)
+    			imgIcon.setImageResource(R.drawable.warning_sign);
+    		else
+    			switch (curContact.getContactAnswer())
+    			{
+    			case notAnswered:
         		imgIcon.setImageResource(R.drawable.question_mark);
         		break;
         	case no:
@@ -83,8 +82,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			default:
 				break;        
         	}
-        txtTitle.setText(curContact.getName());
-    	}
+    	//}
 
         
         //DEPRECATED

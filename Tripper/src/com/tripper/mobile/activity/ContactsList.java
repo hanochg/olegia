@@ -70,25 +70,9 @@ public class ContactsList extends Activity implements
     private Context context;
 	private BroadcastReceiver mMessageReceiver;
     private final int SPEECH_REQUEST_CODE = 10;
-    private final int CONTACTLIST_REQUEST_CODE = 11;
+    //private final int CONTACTLIST_REQUEST_CODE = 11;
+    private String APP_MODE="";
     
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
-	    {
-	        // Populate the wordsList with the String values the recognition engine thought it heard
-	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-	        searchEditText.setText(matches.get(0));
-	    }
-	}
-	public void speechActivation(View view)
-	{
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
-		startActivityForResult(intent, SPEECH_REQUEST_CODE);
-	}
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +80,8 @@ public class ContactsList extends Activity implements
 		setContentView(R.layout.contact_list);
 		context=this;
 		
-		//NO back arrow to previous activity!
-		/*ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);*/
-		
+		APP_MODE = getIntent().getExtras().getString(Queries.Extra.APP_MODE);
+				
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(this);
         getLoaderManager().initLoader(Queries.LoaderManagerID, null, this);
@@ -234,6 +216,24 @@ public class ContactsList extends Activity implements
 			  }
 		};
     }
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)
+	    {
+	        // Populate the wordsList with the String values the recognition engine thought it heard
+	        ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	        searchEditText.setText(matches.get(0));
+	    }
+	}
+	public void speechActivation(View view)
+	{
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
+		startActivityForResult(intent, SPEECH_REQUEST_CODE);
+	}
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

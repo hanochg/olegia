@@ -26,6 +26,7 @@ import com.tripper.mobile.adapter.NavDrawerListAdapter;
 import com.tripper.mobile.map.*;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 
 import android.location.Address;
@@ -90,35 +91,24 @@ public class OnMap extends Activity {
     
 	//Globals
     private GoogleMap googleMap;
-	List<MyMarkers> markersList;
     int markerCounter=0;
     Context context;
     Marker singleRouteMarker=null;
+    private int APP_MODE=-1;
     
 	//Externals
 	public static Address selectedAddress=null;
 	
 	private BroadcastReceiver mMessageReceiver;
 	
-	//MyMarkers Struct (in java)
-	private class MyMarkers
-	{	
-		public MarkerOptions markerOptions;
-	    public Marker marker; 
-	    
-	    MyMarkers(MarkerOptions markerOptions,Marker marker,String marker_street)
-	    {
-	    	this.markerOptions=markerOptions;
-	    	this.marker=marker;    	
-	    }
-	 };
-	 
 	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.on_map);
 	
+		
+		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		context=this;
 		getScreenDimensions();
 		
@@ -152,9 +142,6 @@ public class OnMap extends Activity {
 			  }
 		};
 
-		//initialize markers
-		markersList = new ArrayList<MyMarkers>();
-
 		// Initializing Map
 		initilizeMap();
 		
@@ -174,7 +161,7 @@ public class OnMap extends Activity {
 	            public void onClick(DialogInterface dialog, int which) { 
 	                //clear the singleton
 	            	ContactsListSingleton.getInstance().close();
-	            	ContactsListSingleton.getInstance().setCountryTwoLettersFromContex(getApplicationContext());
+	            	ContactsListSingleton.getInstance().setRegionalSettingsFromContex(getApplicationContext());
 	            	finish();
 	            }
 	         })
@@ -314,7 +301,7 @@ public class OnMap extends Activity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
- 
+        mDrawerLayout.openDrawer(mDrawerList);
     
 	}
 	
@@ -461,17 +448,6 @@ public class OnMap extends Activity {
 	}
 
 	
-	//Launch Async Geocode
-	private  void notifyResult(Context context,int markerIndex) {
-		Log.d("App!!!","notifyResult");
-		try{
-			AsyncGeocode AsyncTasker = new AsyncGeocode(context,markerIndex);
-			AsyncTasker.execute();			
-		}catch(Exception ex){
-			Log.d("AsyncTasker Error#@$#$",ex.getMessage());
-		}
-	}
-	
 	@Override
 	protected void onDestroy()
 	{
@@ -525,6 +501,8 @@ public class OnMap extends Activity {
         	break;
         case R.id.editContacts:
             intent = new Intent(this,FriendsList.class);
+            //intent.putExtra(Queries.Extra.RESTORE_APP_MODE,APP_MODE);
+            intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);            
             startActivity(intent);
             finish();
             break;
@@ -538,58 +516,15 @@ public class OnMap extends Activity {
      * Called when invalidateOptionsMenu() is triggered
      */
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) 
+    {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         menu.findItem(R.id.SettingsOM).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
-	/**------------------
-	 * END MENU Definitions
-	 * ------------------*/
-
+}	
 	
-	
-	/**--------------------
-	 * ASYNC GeoCode Class 
-	 * --------------------*/
-	//Class extends AsyncTask for defining the AsyncTask function 
-	private class AsyncGeocode extends AsyncTask<String, Void, Void> {
-		private Context context;
-		private int markerIndex;
-
-		public AsyncGeocode(Context context,int markerIndex) {
-			super();
-			this.context = context;
-			this.markerIndex= markerIndex;
-		}
-
-		//will run in the created thread
-		protected Void doInBackground(String... search) 
-		{
-			Log.d("MAP!!!","doInBackground-begin");
-			MarkerOptions marker = markersList.get(markerIndex).markerOptions;
-			LatLng cords = marker.getPosition();
-			double lat = cords.latitude;
-			double longt = cords.longitude;
-			
-			try {
-				List<Address> addressList = new Geocoder(context).getFromLocation(lat,longt, 1);
-				if(addressList!=null)
-				{
-					Address address= addressList.get(0);
-					String addressString=address.getAddressLine(2)+","+ address.getAddressLine(1)+","+address.getAddressLine(0);
-					//markersList.get(markerIndex).markerStreet=addressString;	
-				}
-				
-			} catch (Exception ex) {
-				Log.d("MAP Error#@$#$",ex.getMessage());
-			}
-			return null;
-		}    
-	}//End Class AsyncTask
-
-}
 
 /*
  * NAVIGATION
