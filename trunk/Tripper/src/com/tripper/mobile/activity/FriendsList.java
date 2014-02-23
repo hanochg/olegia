@@ -83,6 +83,7 @@ public class FriendsList extends Activity implements
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(context, ContactsList.class);
+				intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
 				startActivityForResult(intent,CONTACTLIST_REQUEST_CODE);	
 				
 			}

@@ -6,7 +6,7 @@
     android:paddingRight="10dp"
     android:paddingBottom="5dp"
     android:paddingTop="7dp"
-    android:background="@drawable/background"
+    android:background="@drawable/contact_bg"
     
     tools:context=".FriendsList" >
 
