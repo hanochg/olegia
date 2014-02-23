@@ -307,7 +307,11 @@ public class ContactsList extends Activity implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // This swaps the new cursor into the adapter.
         if (loader.getId() == Queries.LoaderManagerID) {
-            mAdapter.swapCursor(data);
+        	if(!data.isClosed())
+        		mAdapter.swapCursor(data);
+			else
+				Log.e("ContactsList","mAdapter-closed cursor error");
+        	
             if(data.getCount()!=0)
             	mEmptyView.setVisibility(View.GONE);
             else if (data.getCount()==0)

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,7 +161,7 @@ public class FriendsAutoCompleteAdapter
     public Cursor swapCursor(Cursor newCursor) {
         // Update the AlphabetIndexer with new cursor as well
         mAlphabetIndexer.setCursor(newCursor);
-        return super.swapCursor(newCursor);
+        	return super.swapCursor(newCursor);
     }
 
     /**
