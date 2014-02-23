@@ -142,8 +142,6 @@ public class OnMap extends Activity {
 			  }
 		};
 
-		// Initializing Map
-		initilizeMap();
 		
 		//Initialize the Drawer
 		InitializeDrawer();
@@ -424,6 +422,12 @@ public class OnMap extends Activity {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.MESSAGE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
+		
+		googleMap=null;
+		
+		// Initializing Map
+		initilizeMap();
+		
 		addContactsMarkers();
 
 
@@ -501,10 +505,8 @@ public class OnMap extends Activity {
         	break;
         case R.id.editContacts:
             intent = new Intent(this,FriendsList.class);
-            //intent.putExtra(Queries.Extra.RESTORE_APP_MODE,APP_MODE);
-            intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);            
+            intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.ON_MAP);            
             startActivity(intent);
-            finish();
             break;
         default:
             return super.onOptionsItemSelected(item);
