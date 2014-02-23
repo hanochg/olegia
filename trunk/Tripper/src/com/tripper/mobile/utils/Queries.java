@@ -53,6 +53,7 @@ public class Queries {
 	        public static final String INVITATION="New Trip Invitation!";
 	      //  public static final String ANSWER='b';
 	        public static final String GETDOWN="Get Down!";
+	        public static final String GOTTOPLACE="Get to place!";
 		}
 		
 		

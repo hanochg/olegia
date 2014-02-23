@@ -13,6 +13,8 @@ import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
+import com.tripper.mobile.utils.Queries.Net;
+import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 import android.content.Context;
 import android.content.Intent;
@@ -207,11 +209,25 @@ public class ContactsListSingleton
 			for(int i=0 ; i<db.size() ; i++)
 			{
 				tempContact=db.get(i);
-				if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+				if(channelPrefix==ChannelMode.INVITATION)
 				{
-					phones.add(tempContact.getChannelforParse(channelPrefix));
-					tempContact.setContactAnswer(eAnswer.notAnswered);
+					if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+					{
+						phones.add(tempContact.getChannelforParse(channelPrefix));
+						tempContact.setContactAnswer(eAnswer.notAnswered);
+					}
 				}
+				else if(channelPrefix==ChannelMode.LONERIDER)
+				{
+					if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+					{
+						phones.add(tempContact.getChannelforParse(channelPrefix));
+						tempContact.setContactAnswer(eAnswer.notAnswered);
+					}
+				}
+
+
+
 			}
 		}	
 		return phones;
