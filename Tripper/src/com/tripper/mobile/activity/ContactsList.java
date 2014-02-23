@@ -247,7 +247,7 @@ public class ContactsList extends Activity implements
 		Intent intent;
 		switch(item.getItemId()){
 	    case R.id.doneCL:
-	    	intent = new Intent(this, MainActivity.class);
+	    	intent = new Intent(this, FriendsList.class);
 	    	setResult(Activity.RESULT_OK,intent);
 	    	finish();
 	        return true; 

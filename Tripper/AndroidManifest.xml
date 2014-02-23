@@ -80,8 +80,7 @@
             android:name="com.tripper.mobile.activity.FriendsList"
             android:label="@string/title_activity_friends_list"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
+            android:windowSoftInputMode="stateVisible|adjustPan" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.OnMap"
@@ -93,22 +92,19 @@
             android:name="com.tripper.mobile.activity.FindAddress"
             android:label="@string/title_activity_on_map"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            android:parentActivityName="com.tripper.mobile.activity.MainActivity" >
+            android:windowSoftInputMode="stateVisible|adjustPan" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait"
-            
+            android:screenOrientation="portrait"         
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.ContactsList"
             android:label="@string/title_activity_contact_list"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            android:parentActivityName="com.tripper.mobile.activity.FriendsList" >
+            android:windowSoftInputMode="stateVisible|adjustPan" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.NotificationActivity"
