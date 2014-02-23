@@ -283,7 +283,10 @@ public class LoginActivity extends Activity {
 						
 					try {
 						ParseUserInstalation();
-					} catch (ParseException e1) {
+					}
+					catch (ParseException e1) 
+					{
+						ParseUser.logOut();
 						return eConnectionStatus.NoConnection;
 					}
 						return eConnectionStatus.SighUp;	
@@ -297,9 +300,11 @@ public class LoginActivity extends Activity {
 				}//Switch					
 			}//Catch
 			
-			try {
+			try 
+			{			
 				ParseUserInstalation();
 			} catch (ParseException e) {
+				ParseUser.logOut();
 				return eConnectionStatus.NoConnection;
 			}
 			return eConnectionStatus.SighIn;	//Log in success

@@ -108,12 +108,13 @@ public class OnMap extends Activity {
 		setContentView(R.layout.on_map);
 	
 		
-		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
+		APP_MODE = getIntent().getExtras().getInt(Extra.APP_MODE);
 		context=this;
 		getScreenDimensions();
 		
 		
 	    Intent i=new Intent(this, DistanceService.class);
+	    i.putExtra(Extra.APP_MODE, APP_MODE);
 	    startService(i);
 
 		

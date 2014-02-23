@@ -12,6 +12,7 @@ import com.tripper.mobile.activity.OnMap;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 import com.tripper.mobile.utils.Queries.Net.Messeges;
@@ -23,6 +24,7 @@ import android.app.PendingIntent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.speech.tts.TextToSpeech;
@@ -35,9 +37,10 @@ public class DistanceService extends IntentService
 {
 
 	private LocationManager locationManager=null;
-	Notification note;
-	PendingIntent pi;
-	TextToSpeech ttobj;
+	private Notification note;
+	private PendingIntent pi;
+	private TextToSpeech ttobj;
+	private int APP_MODE=-1;
 
 	public DistanceService() {
 		super("DistanceService");
@@ -46,25 +49,15 @@ public class DistanceService extends IntentService
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onHandleIntent(Intent intent) 
-	{	
-		setNotification();
+	{			
 		boolean flag;
-		
-		
 		Location mylocation=null;
-		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
 		Location targetlocation;
-		
-	      ttobj=new TextToSpeech(getApplicationContext(), 
-	    	      new TextToSpeech.OnInitListener() {
-	    	      @Override
-	    	      public void onInit(int status) {
-	    	         if(status != TextToSpeech.ERROR)
-	    	         {
-	    	             ttobj.setLanguage(Locale.UK);
-	    	            }				
-	    	         }
-	    	      });
+		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
+		APP_MODE = intent.getExtras().getInt(Extra.APP_MODE);
+
+		setNotification();		
+		InitializeSpeech();
 
 		//long endTime = System.currentTimeMillis() + 120000;
 		while (db!=null && !db.isEmpty()) 
@@ -72,45 +65,64 @@ public class DistanceService extends IntentService
 			flag=false;
 
 			mylocation = getLastKnownLocation();
-			
+
 			if(mylocation!=null && db!=null)
 			{
-				ContactDataStructure contact;
-				synchronized(db)
+
+				if(APP_MODE==Extra.MULTI_DESTINATION)
 				{
-					for (int i=0;i<db.size();i++)
+					ContactDataStructure contact;
+					synchronized(db)
 					{
-						contact=db.get(i);
-						
-						targetlocation = new Location(mylocation);
-						targetlocation.setLatitude(contact.getLatitude());
-						targetlocation.setLongitude(contact.getLongitude());
-						
-						if(contact.isSelected()==true)
+						for (int i=0;i<db.size();i++)
 						{
-							note.setLatestEventInfo(this, "Tripper", "On the way to "+ contact.getName(), pi);
-							startForeground(1337, note);
-							flag=true;
-							
-						}
-												
-						if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
-						{
-							note.tickerText="Message to get down was sent to "+ contact.getName();
-							startForeground(1337, note);
-							sendGetDownMessage(contact.getInternationalPhoneNumber());
-							db.remove(i);
-							ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
-						}					
-					}//for contacts
-				}//synchronized
-				if(flag==false)
-				{
-					note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
-					startForeground(1337, note);
+							contact=db.get(i);
+
+							targetlocation = new Location(mylocation);
+							targetlocation.setLatitude(contact.getLatitude());
+							targetlocation.setLongitude(contact.getLongitude());
+
+							if(contact.isSelected()==true)
+							{
+								note.setLatestEventInfo(this, "Tripper", "On the way to "+ contact.getName(), pi);
+								startForeground(1337, note);
+								flag=true;
+
+							}
+
+							if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
+							{
+								note.tickerText="Message to get down was sent to "+ contact.getName();
+								startForeground(1337, note);
+								sendGetDownMessage(contact.getInternationalPhoneNumber());
+								db.remove(i);
+								ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
+							}					
+						}//for contacts
+					}//synchronized
+
+					if(flag==false)
+					{
+						note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
+						startForeground(1337, note);
+					}
+
 				}
-				
-			}
+				else if(APP_MODE==Extra.SINGLE_DESTINATION)
+				{
+						
+					targetlocation = new Location("me");
+					Address singleRouteCoordinates = ContactsListSingleton.getSingleRouteAddress();
+					targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
+					targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
+					
+					if(mylocation.distanceTo(targetlocation)< 50)
+					{
+						sendGotToPlace();
+					}
+				}
+
+			}//While
 
 			try 
 			{
@@ -121,13 +133,29 @@ public class DistanceService extends IntentService
 
 			}			
 		}
-	      if(ttobj !=null){
-	          ttobj.stop();
-	          ttobj.shutdown();
-	      }
-		
+		if(ttobj !=null){
+			ttobj.stop();
+			ttobj.shutdown();
+		}
+
 		stopSelf();
 	}
+
+
+	private void InitializeSpeech()
+	{
+		ttobj=new TextToSpeech(getApplicationContext(), 
+				new TextToSpeech.OnInitListener() {
+			@Override
+			public void onInit(int status) {
+				if(status != TextToSpeech.ERROR)
+				{
+					ttobj.setLanguage(Locale.UK);
+				}				
+			}
+		});
+	}
+
 
 
 	@SuppressWarnings("deprecation")
@@ -136,14 +164,14 @@ public class DistanceService extends IntentService
 		Intent intent=new Intent(this, OnMap.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		pi=PendingIntent.getActivity(this, 0,intent, 0);
-		
-		note=new Notification(R.drawable.ic_launcher,"New Trip started.",System.currentTimeMillis());
+
+		note=new Notification(R.drawable.icon,"New Trip started.",System.currentTimeMillis());
 		note.flags|=Notification.FLAG_NO_CLEAR;
 		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
-		
+
 		startForeground(1337, note);
-			
-	   /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+		/* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 	    builder.setTicker("New Trip started.").setContentTitle( "Tripper").setContentText("Have a nice Trip!")
 	            .setWhen(System.currentTimeMillis()).setAutoCancel(false)
 	            .setOngoing(true).setContentIntent(pi);
@@ -152,8 +180,8 @@ public class DistanceService extends IntentService
 	    //startForeground(1337, note);
 	    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1337, note);*/
-}
-	
+	}
+
 
 
 	private Location getLastKnownLocation()
@@ -210,6 +238,31 @@ public class DistanceService extends IntentService
 		{
 			throw new RuntimeException("Something wrong with JSON", x);
 		}
+		push.setData(data);
+		push.sendInBackground();
+	}
+	
+	
+	
+	public void sendGotToPlace()
+	{	 
+		ParsePush push = new ParsePush();
+		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse(ChannelMode.GETDOWN);
+		push.setChannels(phones);
+		
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+		
+		JSONObject data = new JSONObject();		
+	    try
+	    {
+	    		data.put("alert", Messeges.GOTTOPLACE ); // ParseUser.getCurrentUser().getUsername());
+	    		data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+
+	    }
+	    catch(JSONException x)
+	    {
+	    	throw new RuntimeException("Something wrong with JSON", x);
+	    }
 		push.setData(data);
 		push.sendInBackground();
 	}
