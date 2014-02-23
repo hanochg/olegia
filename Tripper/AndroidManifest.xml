@@ -55,8 +55,8 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" />
- <!-- AIzaSyCEcxbS5QckQg3JraGgVp-DBPxJ1-OSBPU" /> -->
+            android:value="AIzaSyCEcxbS5QckQg3JraGgVp-DBPxJ1-OSBPU" />
+ <!-- "AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" /> -->
 
         <activity
             android:name="com.tripper.mobile.activity.MainActivity"
@@ -150,7 +150,6 @@
                 <category android:name="com.tripper.mobile" />
             </intent-filter>
         </receiver>
-
 
     </application>
 

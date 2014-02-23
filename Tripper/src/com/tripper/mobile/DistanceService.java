@@ -141,7 +141,7 @@ public class DistanceService extends IntentService
 		note.flags|=Notification.FLAG_NO_CLEAR;
 		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
 		
-		
+		startForeground(1337, note);
 			
 	   /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 	    builder.setTicker("New Trip started.").setContentTitle( "Tripper").setContentText("Have a nice Trip!")
