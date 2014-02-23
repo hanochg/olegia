@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingRight="12dp"
-    android:paddingLeft="12dp"
     android:paddingBottom="12dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
     tools:context=".NotificationActivity" >
 
     <TextView
@@ -14,46 +14,54 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:paddingBottom="8dp"
+        android:paddingBottom="18dp"
         android:text="Hello DVssssssssdsfsdfsdfsdfsdfsdfsdfsdf=sssssssssssss"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
-     <LinearLayout
-         android:id="@+id/linearlayout_id"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignLeft="@+id/tvMessage"
-         android:layout_below="@+id/tvMessage"
-         android:gravity="center_horizontal"
-         android:orientation="horizontal" >
+    <RelativeLayout
+        android:id="@+id/linearlayout_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvMessage"
+        android:layout_below="@+id/tvMessage"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
 
-         <Button
-             android:id="@+id/btnMyLocation"
-             android:layout_width="fill_parent"
-             android:layout_height="60dp"
-             android:layout_weight="1"
-             android:lines="2"
-             android:onClick="OnBtnMylocationClick"
-             android:text="@string/btnMyLocation" />
+        <Button
+            android:id="@+id/btnMyLocation"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:onClick="OnBtnMylocationClick"
+            android:text="@string/btnMyLocation"
+            android:textSize="15sp" />
 
-         <Button
-             android:id="@+id/btnEnterAdress"
-             android:layout_width="fill_parent"
-             android:layout_height="60dp"
-             android:layout_weight="1"
-             android:lines="2"
-             android:onClick="OnBtnEnterAdressClick"
-             android:text="@string/btnEnterAdress" />
+        <Button
+            android:id="@+id/btnNoThanks"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/btnEnterAdress"
+            android:gravity="center"
+            android:onClick="OnBtnNoThanksClick"
+            android:text="@string/btnNoThanks"
+            android:textSize="15sp" />
 
-         <Button
-             android:id="@+id/btnNoThanks"
-             android:layout_width="fill_parent"
-             android:layout_height="60dp"
-             android:layout_weight="1"
-             android:lines="2"
-             android:onClick="OnBtnNoThanksClick"
-             android:text="@string/btnNoThanks" />
-
-     </LinearLayout>
+        <Button
+            android:id="@+id/btnEnterAdress"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/btnMyLocation"
+            android:gravity="center"
+            android:onClick="OnBtnEnterAdressClick"
+            android:text="@string/btnEnterAdress"
+            android:textSize="15sp" />
+    </RelativeLayout>
 
 </RelativeLayout>
