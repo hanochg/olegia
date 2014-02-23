@@ -17,7 +17,7 @@ public class ContactDataStructure
 		   notChecked,noApp,hasApp
 		 }
 	 public enum eAnswer {
-		   notAnswered,none,no,ok
+		   notAnswered,none,no,ok,manual
 		 }
 	
 	private String name;

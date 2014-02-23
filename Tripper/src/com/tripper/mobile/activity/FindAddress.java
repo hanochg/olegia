@@ -273,7 +273,7 @@ public class FindAddress extends Activity {
 			
 			switch (APP_MODE)
 			{
-			case Queries.Extra.SINGLE_DESTINATION: //MainActivity				
+			case Extra.SINGLE_DESTINATION: //MainActivity				
 				//get selected address
 				ContactsListSingleton.setSingleRouteAddress(selectedAddress);
 
@@ -284,7 +284,7 @@ public class FindAddress extends Activity {
 				finish();
 				break;
 				
-			case Queries.Extra.MULTI_DESTINATION:	//Manual
+			case Extra.MULTI_DESTINATION:	//Manual
 
 				//get number from intent
 
@@ -293,16 +293,17 @@ public class FindAddress extends Activity {
 				//get longitude and latitude and send it to user's data
 				ContactsListSingleton.getInstance().setContactLocation(
 						phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
+				
 				break;
 				
-			case Queries.Extra.NOTIFICATION:	//Notification
-				
+			case Extra.NOTIFICATION:	//Notification				
 				Intent newintent = new Intent(this, MainActivity.class); 
 				newintent.putExtra(Extra.LATITUDE, selectedAddress.getLatitude());
 				newintent.putExtra(Extra.LONGITUDE, selectedAddress.getLongitude());
 				setResult(Activity.RESULT_OK,newintent);
 				finish();
-				break;					
+				break;	
+
 			}
 			break;
 		case R.id.SettingsFA:

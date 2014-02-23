@@ -238,7 +238,10 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		if (Queries.LoaderManagerID == loader.getId())
 		{
 			FilterCursorWrapper filterCursorWrapper = new FilterCursorWrapper(cursor, true,0);
-			mAutoCompleteAdapter.swapCursor(filterCursorWrapper);
+			if(!filterCursorWrapper.isClosed())
+				mAutoCompleteAdapter.swapCursor(filterCursorWrapper);
+			else
+				Log.e("FriendsList","mAutoCompleteAdapter-closed cursor error");
 		}
 	}
 
@@ -297,7 +300,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    			    		
 	    	finish();
 	    	
-	    	if(APP_MODE!=Queries.Extra.SINGLE_DESTINATION)
+	    	if(APP_MODE==Queries.Extra.MULTI_DESTINATION)
 	    		sendNotifications();
 	        return true;
 	        
@@ -327,6 +330,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    }
 	    catch(JSONException x)
 	    {
+	    	Log.e("sendNotifications","Something wrong with JSON");
 	    	throw new RuntimeException("Something wrong with JSON", x);
 	    }
 		push.setData(data);

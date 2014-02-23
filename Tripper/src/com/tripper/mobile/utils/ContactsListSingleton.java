@@ -135,7 +135,8 @@ public class ContactsListSingleton
 		if(index!=(-1))
 		{
 			db.get(index).setLongitude(lon);
-			db.get(index).setLatitude(lat);			
+			db.get(index).setLatitude(lat);	
+			db.get(index).setContactAnswer(eAnswer.manual);
 		}
 	}
 
