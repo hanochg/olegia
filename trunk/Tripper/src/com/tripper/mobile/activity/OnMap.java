@@ -500,6 +500,7 @@ public class OnMap extends Activity {
 			startActivity(intent);			
 			break;
         case R.id.exitOM:        	
+        	finish();
         	//intent = new Intent("com.tripper.mobile.EXIT");	
     		//LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         	break;
