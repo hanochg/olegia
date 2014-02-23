@@ -30,7 +30,7 @@
          <Button
              android:id="@+id/btnMyLocation"
              android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
+             android:layout_height="60dp"
              android:layout_weight="1"
              android:lines="2"
              android:onClick="OnBtnMylocationClick"
@@ -39,7 +39,7 @@
          <Button
              android:id="@+id/btnEnterAdress"
              android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
+             android:layout_height="60dp"
              android:layout_weight="1"
              android:lines="2"
              android:onClick="OnBtnEnterAdressClick"
@@ -48,7 +48,7 @@
          <Button
              android:id="@+id/btnNoThanks"
              android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
+             android:layout_height="60dp"
              android:layout_weight="1"
              android:lines="2"
              android:onClick="OnBtnNoThanksClick"
