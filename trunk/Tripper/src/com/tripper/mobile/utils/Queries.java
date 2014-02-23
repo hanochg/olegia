@@ -45,6 +45,7 @@ public class Queries {
 	        public static final char INVITATION='a';
 	        public static final char ANSWER='b';
 	        public static final char GETDOWN='c';
+	        public static final char LONERIDER='d';
 		}
 		
 		public static final class Messeges
