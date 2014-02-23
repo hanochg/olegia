@@ -347,14 +347,15 @@ public class LoginActivity extends Activity {
 	private void ParseUserInstalation() throws ParseException 
 	{
 		ParseInstallation installation = ParseInstallation.getCurrentInstallation();	
-		//installation.put("user",ParseUser.getCurrentUser());			
+		installation.put("user",ParseUser.getCurrentUser());			
 		installation.save();
 		
 		String userPhone=ParseUser.getCurrentUser().getUsername();
 		
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class,R.drawable.icon_envpole);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), NotificationActivity.class);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), NotificationActivity.class,R.drawable.icon_mark);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), NotificationActivity.class,R.drawable.icon_mark);
 	}
 	
 }

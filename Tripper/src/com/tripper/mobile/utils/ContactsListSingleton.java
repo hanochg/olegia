@@ -28,10 +28,10 @@ public class ContactsListSingleton
 	//public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
 	//public AppMode APP_MODE;
 
-	
+
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
-	
+
 	private Address singleRouteCoordinates;
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
@@ -52,7 +52,7 @@ public class ContactsListSingleton
 	public void setCountryTwoLetters(String countryTwoLetters) {
 		CountryTwoLetters = countryTwoLetters;
 	}
-	
+
 	public void setRegionalSettingsFromContex( Context context)
 	{	
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -61,29 +61,29 @@ public class ContactsListSingleton
 		CountryTwoLetters = countryTwoLetters;
 		LanguageFromSettings = languageFromSettings;
 	}
-	
+
 
 	public FriendsSelectedAdapter mFriendsSelectedAdapter;
-	
+
 	public void close()
 	{
-			db.clear();
-			db=null;
-			instance=null;
+		db.clear();
+		db=null;
+		instance=null;
 	}
-	
+
 	public static void setSingleRouteAddress(Address address)
 	{
-			getInstance().singleRouteCoordinates=address;
+		getInstance().singleRouteCoordinates=address;
 
 	}
-	
+
 	public static Address getSingleRouteAddress()
 	{
-			return(getInstance().singleRouteCoordinates);
+		return(getInstance().singleRouteCoordinates);
 
 	}
-	
+
 	private ContactsListSingleton()
 	{
 		db=new ArrayList<ContactDataStructure>();
@@ -91,7 +91,7 @@ public class ContactsListSingleton
 
 	static public ContactsListSingleton getInstance()
 	{
-		
+
 		if (instance == null){
 			synchronized(ContactsListSingleton.class)
 			{
@@ -99,16 +99,16 @@ public class ContactsListSingleton
 					instance = new ContactsListSingleton();
 			}
 		}
-		
+
 		return instance;
 	}
-	
+
 	public ArrayList<ContactDataStructure> getDB() 
 	{
 		return db; 
-		
+
 	}
-	
+
 	public synchronized void insertContact(final ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter,Context context) 
 	{
 
@@ -123,12 +123,12 @@ public class ContactsListSingleton
 
 			asyncPhoneConverter= new AsyncPhoneConverter(contact,mFriendsSelectedAdapter,context);
 			asyncPhoneConverter.execute();
-			
+
 		}
 		else
 			Log.e("ContactsListSingelton","DB Not created before insertContact");
 	}
-	
+
 	public synchronized void setContactLocation(String phone, double lon, double lat)
 	{
 		int index = indexOf(phone);
@@ -138,7 +138,7 @@ public class ContactsListSingleton
 			db.get(index).setLatitude(lat);			
 		}
 	}
-	
+
 	public int indexOf(String phone)
 	{
 		if(db!=null)
@@ -152,7 +152,7 @@ public class ContactsListSingleton
 		}
 		return (-1); 
 	}
-	
+
 	public synchronized void removeContactByPhoneNum(String phone) 
 	{
 		if(db!=null)
@@ -164,7 +164,7 @@ public class ContactsListSingleton
 		else
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
 	}
-	
+
 	public ContactDataStructure findContactByPhoneNum(String phone)
 	{
 		if(db!=null)
@@ -178,8 +178,8 @@ public class ContactsListSingleton
 		}
 		return null; 
 	}	
-	
-	
+
+
 	public synchronized void removeContactByIndex(int index) 
 	{
 		if(db!=null)
@@ -192,9 +192,9 @@ public class ContactsListSingleton
 			}
 		}
 		else
-				Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
+			Log.e("ContactsListSingelton","DB Not created before removeContactByIndex");
 	}
-	
+
 	public ArrayList<String> getAllChannelsForParse(char channelPrefix)
 	{
 		ArrayList<String> phones = null; 
@@ -202,7 +202,7 @@ public class ContactsListSingleton
 		{
 			phones = new ArrayList<String>();			
 			ContactDataStructure tempContact=null;
-			
+
 			for(int i=0 ; i<db.size() ; i++)
 			{
 				tempContact=db.get(i);
@@ -216,18 +216,18 @@ public class ContactsListSingleton
 		return phones;
 	}
 
-	
+
 	private class AsyncPhoneConverter extends AsyncTask<Void, Void, Void>
 	{
 
-		
+
 		PhoneNumber converedNumber;
 		String phone;
 		ContactDataStructure contact;
 		String result=null;
 		FriendsSelectedAdapter mFriendsSelectedAdapter;
 		Context context;
-		
+
 		AsyncPhoneConverter(ContactDataStructure contact,FriendsSelectedAdapter mFriendsSelectedAdapter, Context context) 
 		{
 			super();
@@ -236,16 +236,14 @@ public class ContactsListSingleton
 			this.phone = contact.getPhoneNumber();
 			this.mFriendsSelectedAdapter=mFriendsSelectedAdapter;
 			this.context=context;
-        }
-		
+		}
+
 		@Override
 		protected Void doInBackground(Void... none) {
 			synchronized(contact.internationalPhoneNumber)
 			{
 				PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-				try {
-
-					
+				try {				
 					converedNumber = phoneUtil.parse(phone, CountryTwoLetters);
 					result=phoneUtil.format(converedNumber, PhoneNumberFormat.E164);
 				} catch (Exception e) {
@@ -264,25 +262,30 @@ public class ContactsListSingleton
 		@Override
 		protected void onPostExecute(Void result)
 		{
+			String number="";
 			//*Parse*// 
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
-				
-			String number= contact.getInternationalPhoneNumber();
-				
+
+			synchronized(contact)
+			{
+				if(contact!=null)
+					number= contact.getInternationalPhoneNumber();				
+			}
 			query.whereEqualTo("username",number); 
 
 			query.countInBackground(new CountCallback() 
-				{
-					public void done(int count, ParseException e) 
-					{  
-
+			{
+				public void done(int count, ParseException e) 
+				{  
+					synchronized(contact)
+					{
 						if (e == null && contact!=null)
 						{
 							if(count!=0)
 								contact.UpdateAppStatus(eAppStatus.hasApp);
 							else
 								contact.UpdateAppStatus(eAppStatus.noApp);
-							
+
 							if(mFriendsSelectedAdapter!=null)
 								mFriendsSelectedAdapter.notifyDataSetChanged();
 							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
@@ -292,10 +295,11 @@ public class ContactsListSingleton
 						{
 							// The request failed,connection error
 						}
-						
 					}
-				}); 
+
+				}
+			}); 
 		}				
 	}
-	
+
 }
