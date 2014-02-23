@@ -44,15 +44,16 @@ public class SettingsActivity extends PreferenceActivity {
 			Log.d("settings","OnPreferenceChangeListener");
 			if(preference.getKey().equals(language_list))
 			{
-				//used in FindAddress
-
+				String languageSettings=value.toString();
+				
+				//used in ContactsListSingleton	
+				ContactsListSingleton.getInstance().setLanguageFromSettings(languageSettings);
 
 				return true;
 			}
 			if(preference.getKey().equals(location_list))
 			{
-				//used in ContactsListSingleton
-				
+				//used in ContactsListSingleton				
 				String countryTwoLetters=value.toString();
 				
 				ContactsListSingleton.getInstance().setCountryTwoLetters(countryTwoLetters);
