@@ -148,6 +148,13 @@ public class OnMap extends Activity {
 		
 	}
 	
+
+	
+	public void navigateClicked(View v)
+	{
+		Log.d("navigateClicked","navigateClicked");
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {

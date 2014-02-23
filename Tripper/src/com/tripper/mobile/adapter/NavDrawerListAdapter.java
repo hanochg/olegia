@@ -27,7 +27,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
         this.context = context;
         contactsDB = ContactsListSingleton.getInstance().getDB();
     }
- 
+	public void radiusSet(View v)
+	{
+		Log.d("radiusSet","radiusSet");
+	}
     @Override
     public int getCount() {
         return contactsDB.size();
@@ -53,9 +56,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
     			context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
     	if(curContact.isSelected())
-    		convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+    		convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
     	else
-    		convertView = mInflater.inflate(R.layout.drawer_list_item_big, null);
+    		convertView = mInflater.inflate(R.layout.drawer_list_item_replyed, null);
     	
     	TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
         txtTitle.setText(curContact.getName());

@@ -2,20 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerMainLayout"
     android:layout_width="match_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/list_selector" >
 
-    
     <RelativeLayout
         android:id="@+id/drawerUpperLayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"        
         android:background="@drawable/list_selector" >
 
         <ImageView
-            android:focusable="false"
             android:id="@+id/icon"
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -24,6 +21,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:contentDescription="@string/desc_list_item_icon"
+            android:focusable="false"
             android:src="@drawable/ic_home" />
 
         <TextView
@@ -39,41 +37,61 @@
             android:paddingRight="40dp"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:textColor="@color/list_item_title" />
-
     </RelativeLayout>
-    
-    
+
     <RelativeLayout
-        android:focusable="false"
-        android:clickable="false"
-        android:id="@+id/drawerLowerLayout"
+        android:id="@+id/drawerMiddleLayout"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/drawerUpperLayout"
         android:background="@drawable/list_selector" >
 
-        <Button
-            android:focusable="false"
-        	android:clickable="false"            
-            android:id="@+id/button1"
+        <TextView
+            android:id="@+id/contactStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/button2"
-            android:layout_alignBottom="@+id/button2"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="TextView"
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/drawerLowerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/drawerMiddleLayout"
+        android:background="@drawable/list_selector"
+        android:clickable="false"
+        android:focusable="false" >
+
+        <Button
+            android:id="@+id/radiusSet"
+            android:layout_width="110dp"
+            android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:text="Radius" />
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:focusable="false"
+            android:src="#F2F2F2"
+            android:onClick="radiusSet"
+            android:text="Set Radius"
+            android:textSize="15sp" />
 
         <Button
+            android:id="@+id/navigation"
+            android:layout_width="110dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/radiusSet"
+            android:clickable="true"
             android:focusable="false"
-        	android:clickable="false"            
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/button1"
-            android:text="Nav" />
-
+            android:src="#F2F2F2"
+            android:text="Navigate"
+            android:onClick="navigateClicked"
+            android:textSize="15sp" />
     </RelativeLayout>
 
 </RelativeLayout>

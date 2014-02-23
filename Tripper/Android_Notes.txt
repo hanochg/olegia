@@ -5,10 +5,6 @@ Garbage collector- So done I think.
 5. to delete previous installation when new user is getting sign in or sign up - Oleg
 6. to check activities with screen lock
 
-12. check if cursor is closed when accessing it in FriendsList
+12. check if cursor is closed when accessing it in FriendsList - I think I fixed it - Hanoch
 13. get sms messages code and send to oleg
 14. fix- in OnMap while on edit friendslist going back in friendsList get back to menu
-
-
-15. finishing OnMap activity when EditFriends Clicked.
-16. After Map Back, the new "trip", somthing wrong happens

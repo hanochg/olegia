@@ -15,13 +15,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:paddingBottom="18dp"
-        android:text="Hello DVssssssssdsfsdfsdfsdfsdfsdfsdfsdf=sssssssssssss"
+        android:text="testestestestestestestestestestestestestestestestestestestestestestestestestest"
         android:textSize="16sp" />
 
     <RelativeLayout
         android:id="@+id/linearlayout_id"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_alignLeft="@+id/tvMessage"
         android:layout_below="@+id/tvMessage"
         android:gravity="center_horizontal"
@@ -30,7 +30,7 @@
         <Button
             android:id="@+id/btnMyLocation"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
@@ -42,7 +42,7 @@
         <Button
             android:id="@+id/btnNoThanks"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/btnEnterAdress"
@@ -54,7 +54,7 @@
         <Button
             android:id="@+id/btnEnterAdress"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/btnMyLocation"
