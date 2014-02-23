@@ -69,7 +69,7 @@ public class LoginActivity extends Activity {
 
 		setContentView(R.layout.login_screen);
 		
-		SplashScreen.splashActivity.finish();
+		//SplashScreen.splashActivity.finish();
 		
 		ParseAnalytics.trackAppOpened(getIntent()); //???
 		

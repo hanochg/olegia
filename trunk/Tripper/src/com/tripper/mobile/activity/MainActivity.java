@@ -7,14 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.tripper.mobile.R;
@@ -31,8 +27,8 @@ public class MainActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);	
-		if(SplashScreen.splashActivity!=null)
-			SplashScreen.splashActivity.finish();
+		//if(SplashScreen.splashActivity!=null)
+		//	SplashScreen.splashActivity.finish();
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 

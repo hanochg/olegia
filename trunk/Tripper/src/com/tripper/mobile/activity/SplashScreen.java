@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class SplashScreen extends Activity {
 
-	public static Activity splashActivity;
+	public  Activity splashActivity;
 
 	private ParseUser currentUser=null;	
 	private String mPhoneNumber="";
@@ -65,6 +65,7 @@ public class SplashScreen extends Activity {
 					intent = new Intent(splashActivity,LoginActivity.class);
 					intent.putExtra(Extra.PHONE, mPhoneNumber);
 				}
+				splashActivity.finish();
 				startActivity(intent);	
 
 				//if (!networkConnection)
@@ -131,8 +132,9 @@ public class SplashScreen extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		splashActivity=null;
 		super.onDestroy();
+		splashActivity=null;
+		
 	}
 
 	@Override
