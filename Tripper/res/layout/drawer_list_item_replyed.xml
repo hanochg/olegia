@@ -9,8 +9,7 @@
         android:id="@+id/drawerUpperLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/list_selector" >
+        android:layout_alignParentLeft="true" >
 
         <ImageView
             android:id="@+id/icon"
@@ -34,7 +33,7 @@
             android:focusable="false"
             android:gravity="center_vertical"
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingRight="40dp"
+            android:paddingRight="20dp"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:textColor="@color/list_item_title" />
     </RelativeLayout>
@@ -44,8 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/drawerUpperLayout"
-        android:background="@drawable/list_selector" >
+        android:layout_below="@+id/drawerUpperLayout" >
 
         <TextView
             android:id="@+id/contactStatus"
@@ -54,7 +52,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:text="TextView"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FAFFFFFF" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -63,7 +61,6 @@
         android:layout_height="60dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/drawerMiddleLayout"
-        android:background="@drawable/list_selector"
         android:clickable="false"
         android:focusable="false" >
 
@@ -76,8 +73,8 @@
             android:clickable="true"
             android:focusable="false"
             android:src="#F2F2F2"
-            android:onClick="radiusSet"
             android:text="Set Radius"
+            android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
         <Button
@@ -89,8 +86,8 @@
             android:clickable="true"
             android:focusable="false"
             android:src="#F2F2F2"
+            android:textColor="#FFFFFF"
             android:text="Navigate"
-            android:onClick="navigateClicked"
             android:textSize="15sp" />
     </RelativeLayout>
 

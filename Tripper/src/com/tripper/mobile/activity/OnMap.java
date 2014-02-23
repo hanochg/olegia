@@ -278,7 +278,7 @@ public class OnMap extends Activity {
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
  
         // setting the nav drawer list adapter
-        navDrawerListAdapter = new NavDrawerListAdapter(getApplicationContext());
+        navDrawerListAdapter = new NavDrawerListAdapter(this);
         mDrawerList.setAdapter(navDrawerListAdapter);
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
         

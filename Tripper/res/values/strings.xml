@@ -21,6 +21,10 @@
     <string name="Done">Done</string>
     <string name="Back">Back</string>
     <string name="Next">Next</string>
+    <string name="contact_no_app_status">No app!</string>
+    <string name="contact_waiting_reply_status">Waiting for reply</string>
+    <string name="contact_deny_response_status">Declined location request</string>
+    <string name="contact_response_status">Location received</string>
     
     <string name="HebrewLanguage">iw</string>
     <string name="EnglishLanguage">en</string>
