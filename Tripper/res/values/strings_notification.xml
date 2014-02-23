@@ -1,6 +1,6 @@
 <resources>
   
-    <string name="btnMyLocation">Send Current Location</string>
+    <string name="btnMyLocation">Send My Location</string>
     <string name="btnEnterAdress">Enter Address</string>
     <string name="btnProfileAddress">Use my profile Address</string> 
     <string name="btnNoThanks">No Thanks</string>

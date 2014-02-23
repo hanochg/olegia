@@ -18,6 +18,7 @@ import com.tripper.mobile.utils.Queries.Net.Messeges;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 
 import android.content.Context;
@@ -25,7 +26,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
+import android.support.v4.app.NotificationCompat;
 
 
 
@@ -42,6 +43,7 @@ public class DistanceService extends IntentService
 		super("DistanceService");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onHandleIntent(Intent intent) 
 	{	
@@ -52,7 +54,6 @@ public class DistanceService extends IntentService
 		Location mylocation=null;
 		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
 		Location targetlocation;
-		
 		
 	      ttobj=new TextToSpeech(getApplicationContext(), 
 	    	      new TextToSpeech.OnInitListener() {
@@ -72,9 +73,6 @@ public class DistanceService extends IntentService
 
 			mylocation = getLastKnownLocation();
 			
-
-			//Log.e( "Place  " , Float.toString(mylocation.getAccuracy()));
-
 			if(mylocation!=null && db!=null)
 			{
 				ContactDataStructure contact;
@@ -99,7 +97,6 @@ public class DistanceService extends IntentService
 						if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
 						{
 							note.tickerText="Message to get down was sent to "+ contact.getName();
-							//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
 							startForeground(1337, note);
 							sendGetDownMessage(contact.getInternationalPhoneNumber());
 							db.remove(i);
@@ -123,9 +120,6 @@ public class DistanceService extends IntentService
 			{
 
 			}			
-			//note.tickerText="sdasdasdasd";
-			//note.setLatestEventInfo(this, "aaaa", "zzzzzzzzz", pi);
-			//startForeground(1337, note);
 		}
 	      if(ttobj !=null){
 	          ttobj.stop();
@@ -139,21 +133,27 @@ public class DistanceService extends IntentService
 	@SuppressWarnings("deprecation")
 	private void  setNotification()
 	{	
+		Intent intent=new Intent(this, OnMap.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		pi=PendingIntent.getActivity(this, 0,intent, 0);
+		
 		note=new Notification(R.drawable.ic_launcher,"New Trip started.",System.currentTimeMillis());
 		note.flags|=Notification.FLAG_NO_CLEAR;
-		Intent i=new Intent(this, OnMap.class);
-
-
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
-				Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-		pi=PendingIntent.getActivity(this, 0,i, 0);
-
 		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
 		
-		startForeground(1337, note);
-
-	}
+		
+			
+	   /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+	    builder.setTicker("New Trip started.").setContentTitle( "Tripper").setContentText("Have a nice Trip!")
+	            .setWhen(System.currentTimeMillis()).setAutoCancel(false)
+	            .setOngoing(true).setContentIntent(pi);
+	    note = builder.build();
+	   // note.flags |= Notification.FLAG_NO_CLEAR;
+	    //startForeground(1337, note);
+	    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1337, note);*/
+}
+	
 
 
 	private Location getLastKnownLocation()

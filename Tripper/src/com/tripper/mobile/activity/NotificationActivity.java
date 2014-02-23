@@ -27,6 +27,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,10 +48,7 @@ public class NotificationActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.notification_screen);
-		//getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		notificationActivity=this;
-		
 		ParseAnalytics.trackAppOpened(getIntent());	
 		
 		try {
@@ -59,10 +57,17 @@ public class NotificationActivity extends Activity implements
 			
 			
 		} catch (JSONException e) {
-			Toast.makeText(getApplicationContext(), "The Program has Crushed.", Toast.LENGTH_LONG).show();
-			this.finish();
+			throw new RuntimeException("Something wrong with JSON", e);
 		}
+			
+		setContentView(R.layout.notification_screen);
 		
+		//getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+		
+		
+
+		this.setFinishOnTouchOutside(false);
 
 		tvMessage = (TextView) findViewById(R.id.tvMessage);
 		tvMessage.setText("User "+ phone + " is inviting you to the trip.");
@@ -130,7 +135,7 @@ public class NotificationActivity extends Activity implements
 	
 	public void OnBtnEnterAdressClick(View view)
 	{	
-		
+
 		Intent intent = new Intent(this, FindAddress.class);
 		intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.NOTIFICATION);
 		startActivityForResult(intent, Extra.NOTIFICATION_RESULTCODE);
@@ -244,7 +249,15 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 			//mAdapter.swapCursor(null);
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	        // your code
+	        return true;
+	    }
 
+	    return super.onKeyDown(keyCode, event);
+	}
     
 	/*		
 	@Override

@@ -22,12 +22,12 @@ import android.view.Menu;
 import android.widget.Toast;
 
 public class SplashScreen extends Activity {
-	
+
 	public static Activity splashActivity;
-		
+
 	private ParseUser currentUser=null;	
 	private String mPhoneNumber="";
-	
+
 	private boolean networkConnection;
 
 	@Override
@@ -43,26 +43,26 @@ public class SplashScreen extends Activity {
 		{
 			public void run() 
 			{
-				
+
 				if (!networkConnection)	//Exit, connection error.(to Exit the timer thread)
 				{
 					splashActivity.finish(); 
 					return;
 				}
-				
+
 				Intent intent;
-				
+
 				if (currentUser != null) 
 				{
 					intent = new Intent(splashActivity, MainActivity.class);					
 				}
 				else
 				{
-					intent = new Intent(splashActivity, LoginActivity.class);
+					intent = new Intent(splashActivity,LoginActivity.class);
 					intent.putExtra(Extra.PHONE, mPhoneNumber);
 				}
 				startActivity(intent);	
-								
+
 				//if (!networkConnection)
 				//{
 				//	intent = new Intent(android.provider.Settings.ACTION_DATA_ROAMING_SETTINGS);
@@ -70,47 +70,47 @@ public class SplashScreen extends Activity {
 				//}
 			}
 		},getResources().getInteger(R.integer.splash_screen_timeout)); 	
-			
+
 		networkConnection=isNetworkAvailable();
-		
+
 		if (!networkConnection)
 		{
 			Toast.makeText(getApplicationContext(), "You must be connected to the internet", Toast.LENGTH_LONG).show();
 			return; //Exit, connection error.
 		}
-		
+
 		//ParseUser.logOut();
 		currentUser = ParseUser.getCurrentUser();	
-		
+
 		if(currentUser==null)
 		{
-			try{
-			mPhoneNumber = ((TelephonyManager)getSystemService(TELEPHONY_SERVICE)).getLine1Number();
-			if(mPhoneNumber.isEmpty())
+
+			TelephonyManager tel=((TelephonyManager)getSystemService(TELEPHONY_SERVICE));
+			if(tel!= null)
+				mPhoneNumber =tel.getLine1Number();		
+
+			if(mPhoneNumber==null || mPhoneNumber.isEmpty())
 			{
 				AccountManager am = AccountManager.get(this);
 				Account[] accounts = am.getAccountsByType("com.whatsapp");
-			
+
 				if(accounts.length!=0)
 				{
 					mPhoneNumber="+" + accounts[0].name;
 				}
 			}	
-			}catch(Exception e){
-				Log.e("SPLASH","NUMBER ERROR");
-			}
-			
-			}
+
 		}
-	
+	}
+
 	private boolean isNetworkAvailable()
 	{
-	    ConnectivityManager connectivityManager 
-	          = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+		ConnectivityManager connectivityManager 
+		= (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
-	
+
 	@Override
 	protected void onPause() {	
 		// TODO Auto-generated method stub
