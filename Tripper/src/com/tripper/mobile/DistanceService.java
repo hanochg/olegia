@@ -103,7 +103,7 @@ public class DistanceService extends IntentService
 							ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
 						}					
 					}//for contacts
-				}//syncronize
+				}//synchronized
 				if(flag==false)
 				{
 					note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
@@ -114,7 +114,7 @@ public class DistanceService extends IntentService
 
 			try 
 			{
-				Thread.sleep(1000);
+				Thread.sleep(800);
 			}
 			catch (Exception e)
 			{
@@ -202,7 +202,7 @@ public class DistanceService extends IntentService
 		JSONObject data = new JSONObject();		
 		try
 		{
-			data.put("alert", Messeges.GETDOWN + ParseUser.getCurrentUser().getUsername());
+			data.put("alert", Messeges.GETDOWN);
 			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
 		}

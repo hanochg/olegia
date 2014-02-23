@@ -32,10 +32,7 @@ public class ContactDataStructure
 	private double radius;
 	private Marker marker; 
 	private Circle radiusOnMap;
-	private boolean isSelected=true;
-
-	
-
+	private boolean isSelected=false;
 
 
 	public boolean isSelected() {
