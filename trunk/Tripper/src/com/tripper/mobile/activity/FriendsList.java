@@ -113,7 +113,7 @@ public class FriendsList extends Activity implements
 				ContactDataStructure contact = new ContactDataStructure(context);
 				
 				// Gets the Cursor object currently bound to the ListView
-		        final Cursor cursor = mAutoCompleteAdapter.getCursor();
+		        Cursor cursor = mAutoCompleteAdapter.getCursor();
 
 		        // Moves to the Cursor row corresponding to the ListView item that was clicked
 		        cursor.moveToPosition(position);
@@ -133,6 +133,7 @@ public class FriendsList extends Activity implements
 		        
 		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
+		        cursor=null;
 			}
 		});
 			
@@ -286,10 +287,14 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    		Toast.makeText(this, "Please add contacts.", Toast.LENGTH_LONG).show();
 	    		return true;    	
 	    	}	    	
-	    		    		    
-	    	intent = new Intent(this, OnMap.class);		    		
-	    	intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
-	    	startActivity(intent);
+	    	
+	    	if(APP_MODE!=Queries.Extra.ON_MAP)
+	    	{
+	    		intent = new Intent(this, OnMap.class);
+		    	intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
+		    	startActivity(intent);
+	    	}
+	    			    		
 	    	finish();
 	    	
 	    	if(APP_MODE!=Queries.Extra.SINGLE_DESTINATION)
