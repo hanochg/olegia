@@ -24,7 +24,7 @@
         android:layout_toRightOf="@id/icon"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingRight="40dp"
+        android:paddingRight="20dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/list_item_title" />
  
