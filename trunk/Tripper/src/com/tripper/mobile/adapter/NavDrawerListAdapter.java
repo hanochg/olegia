@@ -13,6 +13,7 @@ import com.parse.ParseUser;
 import com.tripper.mobile.R;
 import com.tripper.mobile.activity.FindAddress;
 import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
@@ -34,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -79,9 +81,28 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 		curContact = getItem(position);
 		isContactWiderMenu=curContact.isSelected();
-
 		
-		if(!isContactWiderMenu)
+
+		if(curContact.getContactAnswer()!=eAnswer.single ||
+				curContact.getContactAnswer()!=eAnswer.singleWithMessage)
+		{
+			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+			imgIcon.setImageResource(R.drawable.ic_home);
+
+			if (curContact.getAppStatus()==eAppStatus.noApp)
+			{
+				convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);
+				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
+				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
+				setWiderMenuSingleRouteNoApp(convertView,curContact);
+			}
+			else
+			{
+				convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
+			}
+			
+		}
+		else if(!isContactWiderMenu)
 		{
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
@@ -89,7 +110,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 
 
-		if (curContact.getAppStatus()==eAppStatus.noApp)
+
+
+		
+		if (curContact.getAppStatus()==eAppStatus.noApp && 
+				curContact.getContactAnswer()!=eAnswer.single &&
+					curContact.getContactAnswer()!=eAnswer.singleWithMessage)
 		{
 			if(isContactWiderMenu)
 			{
@@ -159,7 +185,6 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 				imgIcon.setImageResource(R.drawable.green_circle);
 				break;
-				
 			default:
 				break;        
 			}
@@ -167,6 +192,14 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		txtTitle.setText(curContact.getName());
 
 		return convertView;
+	}
+
+	private void setWiderMenuSingleRouteNoApp(View convertView,ContactDataStructure curContact) {
+		final ContactDataStructure contact=curContact;
+		
+		CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		//if()
+
 	}
 
 	private void setWiderMenuYes(View convertView,ContactDataStructure curContact) {

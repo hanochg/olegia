@@ -13,6 +13,8 @@ import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ImageLoader;
 import com.tripper.mobile.utils.Queries;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.Queries.Extra;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -71,7 +73,7 @@ public class ContactsList extends Activity implements
 	private BroadcastReceiver mMessageReceiver;
     private final int SPEECH_REQUEST_CODE = 10;
     //private final int CONTACTLIST_REQUEST_CODE = 11;
-    private String APP_MODE="";
+    private int APP_MODE;
     
 
 	@Override
@@ -80,7 +82,7 @@ public class ContactsList extends Activity implements
 		setContentView(R.layout.contact_list);
 		context=this;
 		
-		APP_MODE = getIntent().getExtras().getString(Queries.Extra.APP_MODE);
+		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 				
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(this);
@@ -174,6 +176,9 @@ public class ContactsList extends Activity implements
 		        	contact.setName(displayName);
 		        	contact.setPhoneNumber(phoneNum);
 		        	contact.setUri(uri);
+			        if(APP_MODE==Extra.SINGLE_DESTINATION)
+			        	contact.setContactAnswer(eAnswer.single);
+			        
 		        	ContactsListSingleton.getInstance().insertContact(contact,ContactsListSingleton.getInstance().mFriendsSelectedAdapter,getApplicationContext());
 		        }
 		        else
