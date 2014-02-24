@@ -31,7 +31,9 @@ import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -149,14 +151,21 @@ public class OnMap extends Activity {
 		InitializeDrawer();
 		
 	}
-	
-	private void setMapView(LatLng point1,LatLng point2)
+
+	private void setMapView(LatLng dest)
 	{
-		LatLng otherSidePos = new LatLng(2 * point1.latitude - point2.latitude, 2 * point1.longitude - point2.longitude);
-		LatLngBounds bounds = new LatLngBounds.Builder().include(point2)
-		                .include(otherSidePos).build();
-		int padding = 50; 
-		        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		Criteria criteria = new Criteria();
+
+		Location source = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+		if (source != null)
+		{
+			LatLng otherSidePos = new LatLng(2 * source.getLatitude() - dest.latitude, 2 * source.getLongitude() - dest.longitude);
+			LatLngBounds bounds = new LatLngBounds.Builder().include(dest)
+					.include(otherSidePos).build();
+			int padding = 20; 
+			googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+		}
 	}
 
 	
@@ -323,18 +332,19 @@ public class OnMap extends Activity {
             				ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
-                long id) {
-        	boolean currentSelection=
-        			ContactsListSingleton.getInstance().getDB().get(position).isSelected();
-        	ContactsListSingleton.getInstance().getDB().get(position).setSelected(!currentSelection);
+        		long id) {
+        	ContactDataStructure currentContact = ContactsListSingleton.getInstance().getDB().get(position);
+        	boolean currentSelection=currentContact.isSelected();
+        	if(currentSelection)
+        		setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
+
+
+        	currentContact.setSelected(!currentSelection);
         	navDrawerListAdapter.notifyDataSetChanged();
-        	//Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        	//setMapView(new )
-        	//mDrawerLayout.closeDrawer(mDrawerList);
-        	
+
+        	//TODO
         }
     }  
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==5)
