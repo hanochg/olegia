@@ -9,6 +9,7 @@ import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.activity.OnMap;
 import com.tripper.mobile.utils.ContactDataStructure;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.Queries.Extra;
@@ -78,23 +79,22 @@ public class DistanceService extends IntentService
 							targetlocation = new Location(mylocation);
 							targetlocation.setLatitude(contact.getLatitude());
 							targetlocation.setLongitude(contact.getLongitude());
-
-							if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
-									contact.getRadius()> mylocation.distanceTo(targetlocation))
+							if(	contact.getContactAnswer()!=eAnswer.messageSent && contact.getRadius()> mylocation.distanceTo(targetlocation))
 							{
-								note.tickerText="Message to get down was sent to "+ contact.getName();
-								startForeground(1337, note);
-								sendGetDownMessage(contact.getInternationalPhoneNumber());
-								contact.setContactAnswer(eAnswer.messageSent);
-								//SEND UPDATE TO DRAWER
-								Intent updateIntent = new Intent("com.tripper.mobile.UPDATE");	
-								LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+								if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
+										contact.getAppStatus()==eAppStatus.hasApp)
+								{
+									sendGetDownMessage(contact.getInternationalPhoneNumber());
+									speechAndUpdateAfterMessege(contact);
+								}			
+								else if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() &&
+										contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
+								{
+									sendSMS(contact.getInternationalPhoneNumber());
+									speechAndUpdateAfterMessege(contact);							
+								}		
 								
-								//talk!
-								ttobj.speak("arrival message sent ." , TextToSpeech.QUEUE_FLUSH, null);
-								//MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
-								//mPlayer.start();
-							}					
+							}
 						}//for contacts
 					}//synchronized
 
@@ -111,7 +111,7 @@ public class DistanceService extends IntentService
 					{
 						note.tickerText="Messages were sent";
 						startForeground(1337, note);
-						
+
 						sendGotToPlace();
 
 						ContactDataStructure contact;
@@ -119,18 +119,19 @@ public class DistanceService extends IntentService
 						{
 							for (int i=0;i<db.size();i++)
 							{
-								
+
 								contact=db.get(i);
-								if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() && contact.getContactAnswer()==eAnswer.single)
+								if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() && 
+										contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
 								{
-									sendSMS(contact.internationalPhoneNumber);
+									sendSMS(contact.getInternationalPhoneNumber());
 									contact.setContactAnswer(eAnswer.singleWithMessage);
 								}
 							}
 						}
 						catch(Exception e)
 						{
-							
+
 						}
 						break;
 					}
@@ -154,7 +155,26 @@ public class DistanceService extends IntentService
 
 		stopSelf();
 	}
-
+	
+	public void speechAndUpdateAfterMessege(ContactDataStructure contact)
+	{
+		contact.setContactAnswer(eAnswer.messageSent);
+		
+		note.tickerText="Message to get down was sent to "+ contact.getName();
+		startForeground(1337, note);
+		
+		//SEND UPDATE TO DRAWER
+		Intent updateIntent = new Intent("com.tripper.mobile.UPDATE");	
+		LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+		
+		//talk!
+		ttobj.speak("arrival message sent ." , TextToSpeech.QUEUE_FLUSH, null);
+			
+		//MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
+		//mPlayer.start();
+	}
+	
+	
 
 	private void InitializeSpeech()
 	{
@@ -225,7 +245,10 @@ public class DistanceService extends IntentService
 		else
 			return l2;
 	}
-
+	
+	
+	
+	
 
 	@Override
 	public void onDestroy()
