@@ -167,7 +167,7 @@ public class OnMap extends Activity {
 	            public void onClick(DialogInterface dialog, int which) { 
 	                //clear the singleton
 	            	ContactsListSingleton.getInstance().close();
-	            	ContactsListSingleton.getInstance().setRegionalSettingsFromContex(getApplicationContext());
+	            	ContactsListSingleton.getInstance().setDefaultSettingsFromContex(getApplicationContext());
 	            	finish();
 	            }
 	         })

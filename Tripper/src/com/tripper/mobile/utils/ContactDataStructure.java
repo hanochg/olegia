@@ -33,6 +33,7 @@ public class ContactDataStructure
 	private Marker marker; 
 	private Circle radiusOnMap;
 	private boolean isSelected=false;
+	private boolean allowSMS=false;
 
 
 	public boolean isSelected() {
@@ -59,6 +60,8 @@ public class ContactDataStructure
 		radius=radiusFromSettings;
 		marker=null;
 		radiusOnMap=null;
+		allowSMS=false;
+		
 	}
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri,Context context)
 	{
@@ -76,8 +79,15 @@ public class ContactDataStructure
 		this.internationalPhoneNumber="";
 		this.marker=null;
 		this.radiusOnMap=null;
+		allowSMS=false;
 	}
 	
+	public boolean isAllowSMS() {
+		return allowSMS;
+	}
+	public void setAllowSMS(boolean allowSMS) {
+		this.allowSMS = allowSMS;
+	}
 	public Circle getRadiusOnMap() {
 		return radiusOnMap;
 	}

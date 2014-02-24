@@ -36,6 +36,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -83,23 +85,26 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		isContactWiderMenu=curContact.isSelected();
 		
 
-		if(curContact.getContactAnswer()!=eAnswer.single ||
-				curContact.getContactAnswer()!=eAnswer.singleWithMessage)
+		if(curContact.getContactAnswer()==eAnswer.single ||
+				curContact.getContactAnswer()==eAnswer.singleWithMessage)
 		{
-			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-			imgIcon.setImageResource(R.drawable.ic_home);
-
 			if (curContact.getAppStatus()==eAppStatus.noApp)
 			{
-				convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);
+				convertView = mInflater.inflate(R.layout.drawer_list_item_single_no_app, null);
 				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
 				setWiderMenuSingleRouteNoApp(convertView,curContact);
+				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+				imgIcon.setImageResource(R.drawable.warning_sign);
 			}
 			else
 			{
 				convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
+				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+				imgIcon.setImageResource(R.drawable.ic_home);
 			}
+			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+			imgIcon.setImageResource(R.drawable.ic_home);
 			
 		}
 		else if(!isContactWiderMenu)
@@ -107,11 +112,6 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 		}
-
-
-
-
-
 		
 		if (curContact.getAppStatus()==eAppStatus.noApp && 
 				curContact.getContactAnswer()!=eAnswer.single &&
@@ -198,7 +198,14 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		final ContactDataStructure contact=curContact;
 		
 		CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
-		//if()
+		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				//contact.setAllowSMS(allowSMS);
+				
+			}
+		});
 
 	}
 

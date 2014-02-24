@@ -33,7 +33,7 @@ public class MainActivity extends Activity
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
 		//reading Settings				
-		ContactsListSingleton.getInstance().setRegionalSettingsFromContex(this);
+		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			  @Override
