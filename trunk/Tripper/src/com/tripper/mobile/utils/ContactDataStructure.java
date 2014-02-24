@@ -181,7 +181,7 @@ public class ContactDataStructure
 		return contactAnswer;
 	}
 	public void setContactAnswer(eAnswer contactAnswer) {
-		Log.d("setContactAnswer","answer: " + contactAnswer.toString());
+		Log.d("setContactAnswer!!","answer: " + contactAnswer.toString());
 		this.contactAnswer = contactAnswer;
 	}
 	

@@ -17,7 +17,6 @@ import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 import com.tripper.mobile.utils.Queries.Net.Messeges;
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
