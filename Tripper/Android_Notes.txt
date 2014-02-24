@@ -1,11 +1,7 @@
-3. SplashScreen.splashActivity.finish();- Deleted the link to SplashActivity and now it can be collected by
-Garbage collector- So done I think.
-
 4. Adding people to friend list with hebrew and english have different style - different font in FriendsList in hebrew and english
 5. to delete previous installation when new user is getting sign in or sign up - Oleg
 6. to check activities with screen lock
 
 12. check if cursor is closed when accessing it in FriendsList - I think I fixed it - Hanoch
-13. get sms messages code and send to oleg
-14. fix- in OnMap while on edit friendslist going back in friendsList get back to menu
 15. to clear singelton when on friend list back button pushed
+16. add SMS to multi_destination
