@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.activity.OnMap;
@@ -16,17 +15,16 @@ import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 import com.tripper.mobile.utils.Queries.Net.Messeges;
-
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.gsm.SmsManager;
@@ -97,7 +95,9 @@ public class DistanceService extends IntentService
 								startForeground(1337, note);
 								sendGetDownMessage(contact.getInternationalPhoneNumber());
 								contact.setContactAnswer(eAnswer.messageSent);
-								ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
+								//ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
+								MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
+								mPlayer.start();
 							}					
 						}//for contacts
 					}//synchronized
