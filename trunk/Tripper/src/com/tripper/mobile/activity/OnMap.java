@@ -128,7 +128,8 @@ public class OnMap extends Activity {
 					  Log.d("onReceive","RECEIVED!!");
 					  navDrawerListAdapter.notifyDataSetChanged();
 					  addContactsMarkers();
-					  Toast.makeText(getApplicationContext(), "MSG RECEIVED!", Toast.LENGTH_LONG).show();					  
+					  String user = intent.getExtras().getString(Extra.USERNAME);
+					  Toast.makeText(getApplicationContext(), "Message Received From "+ user +"!", Toast.LENGTH_LONG).show();					  
 				  }
 				  else if(intentAction.equals("com.tripper.mobile.UPDATE"))
 				  {
