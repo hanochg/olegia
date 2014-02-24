@@ -96,7 +96,7 @@ public class DistanceService extends IntentService
 								note.tickerText="Message to get down was sent to "+ contact.getName();
 								startForeground(1337, note);
 								sendGetDownMessage(contact.getInternationalPhoneNumber());
-								db.remove(i);
+								//db.remove(i);
 								ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
 							}					
 						}//for contacts
@@ -117,7 +117,7 @@ public class DistanceService extends IntentService
 					targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
 					targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
 
-					if(mylocation.distanceTo(targetlocation)< 50)
+					if(mylocation.distanceTo(targetlocation)< 100)
 					{
 						note.tickerText="Messages were sent";
 						startForeground(1337, note);
