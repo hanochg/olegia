@@ -35,11 +35,16 @@
     </string-array>
 
     <!-- RADIUS -->
-    <string name="pref_category_default_radius">Radius Size</string>
-<string name="pref_default_radius">Default Radius Size</string>
-    <string name="pref_default_radius_dialog_title">Default Radius Size (in meters)</string>
-    <string name="pref_default_radius_summery">The default proximity redius (in Meters) that activate the message sending</string>
- 	<string name="pref_default_radius_value">500</string>
+    <string name="pref_category_default_radius">Radius Sizes</string>
+	<string name="pref_default_radius_multi">Radius Size In Take a Trip</string>
+    <string name="pref_default_radius_dialog_title_multi">Default Radius Size In Take a Trip [meters]</string>
+    <string name="pref_default_radius_summery_multi">The default proximity redius (in Meters) that activate the message sending in \"Take A Trip\"</string>
+ 	<string name="pref_default_radius_value_multi">500</string>
+ 	
+ 	<string name="pref_default_radius_single">Radius Size In Notify Arrival</string>
+    <string name="pref_default_radius_dialog_title_single">Radius Size In Notify Arrival [meters]</string>
+    <string name="pref_default_radius_summery_single">The default proximity redius (in Meters) that activate the message sending in \"Notify Arrival\"</string>
+ 	<string name="pref_default_radius_value_single">100</string>
  	
     <!-- SMS -->
     <string name="pref_title_sms_allow">Allow Sending SMS Messages</string>

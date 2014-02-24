@@ -29,16 +29,29 @@
         <PreferenceCategory
         android:key="pref_key_default_radius"
         android:title="@string/pref_category_default_radius" >
+        
         <EditTextPreference
-            android:defaultValue="@string/pref_default_radius_value"
+            android:defaultValue="@string/pref_default_radius_value_multi"
             android:inputType="numberDecimal"
-            android:key="default_radius_text"
+            android:key="default_radius_text_multi"
             android:maxLines="1"
-            android:dialogTitle="@string/pref_default_radius_dialog_title"
+            android:dialogTitle="@string/pref_default_radius_dialog_title_multi"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:summary="@string/pref_default_radius_summery"
-            android:title="@string/pref_default_radius" />
+            android:summary="@string/pref_default_radius_summery_multi"
+            android:title="@string/pref_default_radius_multi" />
+        
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_radius_value_single"
+            android:inputType="numberDecimal"
+            android:key="default_radius_text_single"
+            android:maxLines="1"
+            android:dialogTitle="@string/pref_default_radius_dialog_title_single"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_default_radius_summery_single"
+            android:title="@string/pref_default_radius_single" />
+        
     </PreferenceCategory>
     
     <PreferenceCategory

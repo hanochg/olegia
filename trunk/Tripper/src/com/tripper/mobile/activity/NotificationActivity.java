@@ -137,7 +137,7 @@ LoaderManager.LoaderCallbacks<Cursor>{
 	{	
 
 		Intent intent = new Intent(this, FindAddress.class);
-		intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.NOTIFICATION);
+		intent.putExtra(Queries.Extra.APP_MODE,Extra.NOTIFICATION);
 		startActivityForResult(intent, Extra.NOTIFICATION_RESULTCODE);
 	}
 

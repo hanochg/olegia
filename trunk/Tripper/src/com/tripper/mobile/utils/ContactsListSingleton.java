@@ -38,6 +38,7 @@ public class ContactsListSingleton
 	private String CountryTwoLetters;
 	private String LanguageFromSettings;
 	private boolean GlobalPreferenceAllowSMS=false;
+	private double RadiusSingleFromSettings;
 
 	public boolean isGlobalPreferenceAllowSMS() {
 		return GlobalPreferenceAllowSMS;
@@ -69,9 +70,20 @@ public class ContactsListSingleton
 		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
 		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list,"");
 		boolean allowSMS = sharedPref.getBoolean(SettingsActivity.pref_key_sms_allow,true);
+		double radiusSingleRoute = (double)sharedPref.getFloat(SettingsActivity.default_radius_text_single,0);
 		CountryTwoLetters = countryTwoLetters;
 		LanguageFromSettings = languageFromSettings;
 		GlobalPreferenceAllowSMS=allowSMS;
+		RadiusSingleFromSettings=radiusSingleRoute;
+	}
+
+
+	public double getRadiusSingleFromSettings() {
+		return RadiusSingleFromSettings;
+	}
+
+	public void setRadiusSingleFromSettings(double radiusSingleFromSettings) {
+		RadiusSingleFromSettings = radiusSingleFromSettings;
 	}
 
 
