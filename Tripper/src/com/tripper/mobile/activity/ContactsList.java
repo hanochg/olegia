@@ -70,7 +70,6 @@ public class ContactsList extends Activity implements
     private ListView listView;
     private TextView mEmptyView;
     private Context context;
-	private BroadcastReceiver mMessageReceiver;
     private final int SPEECH_REQUEST_CODE = 10;
     //private final int CONTACTLIST_REQUEST_CODE = 11;
     private int APP_MODE;
@@ -207,19 +206,6 @@ public class ContactsList extends Activity implements
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
         });
           
-        
-		mMessageReceiver = new BroadcastReceiver() {
-			  @Override
-			  public void onReceive(Context context, Intent intent) 
-			  {
-				  String intentAction=intent.getAction();
-				  if(intentAction.equals("com.tripper.mobile.EXIT"))
-				  {
-					  Log.d("onReceive","EXIT");
-					  finish();
-				  }
-			  }
-		};
     }
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -234,6 +220,8 @@ public class ContactsList extends Activity implements
 	public void speechActivation(View view)
 	{
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		String language = ContactsListSingleton.getInstance().getLanguageFromSettings();
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
 		startActivityForResult(intent, SPEECH_REQUEST_CODE);

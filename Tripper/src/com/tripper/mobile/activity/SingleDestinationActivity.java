@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 
-public class SingleDestanationActivity extends Activity {
+public class SingleDestinationActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

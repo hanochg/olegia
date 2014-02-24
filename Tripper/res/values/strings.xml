@@ -14,6 +14,7 @@
     <string name="Enter_Destination_dialog_confirm_button">Confirm</string>
     <string name="Enter_Destination_dialog_cancel_button">Cancel</string>
     <string name="title_activity_friends_list">Friends List</string>
+    <string name="title_activity_contact_list">Contacts List</string>
     <string name="title_activity_find_address">Enter Address</string>
     <string name="title_activity_on_map">Map</string>
     <string name="action_settings">Settings</string>
@@ -36,7 +37,7 @@
          alphabet using ListView fast scroll.
     -->
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
-    <string name="title_activity_contact_list">Contact_List</string>
+
 
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
