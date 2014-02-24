@@ -287,6 +287,8 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	public boolean onOptionsItemSelected(MenuItem item){
 		Intent intent;
 		switch(item.getItemId()){
+	    case android.R.id.home:
+	    	finish();
 	    case R.id.doneFL:	    	
 	    	ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();    	
 	    	if(db==null || db.isEmpty())
