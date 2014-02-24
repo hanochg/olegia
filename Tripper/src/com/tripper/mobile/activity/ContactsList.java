@@ -260,6 +260,8 @@ public class ContactsList extends Activity implements
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
 	    	return true;
+	    case android.R.id.home:
+	    	finish();
 	    	
 	    }
 	    return false;
