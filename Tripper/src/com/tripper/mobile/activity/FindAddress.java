@@ -299,7 +299,7 @@ public class FindAddress extends Activity {
 				break;
 				
 			case Extra.NOTIFICATION:	//Notification				
-				Intent newintent = new Intent(this, MainActivity.class); 
+				Intent newintent = new Intent(this, NotificationActivity.class); 
 				newintent.putExtra(Extra.LATITUDE, selectedAddress.getLatitude());
 				newintent.putExtra(Extra.LONGITUDE, selectedAddress.getLongitude());
 				setResult(Activity.RESULT_OK,newintent);
