@@ -26,6 +26,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.gsm.SmsManager;
 
 
@@ -95,7 +96,12 @@ public class DistanceService extends IntentService
 								startForeground(1337, note);
 								sendGetDownMessage(contact.getInternationalPhoneNumber());
 								contact.setContactAnswer(eAnswer.messageSent);
-								ttobj.speak("get down message sent ." , TextToSpeech.QUEUE_FLUSH, null);
+								//SEND UPDATE TO DRAWER
+								Intent updateIntent = new Intent("com.tripper.mobile.UPDATE");	
+								LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+								
+								//talk!
+								ttobj.speak("arrival message sent ." , TextToSpeech.QUEUE_FLUSH, null);
 								//MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
 								//mPlayer.start();
 							}					
