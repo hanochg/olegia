@@ -3,8 +3,9 @@ package com.tripper.mobile.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import org.apache.http.util.LangUtils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,8 +31,7 @@ import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 
 import android.location.Address;
-import android.location.Geocoder;
-import android.os.AsyncTask;
+import android.location.Location;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -150,12 +150,15 @@ public class OnMap extends Activity {
 		
 	}
 	
-
-	
-	public void navigateClicked(View v)
+	private void setMapView(LatLng point1,LatLng point2)
 	{
-		Log.d("navigateClicked","navigateClicked");
+		LatLng otherSidePos = new LatLng(2 * point1.latitude - point2.latitude, 2 * point1.longitude - point2.longitude);
+		LatLngBounds bounds = new LatLngBounds.Builder().include(point2)
+		                .include(otherSidePos).build();
+		int padding = 50; 
+		        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
 	}
+
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -325,6 +328,8 @@ public class OnMap extends Activity {
         			ContactsListSingleton.getInstance().getDB().get(position).isSelected();
         	ContactsListSingleton.getInstance().getDB().get(position).setSelected(!currentSelection);
         	navDrawerListAdapter.notifyDataSetChanged();
+        	//Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        	//setMapView(new )
         	//mDrawerLayout.closeDrawer(mDrawerList);
         	
         }
