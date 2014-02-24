@@ -43,6 +43,8 @@ import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.*;
+import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 import com.tripper.mobile.utils.Queries.Net.Messeges;
@@ -128,6 +130,8 @@ public class FriendsList extends Activity implements
 		        contact.setName(cursor.getString(Queries.DISPLAY_NAME));
 		        contact.setPhoneNumber(cursor.getString(Queries.PHONE_NUM));
 		        contact.setUri(uri);
+		        if(APP_MODE==Extra.SINGLE_DESTINATION)
+		        	contact.setContactAnswer(eAnswer.single);
 		        
 		        ContactsListSingleton.getInstance().insertContact(contact,mFriendsSelectedAdapter,getApplicationContext());
 		        
