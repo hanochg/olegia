@@ -83,7 +83,7 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.OnMap"
-            android:label="@string/title_activity_friends_list"
+            android:label="@string/title_activity_on_map"
             
             android:screenOrientation="portrait" >
         </activity>
