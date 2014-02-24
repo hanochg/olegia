@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -80,14 +81,16 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 		curContact = getItem(position);
 		isContactWiderMenu=curContact.isSelected();
-		
+		Log.d("getView_NAV","User: " + curContact.getName() +"APP-"+curContact.getAppStatus()+" ANSWER- "+curContact.getContactAnswer());
 
 		//SINGLE ROUTE SETTINGS
 		if(curContact.getContactAnswer()==eAnswer.single ||
 				curContact.getContactAnswer()==eAnswer.singleWithMessage)
 		{
+			Log.d("getView_NAV","In Single route settings");
 			if (curContact.getAppStatus()==eAppStatus.noApp)
 			{
+				Log.d("getView_NAV","In Single route-NoApp");
 				convertView = mInflater.inflate(R.layout.drawer_list_item_single_no_app, null);
 				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
@@ -97,6 +100,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			}
 			else
 			{
+				Log.d("getView_NAV","In Single route-HasApp");
 				convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 				imgIcon.setImageResource(R.drawable.ic_home);
@@ -105,6 +109,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		//REGULAR CLOSED SETTINGS
 		else if(!isContactWiderMenu)
 		{
+			Log.d("getView_NAV","In regular closed settings");
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 		}		
@@ -112,10 +117,14 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		//NO APP SETTINGS
 		if (curContact.getAppStatus()==eAppStatus.noApp && 
 				curContact.getContactAnswer()!=eAnswer.single &&
-					curContact.getContactAnswer()!=eAnswer.singleWithMessage)
+						curContact.getContactAnswer()!=eAnswer.manual &&
+								curContact.getContactAnswer()!=eAnswer.messageSent &&
+									curContact.getContactAnswer()!=eAnswer.singleWithMessage)
 		{
+			Log.d("getView_NAV","In MultiRoute NoApp settings");
 			if(isContactWiderMenu)
 			{
+				Log.d("getView_NAV","In MultiRoute NoApp settings-Wide");
 				convertView = mInflater.inflate(R.layout.drawer_list_item_no_app, null);
 
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
@@ -124,16 +133,20 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
 			}
+			Log.d("getView_NAV","In MultiRoute NoApp settings-closed");
 			imgIcon.setImageResource(R.drawable.warning_sign);
 		}			
 		else
-			//HAVE APP + NOT SINGLE ROUTE, THEN:
+			//HAVE APP + (SINGLE ROUTE or MANUAL or MESG SENT), THEN:
 			switch (curContact.getContactAnswer())
 			{
-			//NOT ANSWERED SETTINGS
-			case notAnswered:
+			//NOT ANSWERED SETTINGS 
+			//APPSTATUS = NOT CHECKED (before checking app achieved) also gets in. 
+			case notAnswered:				
+				Log.d("getView_NAV","In NotAnswered settings");
 				if(isContactWiderMenu)
 				{
+					Log.d("getView_NAV","In NotAnswered settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_no_answer, null);
 					
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
@@ -142,12 +155,16 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_waiting_reply_status));
 				}
+				Log.d("getView_NAV","In NotAnswered settings-closed");
 				imgIcon.setImageResource(R.drawable.question_mark);
 				break;
 			//ANSWERED NO! SETTINGS
 			case no:
+				Log.d("getView_NAV","In AnswerIsNo settings");
 				if(isContactWiderMenu)
 				{
+					Log.d("getView_NAV","In AnswerIsNo settings-wide");
+					
 					//Same layout as No Answer
 					convertView = mInflater.inflate(R.layout.drawer_list_item_no_answer, null);
 					
@@ -158,12 +175,15 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_deny_response_status));
 				}
+				Log.d("getView_NAV","In AnswerIsNo settings-closed");
 				imgIcon.setImageResource(R.drawable.red_circle);
 				break;
 			//ANSWERED YES SETTINGS
 			case ok:
+				Log.d("getView_NAV","In AnswerIsOK settings");
 				if(isContactWiderMenu)
 				{
+					Log.d("getView_NAV","In AnswerIsOK settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);	
 					
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
@@ -172,12 +192,15 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_response_status));
 				}
+				Log.d("getView_NAV","In AnswerIsOK settings-closed");
 				imgIcon.setImageResource(R.drawable.green_circle);
 				break;
 			//MANUAL ADDRESS ENTERED SETTINGS
 			case manual:
+				Log.d("getView_NAV","In ManualAddress settings");
 				if(isContactWiderMenu)
 				{
+					Log.d("getView_NAV","In ManualAddress settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);
 					
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
@@ -186,7 +209,24 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_manual_status));
 				}
+				Log.d("getView_NAV","In ManualAddress settings-closed");
 				imgIcon.setImageResource(R.drawable.green_circle);
+				break;
+			case messageSent:
+				Log.d("getView_NAV","In messageSent settings");
+				if(isContactWiderMenu)
+				{
+					Log.d("getView_NAV","In messageSent settings-wide");
+					convertView = mInflater.inflate(R.layout.drawer_list_item_msg_sent, null);
+					
+					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+					
+					setWiderMenuMsgSent(convertView,curContact);
+					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
+					txtStatus.setText(context.getResources().getText(R.string.contact_msg_sent_status));
+				}
+				Log.d("getView_NAV","In messageSent settings-closed");
+				imgIcon.setImageResource(R.drawable.check);
 				break;
 			default:
 				Log.e("DRAWER getView","Should not get to this part -end of switch");
@@ -196,6 +236,83 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		txtTitle.setText(curContact.getName());
 
 		return convertView;
+	}
+
+	private void setWiderMenuMsgSent(View convertView,
+			ContactDataStructure curContact) {
+		// TODO Auto-generated method stub
+		
+		final ContactDataStructure contact=curContact;
+		
+		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		if(contact.getAppStatus()==eAppStatus.hasApp)
+		{
+			allowSMSCheck.setVisibility(View.GONE);
+		}
+		else
+		{
+		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
+					contact.setAllowSMS(isChecked);
+				else
+				{
+					allowSMSCheck.setChecked(false);
+					Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();	
+				}								
+			}
+		});
+		}
+		Button reSendGetDownButton = (Button) convertView.findViewById(R.id.resendMessage);
+		reSendGetDownButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				//TODO RESEND GET DOWN
+				
+			}
+		});
+		Button removeButton = (Button) convertView.findViewById(R.id.removeContact);
+		removeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(ContactsListSingleton.getInstance().getDB().size()==1)
+					Toast.makeText(context, "This is the last contact, cannot be removed.", Toast.LENGTH_LONG).show();
+				else
+				{
+					new AlertDialog.Builder(context)
+					.setTitle("Delete Contact")
+					.setMessage("Are you sure you want to delete "+ contact.getName() +"?")
+					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) { 
+							//Delete marker&circle if any
+							if(contact.getRadiusOnMap()!=null)
+								contact.getRadiusOnMap().remove();
+							if(contact.getMarker()!=null)
+								contact.getMarker().remove();
+							
+							//DELETE
+							ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
+							
+							//SEND UPDATE TO DRAWER
+							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
+							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+						}
+					})
+					.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) { 	                
+							return;
+						}
+					})
+					.show(); 
+
+				}
+			}
+		});
+		
 	}
 
 	private void setWiderMenuSingleRouteNoApp(View convertView,ContactDataStructure curContact) {
@@ -233,7 +350,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				text.setInputType(InputType.TYPE_CLASS_NUMBER);
 				text.selectAll();
 
-				new AlertDialog.Builder(context)
+				
+				
+				AlertDialog.Builder b = new AlertDialog.Builder(context)
 				.setTitle("Radius Value")
 				.setMessage("Enter Radius Value (In Meters)")
 				.setView(text)
@@ -247,8 +366,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					public void onClick(DialogInterface dialog, int which) { 	                
 						return;
 					}
-				})
-				.show(); 
+				});
+				AlertDialog dialog = b.create();
+				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+				dialog.show();
 			}
 		});
 
@@ -411,8 +532,15 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					.setMessage("Are you sure you want to delete "+ contact.getName() +"?")
 					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) { 
+							//Delete marker&circle if any
+							if(contact.getRadiusOnMap()!=null)
+								contact.getRadiusOnMap().remove();
+							if(contact.getMarker()!=null)
+								contact.getMarker().remove();
+							
 							//DELETE
 							ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
+							
 							//SEND UPDATE TO DRAWER
 							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
 							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);

@@ -9,3 +9,4 @@
 18. fix bug when choosing contact without the app it gets the question mark instead of home.
 19. fix bug when choosing contact without the app, when manually set address does not become green.
 20. TODO camera movement on the map
+21. does not return to the app when sticky notification is pressed
