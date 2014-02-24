@@ -13,7 +13,6 @@ import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
-import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 
 import android.content.Context;
