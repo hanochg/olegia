@@ -49,7 +49,6 @@ public class DistanceService extends IntentService
 	@Override
 	protected void onHandleIntent(Intent intent) 
 	{			
-		boolean flag;
 		Location mylocation=null;
 		Location targetlocation;
 		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
@@ -61,7 +60,6 @@ public class DistanceService extends IntentService
 		//long endTime = System.currentTimeMillis() + 120000;
 		while (db!=null && !db.isEmpty()) 
 		{
-			flag=false;
 
 			mylocation = getLastKnownLocation();
 
@@ -81,14 +79,6 @@ public class DistanceService extends IntentService
 							targetlocation.setLatitude(contact.getLatitude());
 							targetlocation.setLongitude(contact.getLongitude());
 
-							if(contact.isSelected()==true)
-							{
-								note.setLatestEventInfo(this, "Tripper", "On the way to "+ contact.getName(), pi);
-								startForeground(1337, note);
-								flag=true;
-
-							}
-
 							if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
 									contact.getRadius()> mylocation.distanceTo(targetlocation))
 							{
@@ -107,12 +97,6 @@ public class DistanceService extends IntentService
 							}					
 						}//for contacts
 					}//synchronized
-
-					if(flag==false)
-					{
-						note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
-						startForeground(1337, note);
-					}
 
 				}
 				else if(APP_MODE==Extra.SINGLE_DESTINATION)
@@ -193,7 +177,8 @@ public class DistanceService extends IntentService
 	{	
 		Intent intent=new Intent(this, OnMap.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		pi=PendingIntent.getActivity(this, 0,intent, 0);
+		intent.putExtra(Extra.APP_MODE, APP_MODE);
+		pi=PendingIntent.getActivity(this, 231,intent, 0);
 
 		note=new Notification(R.drawable.ic_stat_icon,"New Trip started.",System.currentTimeMillis());
 		note.flags|=Notification.FLAG_NO_CLEAR;
