@@ -107,6 +107,7 @@ public class ContactDataStructure
 	}
 	public void setRadius(double radius) {
 		this.radius = radius;
+		radiusOnMap.setRadius(radius);
 	}
 	
 	public double getLongitude() {
