@@ -262,6 +262,7 @@ public class ContactsList extends Activity implements
 	    	return true;
 	    case android.R.id.home:
 	    	finish();
+	    	break;
 	    	
 	    }
 	    return false;
