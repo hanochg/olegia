@@ -159,9 +159,18 @@ public class FriendsAutoCompleteAdapter
      */
     @Override
     public Cursor swapCursor(Cursor newCursor) {
+        if(newCursor!=null && newCursor.isClosed())
+        {
+        	Log.e("FriendsAutoCompleteAdapter","cursor closed error");
+        	mAlphabetIndexer.setCursor(null); 
+        	return super.swapCursor(null);
+        }
         // Update the AlphabetIndexer with new cursor as well
-        mAlphabetIndexer.setCursor(newCursor);
-        	return super.swapCursor(newCursor);
+        mAlphabetIndexer.setCursor(newCursor);        
+        	return super.swapCursor(newCursor);  		
+        		
+        		
+
     }
 
     /**

@@ -29,10 +29,12 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -41,6 +43,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -248,6 +251,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		if(contact.getAppStatus()==eAppStatus.hasApp)
 		{
 			allowSMSCheck.setVisibility(View.GONE);
+			/*RelativeLayout lowerLayout=(RelativeLayout)convertView.findViewById(R.id.drawerLowerLayout);
+			LayoutParams params = lowerLayout.getLayoutParams();
+			// Changes the height to the specified *DIP*
+			params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 115, convertView.getResources().getDisplayMetrics());
+			lowerLayout.setLayoutParams(params);*/
+			
 		}
 		else
 		{
