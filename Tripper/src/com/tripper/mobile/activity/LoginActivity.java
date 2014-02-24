@@ -277,7 +277,8 @@ public class LoginActivity extends Activity {
 									return eConnectionStatus.PasswordError;	
 								
 								default:
-									return eConnectionStatus.NoConnection;	
+									//return eConnectionStatus.NoConnection;
+									//TODO OLEG
 							}	
 						}
 						
