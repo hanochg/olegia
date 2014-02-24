@@ -37,15 +37,15 @@ import com.parse.PushService;
  * well.
  */
 public class LoginActivity extends Activity {
-	
+
 	/**
 	 * The default email to populate the email field with.
 	 */
-	
-	 private enum eConnectionStatus {
-		   NoConnection, SighUp, PasswordError, SighIn
-		 }
-		
+
+	private enum eConnectionStatus {
+		NoConnection, SighUp, PasswordError, SighIn
+	}
+
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
@@ -68,29 +68,29 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.login_screen);
-		
+
 		//SplashScreen.splashActivity.finish();
-		
+
 		ParseAnalytics.trackAppOpened(getIntent()); //???
-		
+
 		mPhoneView = (EditText) findViewById(R.id.phone);
 		mPhoneNumber=getIntent().getStringExtra(Extra.PHONE);
 		mPhoneView.setText(mPhoneNumber);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
-		
+		.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int id,
+					KeyEvent keyEvent) {
+				if (id == R.id.login || id == EditorInfo.IME_NULL) {
+					attemptLogin();
+					return true;
+				}
+				return false;
+			}
+		});
+
 
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
@@ -188,25 +188,25 @@ public class LoginActivity extends Activity {
 
 			mLoginStatusView.setVisibility(View.VISIBLE);
 			mLoginStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
-						}
-					});
+			.alpha(show ? 1 : 0)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginStatusView.setVisibility(show ? View.VISIBLE
+							: View.GONE);
+				}
+			});
 
 			mLoginFormView.setVisibility(View.VISIBLE);
 			mLoginFormView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginFormView.setVisibility(show ? View.GONE
-									: View.VISIBLE);
-						}
-					});
+			.alpha(show ? 0 : 1)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginFormView.setVisibility(show ? View.GONE
+							: View.VISIBLE);
+				}
+			});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
@@ -219,23 +219,23 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	
-	
+
+
 	//connect a server and sigh up  
-		
+
 	public class UserLoginTask extends AsyncTask<Void, Void, eConnectionStatus> {
-		
+
 		private Context context;
-		
+
 		public UserLoginTask(Context context) {
 			super();
 			this.context = context;
 		}
-		
+
 		protected eConnectionStatus doInBackground(Void... params)
 		{
 			// TODO: attempt authentication against a network service.
-			
+
 			PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 			String converedNumber="";
 			try {
@@ -249,8 +249,8 @@ public class LoginActivity extends Activity {
 				mPhoneNumber = mPhoneNumber.replace("-", "");
 			else
 				mPhoneNumber = converedNumber;
-			
-			
+
+
 			try
 			{				
 				ParseUser.logIn(mPhoneNumber, mPassword);
@@ -259,29 +259,28 @@ public class LoginActivity extends Activity {
 			{
 				switch (e.getCode())
 				{
-					case ParseException.OBJECT_NOT_FOUND: //no such user + password
-						
-						ParseUser user = new ParseUser();					
-						user.setUsername(mPhoneNumber);
-						user.setPassword(mPassword);
-						
-						try
-						{		
-							user.signUp();		
-						} 
-						catch (ParseException  e2) 
+				case ParseException.OBJECT_NOT_FOUND: //no such user + password
+
+					ParseUser user = new ParseUser();					
+					user.setUsername(mPhoneNumber);
+					user.setPassword(mPassword);
+
+					try
+					{		
+						user.signUp();		
+					} 
+					catch (ParseException  e2) 
+					{
+						switch (e2.getCode())
 						{
-							switch (e2.getCode())
-							{
-								case ParseException.USERNAME_TAKEN:
-									return eConnectionStatus.PasswordError;	
-								
-								default:
-									//return eConnectionStatus.NoConnection;
-									//TODO OLEG
-							}	
-						}
-						
+						case ParseException.USERNAME_TAKEN:
+							return eConnectionStatus.PasswordError;	
+
+						default:
+							return eConnectionStatus.NoConnection;
+						}	
+					}
+
 					try {
 						ParseUserInstalation();
 					}
@@ -290,17 +289,17 @@ public class LoginActivity extends Activity {
 						ParseUser.logOut();
 						return eConnectionStatus.NoConnection;
 					}
-						return eConnectionStatus.SighUp;	
-						
-					case ParseException.CONNECTION_FAILED:
-						//can't connect server
-						return eConnectionStatus.NoConnection;	
-						
-					default:
-						return eConnectionStatus.NoConnection;	
+					return eConnectionStatus.SighUp;	
+
+				case ParseException.CONNECTION_FAILED:
+					//can't connect server
+					return eConnectionStatus.NoConnection;	
+
+				default:
+					return eConnectionStatus.NoConnection;	
 				}//Switch					
 			}//Catch
-			
+
 			try 
 			{			
 				ParseUserInstalation();
@@ -316,28 +315,28 @@ public class LoginActivity extends Activity {
 		{
 			mAuthTask = null;
 			showProgress(false);
-			
+
 			switch (success)
 			{
-				case SighIn: case SighUp:
-					String message = (success==eConnectionStatus.SighIn)?"You have sign in successfully":"You have sign up successfully";
-					
-					Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-					finish();
-					Intent intent = new Intent(context, MainActivity.class);
-					startActivity(intent);	
-					
+			case SighIn: case SighUp:
+				String message = (success==eConnectionStatus.SighIn)?"You have sign in successfully":"You have sign up successfully";
+
+				Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+				finish();
+				Intent intent = new Intent(context, MainActivity.class);
+				startActivity(intent);	
+
 				return;
-								
-				case NoConnection:
-					Toast.makeText(getApplicationContext(), "Connection can't be established", Toast.LENGTH_LONG).show();
-					finish();
-					return;
-					
-				case PasswordError:
-					mPasswordView
-					.setError(getString(R.string.error_incorrect_password));
-					mPasswordView.requestFocus();
+
+			case NoConnection:
+				Toast.makeText(getApplicationContext(), "Connection can't be established", Toast.LENGTH_LONG).show();
+				finish();
+				return;
+
+			case PasswordError:
+				mPasswordView
+				.setError(getString(R.string.error_incorrect_password));
+				mPasswordView.requestFocus();
 				return;				
 			} 				
 		}
@@ -349,19 +348,19 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 		}
 	}
-	
+
 	private void ParseUserInstalation() throws ParseException 
 	{
 		ParseInstallation installation = ParseInstallation.getCurrentInstallation();	
 		installation.put("user",ParseUser.getCurrentUser());			
 		installation.save();
-		
+
 		String userPhone=ParseUser.getCurrentUser().getUsername();
-		
+
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class,R.drawable.ic_stat_envpole);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), GetDownActivity.class,R.drawable.ic_stat_mark);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), SingleDestanationActivity.class,R.drawable.ic_stat_mark);
 	}
-	
+
 }

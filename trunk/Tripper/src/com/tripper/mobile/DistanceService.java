@@ -123,7 +123,7 @@ public class DistanceService extends IntentService
 					targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
 					targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
 
-					if(mylocation.distanceTo(targetlocation)< 100)
+					if(mylocation.distanceTo(targetlocation)< ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
 					{
 						note.tickerText="Messages were sent";
 						startForeground(1337, note);
@@ -131,7 +131,7 @@ public class DistanceService extends IntentService
 						sendGotToPlace();
 
 						ContactDataStructure contact;
-						synchronized(db)
+						try
 						{
 							for (int i=0;i<db.size();i++)
 							{
@@ -143,6 +143,10 @@ public class DistanceService extends IntentService
 									contact.setContactAnswer(eAnswer.singleWithMessage);
 								}
 							}
+						}
+						catch(Exception e)
+						{
+							
 						}
 						break;
 					}
