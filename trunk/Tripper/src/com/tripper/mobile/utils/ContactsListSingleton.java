@@ -222,7 +222,8 @@ public class ContactsListSingleton
 				tempContact=db.get(i);
 				if(channelPrefix==ChannelMode.INVITATION)
 				{
-					if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+					//When sending first massege 
+					if(tempContact.getAppStatus() != eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
 					{
 						phones.add(tempContact.getChannelforParse(channelPrefix));
 						tempContact.setContactAnswer(eAnswer.notAnswered);
@@ -230,15 +231,13 @@ public class ContactsListSingleton
 				}
 				else if(channelPrefix==ChannelMode.LONERIDER)
 				{
-					if(tempContact.getAppStatus() != ContactDataStructure.eAppStatus.noApp && (tempContact.getContactAnswer()==eAnswer.none))
+					//When got to point
+					if(tempContact.getAppStatus() == eAppStatus.hasApp && (tempContact.getContactAnswer()==eAnswer.single))
 					{
 						phones.add(tempContact.getChannelforParse(channelPrefix));
-						tempContact.setContactAnswer(eAnswer.notAnswered);
+						tempContact.setContactAnswer(eAnswer.singleWithMessage);
 					}
 				}
-
-
-
 			}
 		}	
 		return phones;

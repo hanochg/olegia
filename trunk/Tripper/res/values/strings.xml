@@ -26,22 +26,20 @@
     <string name="contact_deny_response_status">Declined location request</string>
     <string name="contact_response_status">Location received</string>
     <string name="contact_manual_status">Manual location entered</string>
-    
     <string name="HebrewLanguage">iw</string>
     <string name="EnglishLanguage">en</string>
 
     <!--
          Used for the AlphabetIndexer in ContactsListFragment to provide quick navigation by
-         alphabet using ListView fast scroll.
+         alphabet using ListView fast scroll.
     -->
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="title_activity_contact_list">Contact_List</string>
 
-    
-     
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
-    
+ 
+
 </resources>

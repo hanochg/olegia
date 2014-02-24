@@ -59,9 +59,6 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		setContentView(R.layout.notification_screen);
 		this.setFinishOnTouchOutside(false);
 
-
-
-
 		try {
 			JSONObject json = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
 			phone= json.get(Net.USER).toString();
@@ -76,8 +73,6 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		tvMessage.setText("User "+ name + " is inviting you to the trip.");
 		// Initializes the loader
 		getLoaderManager().initLoader(Queries.LoaderManagerID_Notification, null,  this);
-
-
 
 	}
 

@@ -29,6 +29,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.gsm.SmsManager;
 
 
 
@@ -110,15 +111,34 @@ public class DistanceService extends IntentService
 				}
 				else if(APP_MODE==Extra.SINGLE_DESTINATION)
 				{
-						
+
 					targetlocation = new Location("me");
 					Address singleRouteCoordinates = ContactsListSingleton.getSingleRouteAddress();
 					targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
 					targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
-					
+
 					if(mylocation.distanceTo(targetlocation)< 50)
 					{
+						note.tickerText="Messages were sent";
+						startForeground(1337, note);
+						
 						sendGotToPlace();
+
+						ContactDataStructure contact;
+						synchronized(db)
+						{
+							for (int i=0;i<db.size();i++)
+							{
+								
+								contact=db.get(i);
+								if(contact.isAllowSMS() && contact.getContactAnswer()==eAnswer.single)
+								{
+									sendSMS(contact.internationalPhoneNumber);
+									contact.setContactAnswer(eAnswer.singleWithMessage);
+								}
+							}
+						}
+						break;
 					}
 				}
 
@@ -241,30 +261,35 @@ public class DistanceService extends IntentService
 		push.setData(data);
 		push.sendInBackground();
 	}
-	
-	
-	
+
+
+
 	public void sendGotToPlace()
 	{	 
 		ParsePush push = new ParsePush();
-		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse(ChannelMode.GETDOWN);
+		ArrayList<String> phones = ContactsListSingleton.getInstance().getAllChannelsForParse(ChannelMode.LONERIDER);
 		push.setChannels(phones);
-		
-		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
-		
-		JSONObject data = new JSONObject();		
-	    try
-	    {
-	    		data.put("alert", Messeges.GOTTOPLACE ); // ParseUser.getCurrentUser().getUsername());
-	    		data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
-	    }
-	    catch(JSONException x)
-	    {
-	    	throw new RuntimeException("Something wrong with JSON", x);
-	    }
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+
+		JSONObject data = new JSONObject();		
+		try
+		{
+			data.put("alert", Messeges.GOTTOPLACE ); // ParseUser.getCurrentUser().getUsername());
+			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+
+		}
+		catch(JSONException x)
+		{
+			throw new RuntimeException("Something wrong with JSON", x);
+		}
 		push.setData(data);
 		push.sendInBackground();
 	}
 
+	public void sendSMS(String phoneNumber)
+	{	 
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
+	}
 }
