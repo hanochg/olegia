@@ -477,8 +477,13 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		reRequestButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {
-				sendNotification(contact);	
-				Toast.makeText(context, "Request Sent Again!", Toast.LENGTH_LONG).show();
+				if(contact.getAppStatus()!=eAppStatus.notChecked)
+				{
+					sendNotification(contact);	
+					Toast.makeText(context, "Request Sent Again!", Toast.LENGTH_LONG).show();
+				}
+				else
+					Toast.makeText(context, "Please wait.\nStill checking for if contact has app.", Toast.LENGTH_LONG).show();
 			}
 		});
 		

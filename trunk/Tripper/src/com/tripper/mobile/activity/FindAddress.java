@@ -271,6 +271,7 @@ public class FindAddress extends Activity {
 		switch (itemId) {
 	    case android.R.id.home:
 	    	finish();
+	    	break;
 		case R.id.nextFA:
 			if(selectedAddress==null)
 				return true;
