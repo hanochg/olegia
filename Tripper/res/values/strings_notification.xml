@@ -6,4 +6,12 @@
     <string name="btnNoThanks">No Thanks</string>
   	<string name="title_activity_notification">Tripper Invitation:</string>  
    
+  	<!--Get Down  -->
+  	<string name="title_activity_get_down_screen">TripR:</string>
+  	<string name="btnGotIt">Got It</string>
+  	<string name="tvGetDown">I\'m coming, please get down.</string>
+  	
+  	<string name="title_activity_single_destanation">TripR:</string>
+  	<string name="btnGotItSingle">Got It</string>
+  	<string name="tvGotToPlace">I got to this Place!</string>
 </resources>

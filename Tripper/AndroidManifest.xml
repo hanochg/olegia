@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- Location Access -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <!-- Google Maps -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
@@ -56,19 +57,17 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCEcxbS5QckQg3JraGgVp-DBPxJ1-OSBPU" />
- <!-- "AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" /> -->
+        <!-- "AIzaSyBd7ndf8KRdwYB3LwCRMC1oIDCWuOyC0ps" /> -->
 
         <activity
             android:name="com.tripper.mobile.activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.SplashScreen"
             android:label="@string/splash_screen"
-
             android:screenOrientation="portrait"
-            
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -84,9 +83,8 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.OnMap"
-            android:screenOrientation="portrait"
-            
-            android:label="@string/title_activity_friends_list" >
+            android:label="@string/title_activity_friends_list"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.tripper.mobile.activity.FindAddress"
@@ -97,7 +95,7 @@
         <activity
             android:name="com.tripper.mobile.activity.LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait"         
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
@@ -114,9 +112,22 @@
         </activity>
         <activity
             android:name="com.tripper.mobile.SettingsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name="com.tripper.mobile.activity.GetDownActivity"
+            android:label="@string/title_activity_get_down_screen"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>       
+        <activity
+            android:name="com.tripper.mobile.activity.SingleDestanationActivity"
+            android:label="@string/title_activity_single_destanation" 
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        
 
         <receiver
             android:name="com.tripper.mobile.MyCustomReceiver"
@@ -125,12 +136,10 @@
                 <action android:name="com.tripper.mobile.Answer" />
             </intent-filter>
         </receiver>
-	
-       <service android:name="com.tripper.mobile.DistanceService"
-            	android:exported="false"/>
-        
-        <service android:name="com.tripper.mobile.DistanceService" 
-            android:exported="false"/>
+
+        <service
+            android:name="com.tripper.mobile.DistanceService"
+            android:exported="false" />
         <!-- Parse -->
         <service android:name="com.parse.PushService" />
 

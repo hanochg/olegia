@@ -359,8 +359,8 @@ public class LoginActivity extends Activity {
 		
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class,R.drawable.icon_envpole);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), NotificationActivity.class,R.drawable.icon_mark);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), NotificationActivity.class,R.drawable.icon_mark);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), GetDownActivity.class,R.drawable.icon_mark);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), SingleDestanationActivity.class,R.drawable.icon_mark);
 	}
 	
 }
