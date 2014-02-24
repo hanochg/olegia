@@ -6,3 +6,6 @@
 15. to clear singelton when on friend list back button pushed
 16. add SMS to multi_destination
 17. add "sent message" view on the drawer
+18. fix bug when choosing contact without the app it gets the question mark instead of home.
+19. fix bug when choosing contact without the app, when manually set address does not become green.
+20. TODO camera movment on the map
