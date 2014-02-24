@@ -144,7 +144,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			case no:
 				if(isContactWiderMenu)
 				{
-					convertView = mInflater.inflate(R.layout.drawer_list_item_no_app, null);
+					//Same layout as No Answer
+					convertView = mInflater.inflate(R.layout.drawer_list_item_no_answer, null);
 					
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 					
