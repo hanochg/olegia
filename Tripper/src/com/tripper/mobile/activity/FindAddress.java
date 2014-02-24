@@ -83,13 +83,12 @@ public class FindAddress extends Activity {
 		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-		
-		//reading Settings
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list, "");
+
+		//reading Settings				
+		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
 		
 		//define locale
-		GeoCodeLocale = new Locale(languageFromSettings);
+		GeoCodeLocale = new Locale(ContactsListSingleton.getInstance().getLanguageFromSettings());
 		
 		activityContext=this;
 		AsyncTasker = new AsyncGeocode(activityContext);
@@ -127,14 +126,16 @@ public class FindAddress extends Activity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
 			{
+				Log.d("onTextChanged","in");
 				final String value = s.toString();
 				
 				//reset list selection
 				listViewAdapter.setLastCheckPosition(-1);
 				lastCheckedRadioButton=null;
-				
+				Log.d("onTextChanged","after reset");
 				if (!"".equals(value) && (value.length() >= THRESHOLD))
-				{	
+				{
+					Log.d("onTextChanged","in if");
 					//clean the message queue
 					msgHandler.removeMessages(MESSAGE_TYPE);
 					//get new async tasker for the request
@@ -148,11 +149,12 @@ public class FindAddress extends Activity {
 				}			
 				else
 				{
+					Log.d("onTextChanged","in else");
 					AsyncTasker.cancel(true);
 					msgHandler.removeMessages(MESSAGE_TYPE);
 					listViewAdapter.clear();
 				}
-					
+				Log.d("onTextChanged","out if");
 
 			}
 
@@ -318,7 +320,8 @@ public class FindAddress extends Activity {
 		Log.d("App!!!","notifyResult");
 		try{
 			//AsyncTasker = new AsyncGeocode(context);
-			AsyncTasker.execute(value);			
+			AsyncTasker.execute(value);	
+			Log.d("notifyResult","end notifyResult");
 		}catch(Exception ex){
 			Log.d("Error#@$#$",ex.getMessage());
 		}
@@ -361,7 +364,8 @@ public class FindAddress extends Activity {
 		}
 	    @Override
 	    protected void onPostExecute(Void unused)
-	    {				    		    
+	    {				    		 
+
 	    	Log.d("AsyncGeocode","OnPostExcecute");
 	    	super.onPostExecute(unused);
 
@@ -374,10 +378,14 @@ public class FindAddress extends Activity {
 	    	{	    	
 	    		Log.d("AsyncGeocode","OnPostExcecute-valid changes");
 	    		listViewAdapter.clear();
-				for (Address address : GeoResultsList)      								    
+				for (Address address : GeoResultsList) 
+				{
+					//Log.d("AsyncGeocode","OnPostExcecute-in for");
 					listViewAdapter.add(address);					
-
+				}
+				Log.d("AsyncGeocode","OnPostExcecute-out for");
 	    		listViewAdapter.notifyDataSetChanged();
+	    		Log.d("AsyncGeocode","OnPostExcecute-notify");
 	    	}
 	    	else
 	    		Log.d("AsyncGeocode","OnPostExcecute-zero changes");
@@ -401,8 +409,10 @@ public class FindAddress extends Activity {
 		public void handleMessage(Message msg) {
 			if (msg.what == MESSAGE_TYPE) 
 			{
+				Log.d("handleMessage","handleMessage");
 				String value = msg.getData().getString("Value");
 				notifyResult(value,context);
+				Log.d("handleMessage","out handler");
 			}
 		}
 	}//End class Handler

@@ -46,7 +46,7 @@ public class ContactDataStructure
 	{		
 		//reading Settings
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		String radiusStringFromSettings = sharedPref.getString(SettingsActivity.default_radius_text, "");
+		String radiusStringFromSettings = sharedPref.getString(SettingsActivity.default_radius_text_multi, "");
 		float radiusFromSettings = Float.parseFloat(radiusStringFromSettings);
 		
 		name=null;
@@ -66,7 +66,7 @@ public class ContactDataStructure
 	public ContactDataStructure(String name, String phoneNumber,long id, String lookupkey,Uri uri,Context context)
 	{
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		float radiusFromSettings = sharedPref.getFloat(SettingsActivity.default_radius_text, 0);
+		float radiusFromSettings = sharedPref.getFloat(SettingsActivity.default_radius_text_multi, 0);
 		
 		this.radius=radiusFromSettings;
 		this.name=name;

@@ -304,7 +304,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 	    			    		
 	    	finish();
 	    	
-	    	if(APP_MODE==Queries.Extra.MULTI_DESTINATION)
+	    	if(APP_MODE!=Queries.Extra.SINGLE_DESTINATION)
 	    		sendNotifications();
 	        return true;
 	        
