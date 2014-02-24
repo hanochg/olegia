@@ -89,15 +89,16 @@ public class DistanceService extends IntentService
 
 							}
 
-							if(contact.getContactAnswer()==eAnswer.ok &&  contact.getRadius()> mylocation.distanceTo(targetlocation))
+							if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
+									contact.getRadius()> mylocation.distanceTo(targetlocation))
 							{
 								note.tickerText="Message to get down was sent to "+ contact.getName();
 								startForeground(1337, note);
 								sendGetDownMessage(contact.getInternationalPhoneNumber());
 								contact.setContactAnswer(eAnswer.messageSent);
-								//ttobj.speak("message was sent ." , TextToSpeech.QUEUE_FLUSH, null);
-								MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
-								mPlayer.start();
+								ttobj.speak("get down message sent ." , TextToSpeech.QUEUE_FLUSH, null);
+								//MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
+								//mPlayer.start();
 							}					
 						}//for contacts
 					}//synchronized

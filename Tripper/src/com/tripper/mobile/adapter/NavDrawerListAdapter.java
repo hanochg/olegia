@@ -82,6 +82,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		isContactWiderMenu=curContact.isSelected();
 		
 
+		//SINGLE ROUTE SETTINGS
 		if(curContact.getContactAnswer()==eAnswer.single ||
 				curContact.getContactAnswer()==eAnswer.singleWithMessage)
 		{
@@ -99,16 +100,16 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 				imgIcon.setImageResource(R.drawable.ic_home);
-			}
-
-			
+			}	
 		}
+		//REGULAR CLOSED SETTINGS
 		else if(!isContactWiderMenu)
 		{
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 		}		
 		
+		//NO APP SETTINGS
 		if (curContact.getAppStatus()==eAppStatus.noApp && 
 				curContact.getContactAnswer()!=eAnswer.single &&
 					curContact.getContactAnswer()!=eAnswer.singleWithMessage)
@@ -126,8 +127,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			imgIcon.setImageResource(R.drawable.warning_sign);
 		}			
 		else
+			//HAVE APP + NOT SINGLE ROUTE, THEN:
 			switch (curContact.getContactAnswer())
 			{
+			//NOT ANSWERED SETTINGS
 			case notAnswered:
 				if(isContactWiderMenu)
 				{
@@ -141,6 +144,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 				imgIcon.setImageResource(R.drawable.question_mark);
 				break;
+			//ANSWERED NO! SETTINGS
 			case no:
 				if(isContactWiderMenu)
 				{
@@ -156,6 +160,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 				imgIcon.setImageResource(R.drawable.red_circle);
 				break;
+			//ANSWERED YES SETTINGS
 			case ok:
 				if(isContactWiderMenu)
 				{
@@ -169,6 +174,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 				imgIcon.setImageResource(R.drawable.green_circle);
 				break;
+			//MANUAL ADDRESS ENTERED SETTINGS
 			case manual:
 				if(isContactWiderMenu)
 				{
@@ -183,6 +189,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				imgIcon.setImageResource(R.drawable.green_circle);
 				break;
 			default:
+				Log.e("DRAWER getView","Should not get to this part -end of switch");
 				break;        
 			}
 		TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
@@ -222,8 +229,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			public void onClick(View v) {
 
 				final EditText text = new EditText(context);
-				text.setText(String.valueOf(contact.getRadius()));
+				text.setText(String.valueOf(contact.getRadius()),TextView.BufferType.SPANNABLE);
 				text.setInputType(InputType.TYPE_CLASS_NUMBER);
+				text.selectAll();
+
 				new AlertDialog.Builder(context)
 				.setTitle("Radius Value")
 				.setMessage("Enter Radius Value (In Meters)")
@@ -338,7 +347,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		reRequestButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {
-				sendNotification(contact);				
+				sendNotification(contact);	
+				Toast.makeText(context, "Request Sent Again!", Toast.LENGTH_LONG).show();
 			}
 		});
 		
@@ -393,12 +403,28 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				if(ContactsListSingleton.getInstance().getDB().size()==1)
-					Toast.makeText(context, "This is the last contact, cannot remove.", Toast.LENGTH_LONG).show();
+					Toast.makeText(context, "This is the last contact, cannot be removed.", Toast.LENGTH_LONG).show();
 				else
 				{
-					ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
-					Intent intent = new Intent("com.tripper.mobile.UPDATE");	
-					LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+					new AlertDialog.Builder(context)
+					.setTitle("Delete Contact")
+					.setMessage("Are you sure you want to delete "+ contact.getName() +"?")
+					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) { 
+							//DELETE
+							ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
+							//SEND UPDATE TO DRAWER
+							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
+							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+						}
+					})
+					.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) { 	                
+							return;
+						}
+					})
+					.show(); 
+
 				}
 			}
 		});
