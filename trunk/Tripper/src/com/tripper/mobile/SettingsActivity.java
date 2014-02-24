@@ -66,7 +66,9 @@ public class SettingsActivity extends PreferenceActivity {
 			}
 			if(preference.getKey().equals(pref_key_sms_allow))
 			{
+				boolean allowSMS=Boolean.parseBoolean(value.toString());
 				//will be used by service in OnMap
+				ContactsListSingleton.getInstance().setGlobalPreferenceAllowSMS(allowSMS);
 				return true;
 			}
 			return true;

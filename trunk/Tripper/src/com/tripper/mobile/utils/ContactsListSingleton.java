@@ -38,6 +38,15 @@ public class ContactsListSingleton
 	private AsyncPhoneConverter asyncPhoneConverter;
 	private String CountryTwoLetters;
 	private String LanguageFromSettings;
+	private boolean GlobalPreferenceAllowSMS=false;
+
+	public boolean isGlobalPreferenceAllowSMS() {
+		return GlobalPreferenceAllowSMS;
+	}
+
+	public void setGlobalPreferenceAllowSMS(boolean globalPreferenceAllowSMS) {
+		GlobalPreferenceAllowSMS = globalPreferenceAllowSMS;
+	}
 
 	public String getLanguageFromSettings() {
 		return LanguageFromSettings;
@@ -55,13 +64,15 @@ public class ContactsListSingleton
 		CountryTwoLetters = countryTwoLetters;
 	}
 
-	public void setRegionalSettingsFromContex( Context context)
+	public void setDefaultSettingsFromContex( Context context)
 	{	
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
 		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list,"");
+		boolean allowSMS = sharedPref.getBoolean(SettingsActivity.pref_key_sms_allow,true);
 		CountryTwoLetters = countryTwoLetters;
 		LanguageFromSettings = languageFromSettings;
+		GlobalPreferenceAllowSMS=allowSMS;
 	}
 
 
