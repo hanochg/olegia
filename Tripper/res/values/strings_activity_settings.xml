@@ -39,7 +39,7 @@
 <string name="pref_default_radius">Default Radius Size</string>
     <string name="pref_default_radius_dialog_title">Default Radius Size (in meters)</string>
     <string name="pref_default_radius_summery">The default proximity redius (in Meters) that activate the message sending</string>
- 	<string name="pref_default_radius_value">500.0</string>
+ 	<string name="pref_default_radius_value">500</string>
  	
     <!-- SMS -->
     <string name="pref_title_sms_allow">Allow Sending SMS Messages</string>

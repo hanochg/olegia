@@ -137,7 +137,7 @@ public class FriendsList extends Activity implements
 		        
 		        mFriendsSelectedAdapter.notifyDataSetChanged();
 		        actvContacts.setText("");
-		        cursor=null;
+		        //cursor=null;
 			}
 		});
 			

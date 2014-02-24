@@ -289,6 +289,7 @@ public class ContactsListSingleton
 		@Override
 		protected void onPostExecute(Void result)
 		{
+			Log.d("onPostExecute","inFunction");
 			String number="";
 			//*Parse*// 
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -306,12 +307,20 @@ public class ContactsListSingleton
 				{  
 					synchronized(contact)
 					{
+						Log.d("countInBackground","done in synchronized");
 						if (e == null && contact!=null)
 						{
+							Log.d("countInBackground","done in if");
 							if(count!=0)
+							{
+								Log.d("countInBackground","done update to hasApp");
 								contact.UpdateAppStatus(eAppStatus.hasApp);
+							}
 							else
+							{
+								Log.d("countInBackground","done update to noApp");
 								contact.UpdateAppStatus(eAppStatus.noApp);
+							}
 
 							if(mFriendsSelectedAdapter!=null)
 								mFriendsSelectedAdapter.notifyDataSetChanged();

@@ -15,7 +15,6 @@ import com.tripper.mobile.activity.FindAddress;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactsListSingleton;
-import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
@@ -27,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +41,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 
@@ -68,10 +69,6 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		return position;
 	}
 
-	public void radiusSet(View v)
-	{
-		Log.d("radiusSet","radiusSet");
-	}
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ContactDataStructure curContact=null;
@@ -103,8 +100,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 				imgIcon.setImageResource(R.drawable.ic_home);
 			}
-			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-			imgIcon.setImageResource(R.drawable.ic_home);
+
 			
 		}
 		else if(!isContactWiderMenu)
@@ -122,7 +118,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				convertView = mInflater.inflate(R.layout.drawer_list_item_no_app, null);
 
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-				
+			
 				setWiderMenuNoApp(convertView,curContact);
 				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
@@ -197,13 +193,18 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	private void setWiderMenuSingleRouteNoApp(View convertView,ContactDataStructure curContact) {
 		final ContactDataStructure contact=curContact;
 		
-		CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
 		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				//contact.setAllowSMS(allowSMS);
-				
+				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
+					contact.setAllowSMS(isChecked);
+				else
+				{
+					allowSMSCheck.setChecked(false);
+					Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 
@@ -213,13 +214,14 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		final ContactDataStructure contact=curContact;
 		
 
-		Button replyButton = (Button) convertView.findViewById(R.id.radiusSet);
-		replyButton.setOnClickListener(new OnClickListener() {
+		Button setRadiusButton = (Button) convertView.findViewById(R.id.radiusSet);
+		setRadiusButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
 				final EditText text = new EditText(context);
+				text.setText(String.valueOf(contact.getRadius()));
 				text.setInputType(InputType.TYPE_CLASS_NUMBER);
 				new AlertDialog.Builder(context)
 				.setTitle("Radius Value")
@@ -354,9 +356,53 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	}
 
 	private void setWiderMenuNoApp(View convertView,ContactDataStructure curContact) {
-		txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
 
 		final ContactDataStructure contact=curContact;
+		
+		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
+					contact.setAllowSMS(isChecked);
+				else
+				{
+					allowSMSCheck.setChecked(false);
+					Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();	
+				}								
+			}
+		});
+		
+		Button manualLocationButton = (Button) convertView.findViewById(R.id.manualLocation);
+		manualLocationButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(context, FindAddress.class);
+				intent.putExtra(Extra.APP_MODE,Extra.MULTI_DESTINATION);
+				intent.putExtra(Extra.MANUAL_ADDRESS,contact.getPhoneNumber());
+				context.startActivity(intent);
+				
+			}
+		});
+		Button removeButton = (Button) convertView.findViewById(R.id.removeContact);
+		removeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(ContactsListSingleton.getInstance().getDB().size()==1)
+					Toast.makeText(context, "This is the last contact, cannot remove.", Toast.LENGTH_LONG).show();
+				else
+				{
+					ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
+					Intent intent = new Intent("com.tripper.mobile.UPDATE");	
+					LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+				}
+			}
+		});
+		
+		
 	}
 
 	public void sendNotification(ContactDataStructure curContact)
