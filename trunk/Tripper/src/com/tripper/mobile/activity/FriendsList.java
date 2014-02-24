@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -28,6 +30,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,7 +65,6 @@ public class FriendsList extends Activity implements
     FriendsSelectedAdapter mFriendsSelectedAdapter;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
-	private BroadcastReceiver mMessageReceiver;
 	private int APP_MODE=-1;
 
 
@@ -167,20 +169,9 @@ public class FriendsList extends Activity implements
         // Initializes the loader
         getLoaderManager().initLoader(Queries.LoaderManagerID, null,  this);
         
-		mMessageReceiver = new BroadcastReceiver() {
-			  @Override
-			  public void onReceive(Context context, Intent intent) 
-			  {
-				  String intentAction=intent.getAction();
-				  if(intentAction.equals("com.tripper.mobile.EXIT"))
-				  {
-					  Log.d("onReceive","EXIT");
-					  finish();
-				  }
-			  }
-		};
       }
 	
+
 	//##Google speech##
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -199,6 +190,8 @@ public class FriendsList extends Activity implements
 	public void speechActivation(View view)
 	{
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		String language = ContactsListSingleton.getInstance().getLanguageFromSettings();
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the contact name...");
 		startActivityForResult(intent, SPEECH_REQUEST_CODE);
@@ -261,12 +254,22 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
     @Override
 	protected void onResume() {
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 		mFriendsSelectedAdapter.notifyDataSetChanged();
 		//Log.d("FriendsList","Resumed");
 	}
 
 	
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) 
+    	{
+    		if(APP_MODE!=Extra.ON_MAP)
+    			ContactsListSingleton.getInstance().getDB().clear();
+    		finish();
+    	}
+    	return true;
+    }
+
 	public void removeContactButtonClick(View v)
 	{		
 		int position = mSelectedContactsList.getPositionForView((View) v.getParent());		
@@ -288,7 +291,7 @@ public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 		Intent intent;
 		switch(item.getItemId()){
 	    case android.R.id.home:
-	    	finish();
+	    	onKeyDown(KeyEvent.KEYCODE_BACK, null);	    	
 	    	break;
 	    case R.id.doneFL:	    	
 	    	ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();    	

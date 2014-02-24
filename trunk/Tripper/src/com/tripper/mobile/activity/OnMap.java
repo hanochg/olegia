@@ -138,11 +138,6 @@ public class OnMap extends Activity {
 					  Log.d("onReceive","List update received");
 					  navDrawerListAdapter.notifyDataSetChanged();
 				  }
-				  else if(intentAction.equals("com.tripper.mobile.EXIT"))
-				  {
-					  Log.d("onReceive","EXIT");
-					  finish();
-				  }
 			  }
 		};
 

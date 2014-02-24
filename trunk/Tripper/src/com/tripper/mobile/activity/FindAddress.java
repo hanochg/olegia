@@ -26,13 +26,9 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.speech.RecognizerIntent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -68,7 +64,6 @@ public class FindAddress extends Activity {
 	private Context activityContext;
 	private final int SPEECH_REQUEST_CODE = 10;
 	private RadioButton lastCheckedRadioButton=null;
-	private BroadcastReceiver mMessageReceiver;
 	private int APP_MODE=-1;
 	private Locale GeoCodeLocale;
 	
@@ -199,18 +194,6 @@ public class FindAddress extends Activity {
 		});
 	
 		
-		mMessageReceiver = new BroadcastReceiver() {
-			  @Override
-			  public void onReceive(Context context, Intent intent) 
-			  {
-				  String intentAction=intent.getAction();
-				  if(intentAction.equals("com.tripper.mobile.EXIT"))
-				  {
-					  Log.d("onReceive","EXIT");
-					  finish();
-				  }
-			  }
-		};
 	}
 	
 	@Override
@@ -232,6 +215,8 @@ public class FindAddress extends Activity {
 	public void speechActivation(View view)
 	{
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		String language = ContactsListSingleton.getInstance().getLanguageFromSettings();
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me the address...");
 		startActivityForResult(intent, SPEECH_REQUEST_CODE);
@@ -255,7 +240,6 @@ public class FindAddress extends Activity {
 
 	@Override
 	protected void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 		super.onResume();
 	}
 

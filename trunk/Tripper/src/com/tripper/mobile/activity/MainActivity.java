@@ -19,10 +19,7 @@ import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 
 public class MainActivity extends Activity
-				{
-
-	private BroadcastReceiver mMessageReceiver;
-	
+{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,18 +32,6 @@ public class MainActivity extends Activity
 		//reading Settings				
 		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
 		
-		mMessageReceiver = new BroadcastReceiver() {
-			  @Override
-			  public void onReceive(Context context, Intent intent) 
-			  {
-				  String intentAction=intent.getAction();
-				  if(intentAction.equals("com.tripper.mobile.EXIT"))
-				  {
-					  Log.d("onReceive","EXIT");
-					  finish();
-				  }
-			  }
-		};
 	}
 
 
@@ -100,8 +85,7 @@ public class MainActivity extends Activity
 
 
 	@Override
-	protected void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
+	protected void onResume() {		
 		super.onResume();
 	}
 

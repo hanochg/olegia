@@ -3,8 +3,7 @@
 6. to check activities with screen lock
 
 12. check if cursor is closed when accessing it in FriendsList - I think I fixed it - Hanoch
-15. to clear singelton when on friend list back button pushed
 16. add SMS to multi_destination
 20. TODO camera movement on the map
 21. does not return to the app when sticky notification is pressed
-22. deny user to resend invitation when not hasAPP or notHasAPP
+22. speech locale
