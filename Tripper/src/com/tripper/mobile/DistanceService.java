@@ -185,7 +185,7 @@ public class DistanceService extends IntentService
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		pi=PendingIntent.getActivity(this, 0,intent, 0);
 
-		note=new Notification(R.drawable.icon,"New Trip started.",System.currentTimeMillis());
+		note=new Notification(R.drawable.ic_stat_icon,"New Trip started.",System.currentTimeMillis());
 		note.flags|=Notification.FLAG_NO_CLEAR;
 		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
 

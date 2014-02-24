@@ -277,7 +277,7 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		PendingIntent pi;
 		pi=PendingIntent.getActivity(this, 0,getIntent(),  PendingIntent.FLAG_UPDATE_CURRENT);
 
-		note=new Notification(R.drawable.icon_envpole,"",System.currentTimeMillis());
+		note=new Notification(R.drawable.ic_stat_envpole,"",System.currentTimeMillis());
 		note.setLatestEventInfo(this, "Tripper",Messeges.INVITATION,pi);
 		note.flags |= Notification.FLAG_AUTO_CANCEL;
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);  

@@ -357,10 +357,10 @@ public class LoginActivity extends Activity {
 		
 		String userPhone=ParseUser.getCurrentUser().getUsername();
 		
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class,R.drawable.icon_envpole);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.INVITATION ,userPhone), NotificationActivity.class,R.drawable.ic_stat_envpole);
 		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.ANSWER ,userPhone), FriendsList.class);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), GetDownActivity.class,R.drawable.icon_mark);
-		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), SingleDestanationActivity.class,R.drawable.icon_mark);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.GETDOWN,userPhone), GetDownActivity.class,R.drawable.ic_stat_mark);
+		PushService.subscribe(this.getApplicationContext(),Net.PhoneToChannel(ChannelMode.LONERIDER,userPhone), SingleDestanationActivity.class,R.drawable.ic_stat_mark);
 	}
 	
 }
