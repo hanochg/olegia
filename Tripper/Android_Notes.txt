@@ -5,3 +5,4 @@
 12. check if cursor is closed when accessing it in FriendsList - I think I fixed it - Hanoch
 15. to clear singelton when on friend list back button pushed
 16. add SMS to multi_destination
+17. add "sent message" view on the drawer

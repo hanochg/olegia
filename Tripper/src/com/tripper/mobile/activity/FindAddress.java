@@ -293,7 +293,7 @@ public class FindAddress extends Activity {
 				//get longitude and latitude and send it to user's data
 				ContactsListSingleton.getInstance().setContactLocation(
 						phone, selectedAddress.getLongitude(),selectedAddress.getLatitude());
-				
+				finish();
 				break;
 				
 			case Extra.NOTIFICATION:	//Notification				

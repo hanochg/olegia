@@ -107,7 +107,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		{
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-		}
+		}		
 		
 		if (curContact.getAppStatus()==eAppStatus.noApp && 
 				curContact.getContactAnswer()!=eAnswer.single &&
