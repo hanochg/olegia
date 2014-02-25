@@ -251,16 +251,6 @@ public class DistanceService extends Service implements LocationListener {
 		note.setLatestEventInfo(this, "Tripper","Have a nice Trip!",pi);
 
 		startForeground(1337, note);
-
-		/* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-	    builder.setTicker("New Trip started.").setContentTitle( "Tripper").setContentText("Have a nice Trip!")
-	            .setWhen(System.currentTimeMillis()).setAutoCancel(false)
-	            .setOngoing(true).setContentIntent(pi);
-	    note = builder.build();
-	   // note.flags |= Notification.FLAG_NO_CLEAR;
-	    //startForeground(1337, note);
-	    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1337, note);*/
 	}
 
 
