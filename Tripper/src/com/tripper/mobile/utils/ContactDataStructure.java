@@ -46,7 +46,7 @@ public class ContactDataStructure
 	{		
 		//reading Settings
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		String radiusStringFromSettings = sharedPref.getString(SettingsActivity.default_radius_text_multi, "0");
+		String radiusStringFromSettings = sharedPref.getString(SettingsActivity.default_radius_text_multi, "20");
 		float radiusFromSettings = Float.parseFloat(radiusStringFromSettings);
 		
 		name=null;
