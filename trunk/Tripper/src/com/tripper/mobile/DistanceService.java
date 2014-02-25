@@ -23,8 +23,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,7 +35,7 @@ import android.telephony.gsm.SmsManager;
 
 
 
-public class DistanceService extends IntentService  
+public class DistanceService extends IntentService implements LocationListener
 {
 
 	private LocationManager locationManager=null;
@@ -45,6 +47,16 @@ public class DistanceService extends IntentService
 	public DistanceService() {
 		super("DistanceService");
 	}
+
+	@Override
+	public void onLocationChanged(Location location) {}
+	@Override
+	public void onProviderDisabled(String provider) {}
+		
+	@Override
+	public void onProviderEnabled(String provider){}
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 	@SuppressWarnings("deprecation")
 	@Override
