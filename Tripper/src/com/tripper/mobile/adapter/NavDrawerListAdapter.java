@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.gsm.SmsManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -287,7 +288,11 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 			@Override
 			public void onClick(View arg0) {
-				//TODO RESEND GET DOWN
+				if(contact.getAppStatus()==eAppStatus.hasApp)
+					sendGetDownMessage(contact.getInternationalPhoneNumber());
+				else if(contact.getAppStatus()==eAppStatus.noApp)
+					sendSMS(contact.getInternationalPhoneNumber(), Extra.MULTI_DESTINATION);
+				Toast.makeText(context, "Arrival Message was send again.", Toast.LENGTH_LONG).show();
 
 			}
 		});
@@ -623,7 +628,39 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		push.setData(data);
 		push.sendInBackground();
 	}
+	
+	public void sendGetDownMessage(String targetNumber)
+	{	 
+		ParsePush push = new ParsePush();
+		push.setChannel(Net.PhoneToChannel(ChannelMode.GETDOWN,targetNumber)); 
 
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+
+		JSONObject data = new JSONObject();		
+		try
+		{
+			data.put("alert", Messeges.GETDOWN);
+			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+
+		}
+		catch(JSONException x)
+		{
+			throw new RuntimeException("Something wrong with JSON", x);
+		}
+		push.setData(data);
+		push.sendInBackground();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void sendSMS(String phoneNumber,int mode)
+	{	 
+		SmsManager sms = SmsManager.getDefault();
+		if(mode==Extra.MULTI_DESTINATION)
+			sms.sendTextMessage(phoneNumber, null, "Get Down!", null, null);
+		else if (mode==Extra.SINGLE_DESTINATION)
+			sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
+			
+	}
 
 
 }
