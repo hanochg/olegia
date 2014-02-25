@@ -7,6 +7,7 @@ import com.parse.ParseAnalytics;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
@@ -18,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.Notification;
@@ -59,6 +61,11 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		setContentView(R.layout.notification_screen);
 		this.setFinishOnTouchOutside(false);
 
+		//Reset Settings values
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		//Writing global settings Settings				
+		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
+		
 		try {
 			JSONObject json = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
 			phone= json.get(Net.USER).toString();

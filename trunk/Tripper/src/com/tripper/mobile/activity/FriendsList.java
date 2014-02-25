@@ -11,21 +11,16 @@ import com.tripper.mobile.SettingsActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract.Contacts;
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.speech.RecognizerIntent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -40,7 +35,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
@@ -55,14 +49,13 @@ import com.tripper.mobile.utils.Queries.Net.Messeges;
 public class FriendsList extends Activity implements
 						LoaderManager.LoaderCallbacks<Cursor>
 {
-	ListView mSelectedContactsList;
-	SimpleCursorAdapter mCursorAdapter;
+	private ListView mSelectedContactsList;
 	private FriendsAutoCompleteAdapter mAutoCompleteAdapter; // The main query adapter
-	Context context;
-	ImageButton contactsButton;
-	AutoCompleteTextView actvContacts;
-    String mSearchString=null;
-    FriendsSelectedAdapter mFriendsSelectedAdapter;
+	private Context context;
+	private ImageButton contactsButton;
+	private AutoCompleteTextView actvContacts;
+	private String mSearchString=null;
+	private FriendsSelectedAdapter mFriendsSelectedAdapter;
     private final int SPEECH_REQUEST_CODE = 10;
     private final int CONTACTLIST_REQUEST_CODE = 11;
 	private int APP_MODE=-1;
@@ -76,8 +69,12 @@ public class FriendsList extends Activity implements
 		
 		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		//Reset Settings values
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		//Writing global settings Settings				
+		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
         mAutoCompleteAdapter = new FriendsAutoCompleteAdapter(this);
 		
@@ -171,7 +168,13 @@ public class FriendsList extends Activity implements
         
       }
 	
-
+	@Override
+	protected void onDestroy() {
+		context=null;
+		super.onDestroy();
+	}
+	
+	
 	//##Google speech##
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

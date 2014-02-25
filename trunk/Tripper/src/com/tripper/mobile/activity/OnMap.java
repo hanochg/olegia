@@ -12,7 +12,6 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -92,7 +91,6 @@ public class OnMap extends Activity {
 	//Globals
     private GoogleMap googleMap;
     int markerCounter=0;
-    private Context context;
     private Marker singleRouteMarker=null;
     private int APP_MODE=-1;
     
@@ -109,7 +107,6 @@ public class OnMap extends Activity {
 	
 		
 		APP_MODE = getIntent().getExtras().getInt(Extra.APP_MODE);
-		context=this;
 		getScreenDimensions();
 		
 		
@@ -237,7 +234,8 @@ public class OnMap extends Activity {
 			});
 			
 			//MARKERS
-			addSingleRouteMarker();
+			if(singleRouteMarker==null)
+				addSingleRouteMarker();
 		}
 	}
 	
@@ -324,6 +322,7 @@ public class OnMap extends Activity {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
                 navDrawerListAdapter.notifyDataSetChanged();
+                ContactsListSingleton.getInstance().clearAllSelected();
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
@@ -350,13 +349,17 @@ public class OnMap extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
         		long id) {
         	ContactDataStructure currentContact = ContactsListSingleton.getInstance().getDB().get(position);
-        	boolean currentSelection=currentContact.isSelected();
         	
-        	if(!currentSelection)
-        		setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
+        	if(APP_MODE!=Extra.SINGLE_DESTINATION)
+        	{
+        		boolean currentSelection=currentContact.isSelected();
 
+        		if(!currentSelection)
+        			setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
 
-        	currentContact.setSelected(!currentSelection);
+        		currentContact.setSelected(!currentSelection);
+        	}
+        	
         	navDrawerListAdapter.notifyDataSetChanged();
         }
     }  
@@ -370,7 +373,7 @@ public class OnMap extends Activity {
 
 
 	/*
-	 * MAP ROUTE FUNCTIONS
+	 * START - MAP ROUTE FUNCTIONS-DEPRECATED
 	 */
 	
 	public void navigateClick(View v)
@@ -455,6 +458,11 @@ public class OnMap extends Activity {
 		GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(this);
 		asyncTask.execute(map);	
 	}	
+	
+	/*
+	 * END - MAP ROUTE FUNCTIONS
+	 */
+	
 	@Override
 	protected void onResume() {
 		super.onResume();	

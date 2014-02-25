@@ -1,7 +1,6 @@
 package com.tripper.mobile.adapter;
 
 import java.util.Locale;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;

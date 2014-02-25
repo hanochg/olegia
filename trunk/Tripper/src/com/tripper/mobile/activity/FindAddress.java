@@ -77,9 +77,9 @@ public class FindAddress extends Activity {
 		
 		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
 		
+		//Reset Settings values
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-
-		//reading Settings				
+		//Writing global settings Settings				
 		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
 		
 		//define locale
@@ -226,7 +226,7 @@ public class FindAddress extends Activity {
 	
 	@Override
 	protected void onDestroy() {
-
+		activityContext=null;
 		super.onDestroy();
 	}
 
