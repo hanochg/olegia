@@ -4,15 +4,15 @@ package com.tripper.mobile.activity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.http.util.LangUtils;
-
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -29,9 +29,7 @@ import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
-
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -94,8 +92,8 @@ public class OnMap extends Activity {
 	//Globals
     private GoogleMap googleMap;
     int markerCounter=0;
-    Context context;
-    Marker singleRouteMarker=null;
+    private Context context;
+    private Marker singleRouteMarker=null;
     private int APP_MODE=-1;
     
 	//Externals
@@ -149,17 +147,25 @@ public class OnMap extends Activity {
 
 	private void setMapView(LatLng dest)
 	{
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-
-		Location source = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+		Location source = getLastKnownLocation();
 		if (source != null)
 		{
-			LatLng otherSidePos = new LatLng(2 * source.getLatitude() - dest.latitude, 2 * source.getLongitude() - dest.longitude);
-			LatLngBounds bounds = new LatLngBounds.Builder().include(dest)
-					.include(otherSidePos).build();
-			int padding = 20; 
-			googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		    
+			builder.include(new LatLng(source.getLatitude(), source.getLongitude()));
+			builder.include(dest);
+
+			LatLngBounds bounds = builder.build();
+			
+			int padding = 300; // offset from edges of the map in pixels
+			CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+			try{
+				googleMap.animateCamera(cu,1500,null);
+			}catch(Exception e){
+				Log.e("setMapView-MAP","error in animateCamera: "+e.getMessage());
+			}
+
 		}
 	}
 
@@ -244,8 +250,23 @@ public class OnMap extends Activity {
 				selectedAddress.getLongitude()!=-1)
 		{
 			LatLng latLng=new LatLng(selectedAddress.getLatitude(),selectedAddress.getLongitude());
-			MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Destination!!").icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag1));				
+			
+			//Make Marker
+			MarkerOptions markerOptions = new MarkerOptions().
+					position(latLng).
+					title("Destination!!").
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag1));
 			singleRouteMarker=googleMap.addMarker(markerOptions);
+			
+			//Make Circle on Marker
+			ContactsListSingleton.getInstance().setSingleRouteCircle(
+			googleMap.addCircle(new CircleOptions()
+		     .center(latLng)
+		     .radius(ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
+		     .strokeColor(Color.DKGRAY)
+		     .strokeWidth(2)
+		     .fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
+
 		}
 	}
 
@@ -330,14 +351,13 @@ public class OnMap extends Activity {
         		long id) {
         	ContactDataStructure currentContact = ContactsListSingleton.getInstance().getDB().get(position);
         	boolean currentSelection=currentContact.isSelected();
-        	if(currentSelection)
+        	
+        	if(!currentSelection)
         		setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
 
 
         	currentContact.setSelected(!currentSelection);
         	navDrawerListAdapter.notifyDataSetChanged();
-
-        	//TODO
         }
     }  
 	@Override
@@ -441,23 +461,51 @@ public class OnMap extends Activity {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.UPDATE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.MESSAGE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
+
 		
 		googleMap=null;
 		
 		// Initializing Map
 		initilizeMap();
 		
+		Location source = getLastKnownLocation();
+		if (source != null)
+			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(source.getLatitude(),source.getLongitude()) , 14, 0, 0)),3000,null);
+		
 		addContactsMarkers();
 
-
 		navDrawerListAdapter.notifyDataSetChanged();
-/*
-		//MAP ROUTE 
-    	latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
-*/
+
+
 	}
 	
+	private Location getLastKnownLocation()
+	{ 
+		Location l1=null; 	
+		Location l2=null; 
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
+		{
+			l1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
+		}
+		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+		{
+			l2 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		}
+
+		if (l1 == null && l2==null) 
+			return null;
+		else if(l1 == null)
+			return l2;
+		else if(l2 == null)
+			return l1;
+		else if(l1.getAccuracy() < l2.getAccuracy())
+			return l1;
+		else
+			return l2;
+	}
+
 	
 	@Override
 	protected void onPause()
@@ -547,69 +595,5 @@ public class OnMap extends Activity {
     }
 }	
 	
-
-/*
- * NAVIGATION
-
-//GOOGLE
-Button GoogleNavigate = (Button)findViewById(R.id.navigateGooG);
-GoogleNavigate.setOnClickListener(new OnClickListener() {
-	@Override
-	public void onClick(View v) {
-		selectedAddress=ContactsListSingleton.getSingleRouteAddress();
-		
-		//GoogleMaps Navigation
-		try{					
-			//source location
-		    double latitudeCurr = 31.2718;
-		    double longitudeCurr = 34.78256;
-			
-		    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(
-		    		"http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+selectedAddress.getLatitude()+","+selectedAddress.getLongitude()));
-		    		//can enter a String address after saddr\daddr
-		    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-		    startActivityForResult(intent,5);
-		}catch(Exception e)
-		{
-			Log.e("Google Navigate","Error: "+e.getMessage());
-		}
-        
-
-	}
-});		
-
-Button WazeNavigate = (Button)findViewById(R.id.navigateWaze);
-WazeNavigate.setOnClickListener(new OnClickListener() {
-	@Override
-	public void onClick(View v) 
-	{
-		/*
-		selectedAddress=new Address(Locale.getDefault());
-		selectedAddress.setLatitude(ContactsListSingleton.getInstance().singleCoordinates_lat);
-		selectedAddress.setLongitude(ContactsListSingleton.getInstance().singleCoordinates_long);		        
-		/*  WAZE API
-		 *  search for address: 	waze://?q=<address search term>
-		 *	center map to lat / lon: 	waze://?ll=<lat>,<lon>
-		 *	set zoom (minimum is 6): 	waze://?z=<zoom>
-		 */
-		/*
-        //Waze Navigation
-		try
-		{
-			//String url = "waze://?ll="+ selectedAddress.getLatitude()+","+selectedAddress.getLongitude();
-			String url = "waze://?q=ביאליק 1 באר שבע";
-		    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-		    startActivityForResult(intent,6);
-		}
-		catch ( ActivityNotFoundException ex  )
-		{
-		  Intent intent =
-		    new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
-		  startActivity(intent);
-		}	
-
-		
-	}
-}); */
 
 

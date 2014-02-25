@@ -29,12 +29,10 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -43,7 +41,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -204,10 +201,18 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				if(isContactWiderMenu)
 				{
 					Log.d("getView_NAV","In ManualAddress settings-wide");
-					convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);
-					
-					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-					
+					if(curContact.getAppStatus()==eAppStatus.hasApp)
+					{
+						convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);
+
+						imgIcon = (ImageView) convertView.findViewById(R.id.icon);				
+					}
+					else if(curContact.getAppStatus()==eAppStatus.noApp)
+					{
+						convertView = mInflater.inflate(R.layout.drawer_list_item_manual_no_app, null);
+
+						imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+					}
 					setWiderMenuYes(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_manual_status));
@@ -241,9 +246,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		return convertView;
 	}
 
+
+
 	private void setWiderMenuMsgSent(View convertView,
 			ContactDataStructure curContact) {
-		// TODO Auto-generated method stub
 		
 		final ContactDataStructure contact=curContact;
 		
@@ -347,7 +353,25 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	private void setWiderMenuYes(View convertView,ContactDataStructure curContact) {
 		final ContactDataStructure contact=curContact;
 		
-
+		if(contact.getAppStatus()==eAppStatus.noApp)			
+		{
+			final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+			allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
+						contact.setAllowSMS(isChecked);
+					else
+					{
+						allowSMSCheck.setChecked(false);
+						Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();	
+					}								
+				}
+			});
+		}
+		
+		
 		Button setRadiusButton = (Button) convertView.findViewById(R.id.radiusSet);
 		setRadiusButton.setOnClickListener(new OnClickListener() {
 

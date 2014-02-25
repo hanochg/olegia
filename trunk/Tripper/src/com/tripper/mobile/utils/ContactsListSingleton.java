@@ -2,6 +2,8 @@ package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.Marker;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
@@ -38,7 +40,16 @@ public class ContactsListSingleton
 	private String CountryTwoLetters;
 	private String LanguageFromSettings;
 	private boolean GlobalPreferenceAllowSMS=false;
-	private double RadiusSingleFromSettings;
+	private double RadiusSingleFromSettings;	
+    private Circle singleRouteCircle=null;
+
+	public Circle getSingleRouteCircle() {
+		return singleRouteCircle;
+	}
+
+	public void setSingleRouteCircle(Circle singleRouteCircle) {
+		this.singleRouteCircle = singleRouteCircle;
+	}
 
 	public boolean isGlobalPreferenceAllowSMS() {
 		return GlobalPreferenceAllowSMS;
@@ -84,6 +95,8 @@ public class ContactsListSingleton
 
 	public void setRadiusSingleFromSettings(double radiusSingleFromSettings) {
 		RadiusSingleFromSettings = radiusSingleFromSettings;
+		if (singleRouteCircle!=null)
+			singleRouteCircle.setRadius(radiusSingleFromSettings);
 	}
 
 

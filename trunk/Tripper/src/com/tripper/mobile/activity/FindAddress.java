@@ -257,8 +257,19 @@ public class FindAddress extends Activity {
 	    	finish();
 	    	break;
 		case R.id.nextFA:
+			
+			//Nothing was chosen
 			if(selectedAddress==null)
+			{
+				Toast.makeText(this, "Nothing selected.", Toast.LENGTH_LONG).show();
 				return true;
+			}
+			
+			if(addressDB.size()==0)
+			{
+				Toast.makeText(this, "Please wait for the list to update.\nAlso check if the address is valid.", Toast.LENGTH_LONG).show();
+				return true;
+			}
 			
 			switch (APP_MODE)
 			{
