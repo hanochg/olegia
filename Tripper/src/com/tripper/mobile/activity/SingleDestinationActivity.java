@@ -23,7 +23,7 @@ public class SingleDestinationActivity extends Activity {
 	}
 	
 	
-	public void btnGotItSingleClick(View view)
+	public void OnBtnbtnGotItSingleClick(View view)
 	{	
 		finish();
 	}

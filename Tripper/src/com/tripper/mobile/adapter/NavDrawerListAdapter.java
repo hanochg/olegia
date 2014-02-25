@@ -237,7 +237,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				imgIcon.setImageResource(R.drawable.check);
 				break;
 			default:
-				Log.e("DRAWER getView","Should not get to this part -end of switch");
+				//Single route items can enter this part
 				break;        
 			}
 		TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
