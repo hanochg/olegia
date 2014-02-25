@@ -4,6 +4,7 @@ package com.tripper.mobile.activity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,26 +21,33 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tripper.mobile.DistanceService;
+import com.tripper.mobile.DistanceService.myBinder;
 import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.adapter.NavDrawerListAdapter;
-import com.tripper.mobile.map.*;
+import com.tripper.mobile.map.GMapV2Direction;
+import com.tripper.mobile.map.GetDirectionsAsyncTask;
+import com.tripper.mobile.map.PopupAdapter;
 import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
+
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -67,79 +75,102 @@ public class OnMap extends Activity {
 	private Polyline newPolyline;
 	private boolean isTravelingToParis = false;
 	private int width, height;
-	
-	
+
+
 	/*
 	 * DRAWER VARIABLES
 	 */
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
 
-    // nav drawer title
-    private CharSequence mDrawerTitle;
- 
-    // used to store app title
-    private CharSequence mTitle;
- 
-    private NavDrawerListAdapter navDrawerListAdapter;
+	// nav drawer title
+	private CharSequence mDrawerTitle;
+
+	// used to store app title
+	private CharSequence mTitle;
+
+	private NavDrawerListAdapter navDrawerListAdapter;
 
 	/*
 	 * END DRAWER VARIABLES
 	 */
-    
+
 	//Globals
-    private GoogleMap googleMap;
-    int markerCounter=0;
-    private Marker singleRouteMarker=null;
-    private int APP_MODE=-1;
-    
+	private GoogleMap googleMap;
+	int markerCounter=0;
+	private Marker singleRouteMarker=null;
+	private int APP_MODE=-1;
+
 	//Externals
 	public static Address selectedAddress=null;
-	
+
 	private BroadcastReceiver mMessageReceiver;
-	
-	 
+
+
+
+	DistanceService mService;
+	boolean mBound = false;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className,
+				IBinder service) {
+			// We've bound to LocalService, cast the IBinder and get LocalService instance
+			myBinder binder = (myBinder) service;
+			mService = binder.getService();
+			mBound = true;
+
+			mService.startPassiveLocations();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.on_map);
-	
-		
+
+
 		APP_MODE = getIntent().getExtras().getInt(Extra.APP_MODE);
 		getScreenDimensions();
-		
-		
-	    Intent i=new Intent(this, DistanceService.class);
-	    i.putExtra(Extra.APP_MODE, APP_MODE);
-	    startService(i);
 
-		
+		Intent intent=new Intent(this, DistanceService.class);
+		intent.putExtra(Extra.APP_MODE, APP_MODE);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
+		startService(intent);
+
+
 		mMessageReceiver = new BroadcastReceiver() {
-			  @Override
-			  public void onReceive(Context context, Intent intent) 
-			  {
-				  String intentAction=intent.getAction();
-				  if(intentAction.equals("com.tripper.mobile.MESSAGE"))
-				  {
-					  Log.d("onReceive","RECEIVED!!");
-					  navDrawerListAdapter.notifyDataSetChanged();
-					  addContactsMarkers();
-					  String user = intent.getExtras().getString(Extra.USERNAME);
-					  Toast.makeText(getApplicationContext(), "Message Received From "+ user +"!", Toast.LENGTH_LONG).show();					  
-				  }
-				  else if(intentAction.equals("com.tripper.mobile.UPDATE"))
-				  {
-					  Log.d("onReceive","List update received");
-					  navDrawerListAdapter.notifyDataSetChanged();
-				  }
-			  }
+			@Override
+			public void onReceive(Context context, Intent intent) 
+			{
+				String intentAction=intent.getAction();
+				if(intentAction.equals("com.tripper.mobile.MESSAGE"))
+				{
+					Log.d("onReceive","RECEIVED!!");
+					navDrawerListAdapter.notifyDataSetChanged();
+					addContactsMarkers();
+					String user = intent.getExtras().getString(Extra.USERNAME);
+					Toast.makeText(getApplicationContext(), "Message Received From "+ user +"!", Toast.LENGTH_LONG).show();					  
+				}
+				else if(intentAction.equals("com.tripper.mobile.UPDATE"))
+				{
+					Log.d("onReceive","List update received");
+					navDrawerListAdapter.notifyDataSetChanged();
+				}
+			}
 		};
 
-		
+
 		//Initialize the Drawer
 		InitializeDrawer();
-		
+
 	}
 
 	private void setMapView(LatLng dest)
@@ -148,12 +179,12 @@ public class OnMap extends Activity {
 		if (source != null && dest.latitude!=-1 && dest.longitude!=-1)
 		{
 			LatLngBounds.Builder builder = new LatLngBounds.Builder();
-		    
+
 			builder.include(new LatLng(source.getLatitude(), source.getLongitude()));
 			builder.include(dest);
 
 			LatLngBounds bounds = builder.build();
-			
+
 			int padding = 300; // offset from edges of the map in pixels
 			CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
@@ -166,34 +197,34 @@ public class OnMap extends Activity {
 		}
 	}
 
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	
-	    	new AlertDialog.Builder(this)
-	        .setTitle("Exit Map")
-	        .setMessage("Exiting the map will end the trip.\nAre you sure you wish to exit?")
-	        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-	            public void onClick(DialogInterface dialog, int which) { 
-	                //clear the singleton
-	            	ContactsListSingleton.getInstance().close();
-	            	ContactsListSingleton.getInstance().setDefaultSettingsFromContex(getApplicationContext());
-	            	finish();
-	            }
-	         })
-	        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-	            public void onClick(DialogInterface dialog, int which) { 	                
-	            	return;
-	            }
-	         })
-	         .show(); 
-	        return true;
-	    }
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-	    return super.onKeyDown(keyCode, event);
+			new AlertDialog.Builder(this)
+			.setTitle("Exit Map")
+			.setMessage("Exiting the map will end the trip.\nAre you sure you wish to exit?")
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) { 
+					//clear the singleton
+					ContactsListSingleton.getInstance().close();
+					ContactsListSingleton.getInstance().setDefaultSettingsFromContex(getApplicationContext());
+					finish();
+				}
+			})
+			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) { 	                
+					return;
+				}
+			})
+			.show(); 
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	/**
 	 * function to load map. If map is not created it will create it for you
 	 * */
@@ -225,20 +256,20 @@ public class OnMap extends Activity {
 			});
 			googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 			googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-				
+
 				@Override
 				public void onInfoWindowClick(Marker arg0) {
 					//Toast.makeText(this, marker.getTitle(), Toast.LENGTH_LONG).show();
-					
+
 				}
 			});
-			
+
 			//MARKERS
 			if(singleRouteMarker==null)
 				addSingleRouteMarker();
 		}
 	}
-	
+
 	private void addSingleRouteMarker()
 	{
 		//Get single route details
@@ -248,32 +279,31 @@ public class OnMap extends Activity {
 				selectedAddress.getLongitude()!=-1)
 		{
 			LatLng latLng=new LatLng(selectedAddress.getLatitude(),selectedAddress.getLongitude());
-			
+
 			//Make Marker
 			MarkerOptions markerOptions = new MarkerOptions().
 					position(latLng).
 					title("Destination!!").
 					icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag1));
 			singleRouteMarker=googleMap.addMarker(markerOptions);
-			
+
 			//Make Circle on Marker
 			ContactsListSingleton.getInstance().setSingleRouteCircle(
-			googleMap.addCircle(new CircleOptions()
-		     .center(latLng)
-		     .radius(ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
-		     .strokeColor(Color.DKGRAY)
-		     .strokeWidth(2)
-		     .fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
+					googleMap.addCircle(new CircleOptions()
+					.center(latLng)
+					.radius(ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
+					.strokeColor(Color.DKGRAY)
+					.strokeWidth(2)
+					.fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
 
 		}
 	}
-
 	private void addContactsMarkers()
 	{
 		ArrayList<ContactDataStructure> contactsDB = ContactsListSingleton.getInstance().getDB();
 		ContactDataStructure curContact;
 		double curContactLong,curContactLat;
-		
+
 		for(int i=0 ; i<contactsDB.size() ; i++)
 		{
 			curContact=contactsDB.get(i);
@@ -286,83 +316,83 @@ public class OnMap extends Activity {
 				Log.d("ContactMarker","MarkerName: "+curContact.getName());
 				MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(curContact.getName());
 				curContact.setRadiusOnMap(googleMap.addCircle(new CircleOptions()
-			     .center(latLng)
-			     .radius(curContact.getRadius())
-			     .strokeColor(Color.DKGRAY)
-			     .strokeWidth(2)
-			     //.fillColor(Color.BLUE)
-			     .fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
+				.center(latLng)
+				.radius(curContact.getRadius())
+				.strokeColor(Color.DKGRAY)
+				.strokeWidth(2)
+				//.fillColor(Color.BLUE)
+				.fillColor(Color.argb(50, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY)))));
 				curContact.setMarker(googleMap.addMarker(markerOptions));
-				
+
 			}
 		}	
 	}
-	
+
 	private void InitializeDrawer()
 	{
-        mTitle = mDrawerTitle = getTitle();
-        
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
- 
-        // setting the nav drawer list adapter
-        navDrawerListAdapter = new NavDrawerListAdapter(this);
-        mDrawerList.setAdapter(navDrawerListAdapter);
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
-        
-        // enabling action bar app icon and behaving it as toggle button
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
- 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility
-                R.string.app_name // nav drawer close - description for accessibility
-        ){
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                navDrawerListAdapter.notifyDataSetChanged();
-                ContactsListSingleton.getInstance().clearAllSelected();
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
- 
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                navDrawerListAdapter.notifyDataSetChanged();
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.openDrawer(mDrawerList);
-    
+		mTitle = mDrawerTitle = getTitle();
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+
+		// setting the nav drawer list adapter
+		navDrawerListAdapter = new NavDrawerListAdapter(this);
+		mDrawerList.setAdapter(navDrawerListAdapter);
+		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+
+		// enabling action bar app icon and behaving it as toggle button
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+				R.drawable.ic_drawer, //nav menu toggle icon
+				R.string.app_name, // nav drawer open - description for accessibility
+				R.string.app_name // nav drawer close - description for accessibility
+				){
+			public void onDrawerClosed(View view) {
+				getActionBar().setTitle(mTitle);
+				navDrawerListAdapter.notifyDataSetChanged();
+				ContactsListSingleton.getInstance().clearAllSelected();
+				// calling onPrepareOptionsMenu() to show action bar icons
+				invalidateOptionsMenu();
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				getActionBar().setTitle(mDrawerTitle);
+				navDrawerListAdapter.notifyDataSetChanged();
+				// calling onPrepareOptionsMenu() to hide action bar icons
+				invalidateOptionsMenu();
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.openDrawer(mDrawerList);
+
 	}
-	
-    
-    /**
-     * Slide menu item click listener
-     * */
-    private class SlideMenuClickListener implements
-            				ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-        		long id) {
-        	ContactDataStructure currentContact = ContactsListSingleton.getInstance().getDB().get(position);
-        	
-        	if(APP_MODE!=Extra.SINGLE_DESTINATION)
-        	{
-        		boolean currentSelection=currentContact.isSelected();
 
-        		if(!currentSelection)
-        			setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
 
-        		currentContact.setSelected(!currentSelection);
-        	}
-        	
-        	navDrawerListAdapter.notifyDataSetChanged();
-        }
-    }  
+	/**
+	 * Slide menu item click listener
+	 * */
+	private class SlideMenuClickListener implements
+	ListView.OnItemClickListener {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			ContactDataStructure currentContact = ContactsListSingleton.getInstance().getDB().get(position);
+
+			if(APP_MODE!=Extra.SINGLE_DESTINATION)
+			{
+				boolean currentSelection=currentContact.isSelected();
+
+				if(!currentSelection)
+					setMapView(new LatLng(currentContact.getLatitude(), currentContact.getLongitude()));
+
+				currentContact.setSelected(!currentSelection);
+			}
+
+			navDrawerListAdapter.notifyDataSetChanged();
+		}
+	}  
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==5)
@@ -375,7 +405,7 @@ public class OnMap extends Activity {
 	/*
 	 * START - MAP ROUTE FUNCTIONS-DEPRECATED
 	 */
-	
+
 	public void navigateClick(View v)
 	{
 		if (!isTravelingToParis)
@@ -404,48 +434,48 @@ public class OnMap extends Activity {
 		if (isTravelingToParis)
 		{
 			latlngBounds = createLatLngBoundsObject(AMSTERDAM, PARIS);
-	        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
+			googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
 		}
 		else
 		{
 			latlngBounds = createLatLngBoundsObject(AMSTERDAM, FRANKFURT);
-	        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
+			googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
 		}
-		
+
 	}
-	
+
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	private void getScreenDimensions()
 	{
-		 if (  Integer.valueOf(android.os.Build.VERSION.SDK_INT) < 13 ) 
-		 {
-	         Display display = getWindowManager().getDefaultDisplay(); 
-	         width = display.getWidth();
-	         height = display.getHeight();
-	     } 
-		 else 
-	     {
-	          Display display = getWindowManager().getDefaultDisplay();
-	          Point size = new Point();
-	          display.getSize(size);
-	          width = size.x;
-	          height = size.y;
-	     }        
+		if (  Integer.valueOf(android.os.Build.VERSION.SDK_INT) < 13 ) 
+		{
+			Display display = getWindowManager().getDefaultDisplay(); 
+			width = display.getWidth();
+			height = display.getHeight();
+		} 
+		else 
+		{
+			Display display = getWindowManager().getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			width = size.x;
+			height = size.y;
+		}        
 	}
-	
+
 	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation, LatLng secondLocation)
 	{
 		if (firstLocation != null && secondLocation != null)
 		{
 			LatLngBounds.Builder builder = new LatLngBounds.Builder();    
 			builder.include(firstLocation).include(secondLocation);
-			
+
 			return builder.build();
 		}
 		return null;
 	}
-	
+
 	public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
 	{
 		Map<String, String> map = new HashMap<String, String>();
@@ -454,15 +484,16 @@ public class OnMap extends Activity {
 		map.put(GetDirectionsAsyncTask.DESTINATION_LAT, String.valueOf(toPositionDoubleLat));
 		map.put(GetDirectionsAsyncTask.DESTINATION_LONG, String.valueOf(toPositionDoubleLong));
 		map.put(GetDirectionsAsyncTask.DIRECTIONS_MODE, mode);
-		
+
 		GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(this);
 		asyncTask.execute(map);	
 	}	
-	
+
+
 	/*
 	 * END - MAP ROUTE FUNCTIONS
 	 */
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();	
@@ -470,23 +501,26 @@ public class OnMap extends Activity {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.MESSAGE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 
-		
 		googleMap=null;
-		
+
 		// Initializing Map
 		initilizeMap();
-		
+
 		Location source = getLastKnownLocation();
 		if (source != null)
 			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(source.getLatitude(),source.getLongitude()) , 14, 0, 0)),3000,null);
-		
+
+
 		addContactsMarkers();
 
 		navDrawerListAdapter.notifyDataSetChanged();
 
-
+		Intent intent=new Intent(this, DistanceService.class);
+		intent.putExtra(Extra.APP_MODE, APP_MODE);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
 	}
-	
+
+
 	private Location getLastKnownLocation()
 	{ 
 		Location l1=null; 	
@@ -514,54 +548,66 @@ public class OnMap extends Activity {
 			return l2;
 	}
 
-	
+
 	@Override
 	protected void onPause()
 	{
-	    super.onPause();
+		super.onPause();
 
-	    if (mMessageReceiver != null) 
-	    {
-	    	LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-	    }
+		if (mMessageReceiver != null) 
+		{
+			LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+		}
 	}
 
-	
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		if (mBound)
+		{
+			mService.startFineLocations();
+			unbindService(mConnection);
+			mBound = false;
+		}
+	}
+
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
 		selectedAddress=null;
-	    Intent i=new Intent(this, DistanceService.class);
-	    stopService(i);
-		
+
+		Intent i=new Intent(this, DistanceService.class);
+		stopService(i);
 	}
-	
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
- 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-	
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		// Pass any configuration change to the drawer toggls
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
 	/**------------------
 	 * MENU Definitions
 	 * ------------------*/
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.on_map_menu, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.on_map_menu, menu);
+		return true;
 	}
-	
-    @Override
+
+	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // toggle nav drawer on selecting action bar app icon/title
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -590,18 +636,18 @@ public class OnMap extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
-    /***
-     * Called when invalidateOptionsMenu() is triggered
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) 
-    {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.SettingsOM).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
+
+	/***
+	 * Called when invalidateOptionsMenu() is triggered
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) 
+	{
+		// if nav drawer is opened, hide the action items
+		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		menu.findItem(R.id.SettingsOM).setVisible(!drawerOpen);
+		return super.onPrepareOptionsMenu(menu);
+	}
 }	
-	
 
 
