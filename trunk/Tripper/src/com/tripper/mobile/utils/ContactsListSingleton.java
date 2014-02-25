@@ -37,6 +37,7 @@ public class ContactsListSingleton
 	private double RadiusSingleFromSettings;	
     private Circle singleRouteCircle=null;
     public FriendsSelectedAdapter mFriendsSelectedAdapter;
+    private boolean isTripActive=true;
 
     
     public void clearAllSelected()
@@ -276,6 +277,15 @@ public class ContactsListSingleton
 			}
 		}	
 		return phones;
+	}
+
+
+	public boolean GetIsTripActive() {
+		return isTripActive;
+	}
+
+	public void setTripActive(boolean isTripActive) {
+		this.isTripActive = isTripActive;
 	}
 
 

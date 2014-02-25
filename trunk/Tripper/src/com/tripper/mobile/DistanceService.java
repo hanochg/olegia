@@ -98,7 +98,7 @@ public class DistanceService extends Service implements LocationListener {
 		Log.e( mylocation.getProvider(), "h");
 		Log.e(Long.toString((System.currentTimeMillis()-starttime)/1000), Float.toString(mylocation.getAccuracy()));
 		 */
-		if(mylocation.getAccuracy()<30 && db!=null && !db.isEmpty()&& mylocation!=null )
+		if(mylocation.getAccuracy()<40 && db!=null && !db.isEmpty()&& mylocation!=null )
 		{
 
 			if(APP_MODE==Extra.MULTI_DESTINATION)
@@ -322,6 +322,7 @@ public class DistanceService extends Service implements LocationListener {
 			ttobj.stop();
 			ttobj.shutdown();
 		}
+		ContactsListSingleton.getInstance().setTripActive(false);
 		stopForeground(true);
 		stopSelf();
 	}
