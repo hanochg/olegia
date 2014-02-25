@@ -213,7 +213,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 						imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 					}
-					setWiderMenuYes(convertView,curContact);
+					if(curContact.getAppStatus()!=eAppStatus.notChecked)
+						setWiderMenuYes(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_manual_status));
 				}
@@ -373,7 +374,6 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 			});
 		}
-
 
 		Button setRadiusButton = (Button) convertView.findViewById(R.id.radiusSet);
 		setRadiusButton.setOnClickListener(new OnClickListener() {
