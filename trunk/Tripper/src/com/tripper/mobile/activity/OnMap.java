@@ -145,7 +145,7 @@ public class OnMap extends Activity {
 	private void setMapView(LatLng dest)
 	{
 		Location source = getLastKnownLocation();
-		if (source != null)
+		if (source != null && dest.latitude!=-1 && dest.longitude!=-1)
 		{
 			LatLngBounds.Builder builder = new LatLngBounds.Builder();
 		    
