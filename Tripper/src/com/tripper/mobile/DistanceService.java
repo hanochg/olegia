@@ -1,191 +1,226 @@
 package com.tripper.mobile;
 
+
 import java.util.ArrayList;
 import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.tripper.mobile.activity.OnMap;
 import com.tripper.mobile.utils.ContactDataStructure;
-import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
 import com.tripper.mobile.utils.Queries.Net.Messeges;
-import android.app.IntentService;
+
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.gsm.SmsManager;
+import android.util.Log;
 
-
-
-
-public class DistanceService extends IntentService implements LocationListener
-{
+public class DistanceService extends Service implements LocationListener {
 
 	private LocationManager locationManager=null;
 	private Notification note;
 	private PendingIntent pi;
 	private TextToSpeech ttobj;
 	private int APP_MODE=-1;
+	ArrayList<ContactDataStructure> db;
+	Location targetlocation;
 
-	public DistanceService() {
-		super("DistanceService");
+	LocationManager lm;
+
+	public DistanceService() {}
+
+	private final IBinder mBinder = new myBinder();
+
+	public class myBinder extends Binder {
+		public DistanceService getService() {
+			// Return this instance of LocalService so clients can call public methods
+			return DistanceService.this;
+		}
 	}
 
-	@Override
-	public void onLocationChanged(Location location) {}
-	@Override
-	public void onProviderDisabled(String provider) {}
-		
-	@Override
-	public void onProviderEnabled(String provider){}
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {}
+	public IBinder onBind(Intent intent) {
+		return mBinder;
+	}
 
-	@SuppressWarnings("deprecation")
+	long starttime;
+
+
 	@Override
-	protected void onHandleIntent(Intent intent) 
-	{			
-		Location mylocation=null;
-		Location targetlocation;
-		ArrayList<ContactDataStructure> db=ContactsListSingleton.getInstance().getDB();
+	public int onStartCommand(Intent intent, int flags, int startId) 
+	{
+		db=ContactsListSingleton.getInstance().getDB();
 		APP_MODE = intent.getExtras().getInt(Extra.APP_MODE);
-
-		setNotification();		
+		locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		setNotification();
 		InitializeSpeech();
+		starttime=System.currentTimeMillis();
 
-		//long endTime = System.currentTimeMillis() + 120000;
-		while (db!=null && !db.isEmpty()) 
+
+		return START_STICKY;
+	}
+
+	public void startFineLocations()
+	{
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
+	}
+	public void startPassiveLocations()
+	{
+		locationManager.removeUpdates(this);
+		locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 500, 0, this);
+	}
+
+	public void onLocationChanged(Location mylocation) 
+	{
+		boolean endFlag=true;
+		/*
+		Log.e( mylocation.getProvider(), "h");
+		Log.e(Long.toString((System.currentTimeMillis()-starttime)/1000), Float.toString(mylocation.getAccuracy()));
+		 */
+		if(mylocation.getAccuracy()<30 && db!=null && !db.isEmpty()&& mylocation!=null )
 		{
 
-			mylocation = getLastKnownLocation();
+			if(APP_MODE==Extra.MULTI_DESTINATION)
+			{
+				ContactDataStructure contact;
+				try
+				{
+					for (int i=0;i<db.size();i++)
+					{
+						contact=db.get(i);
 
-			if(mylocation!=null && db!=null)
+						targetlocation = new Location(mylocation);
+						targetlocation.setLatitude(contact.getLatitude());
+						targetlocation.setLongitude(contact.getLongitude());
+						if(	contact.getContactAnswer()!=eAnswer.messageSent && contact.getRadius()> mylocation.distanceTo(targetlocation))
+						{
+							if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
+									contact.getAppStatus()==eAppStatus.hasApp)
+							{
+								sendGetDownMessage(contact.getInternationalPhoneNumber());
+								speechAndUpdateAfterMessege(contact);
+							}			
+							else if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() &&
+									contact.getContactAnswer()==eAnswer.manual && contact.getAppStatus()==eAppStatus.noApp)
+							{
+								sendSMS(contact.getInternationalPhoneNumber());
+								speechAndUpdateAfterMessege(contact);							
+							}		
+
+						}
+						if(contact.getContactAnswer()!= eAnswer.messageSent )
+						{
+							endFlag=false;
+						}
+					}//for contacts
+
+
+				}//try
+				catch(Exception e)
+				{
+				}
+
+
+			}
+			else if(APP_MODE==Extra.SINGLE_DESTINATION)
 			{
 
-				if(APP_MODE==Extra.MULTI_DESTINATION)
+				targetlocation = new Location("me");
+				Address singleRouteCoordinates = ContactsListSingleton.getSingleRouteAddress();
+				targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
+				targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
+
+				if(mylocation.distanceTo(targetlocation)< ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
 				{
+					note.tickerText="Messages were sent";
+					startForeground(1337, note);
+
+					sendGotToPlace();
+
 					ContactDataStructure contact;
-					synchronized(db)
+					try
 					{
 						for (int i=0;i<db.size();i++)
 						{
+
 							contact=db.get(i);
-
-							targetlocation = new Location(mylocation);
-							targetlocation.setLatitude(contact.getLatitude());
-							targetlocation.setLongitude(contact.getLongitude());
-							if(	contact.getContactAnswer()!=eAnswer.messageSent && contact.getRadius()> mylocation.distanceTo(targetlocation))
+							if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() && 
+									contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
 							{
-								if((contact.getContactAnswer()==eAnswer.ok ||  contact.getContactAnswer()==eAnswer.manual) &&
-										contact.getAppStatus()==eAppStatus.hasApp)
-								{
-									sendGetDownMessage(contact.getInternationalPhoneNumber());
-									speechAndUpdateAfterMessege(contact);
-								}			
-								else if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() &&
-										contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
-								{
-									sendSMS(contact.getInternationalPhoneNumber());
-									speechAndUpdateAfterMessege(contact);							
-								}		
-								
+								sendSMS(contact.getInternationalPhoneNumber());
+								contact.setContactAnswer(eAnswer.singleWithMessage);
 							}
-						}//for contacts
-					}//synchronized
 
-				}
-				else if(APP_MODE==Extra.SINGLE_DESTINATION)
-				{
 
-					targetlocation = new Location("me");
-					Address singleRouteCoordinates = ContactsListSingleton.getSingleRouteAddress();
-					targetlocation.setLatitude(singleRouteCoordinates.getLatitude());
-					targetlocation.setLongitude(singleRouteCoordinates.getLongitude());	
-
-					if(mylocation.distanceTo(targetlocation)< ContactsListSingleton.getInstance().getRadiusSingleFromSettings())
+						}
+					}
+					catch(Exception e)
 					{
-						note.tickerText="Messages were sent";
-						startForeground(1337, note);
-
-						sendGotToPlace();
-
-						ContactDataStructure contact;
-						try
-						{
-							for (int i=0;i<db.size();i++)
-							{
-
-								contact=db.get(i);
-								if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() && 
-										contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
-								{
-									sendSMS(contact.getInternationalPhoneNumber());
-									contact.setContactAnswer(eAnswer.singleWithMessage);
-								}
-							}
-						}
-						catch(Exception e)
-						{
-
-						}
-						break;
 					}
 				}
-
-			}//While
-
-			try 
+				
+				ContactDataStructure contact;
+				for (int i=0;i<db.size();i++)
+				{
+					contact=db.get(i);
+					if(contact.getContactAnswer()!= eAnswer.singleWithMessage )
+					{
+						endFlag=false;
+					}
+				}
+			}	//SINGLE_DESTINATION
+			if( endFlag==true)
 			{
-				Thread.sleep(800);
+				myClose();
 			}
-			catch (Exception e)
-			{
-
-			}			
-		}
-		if(ttobj !=null){
-			ttobj.stop();
-			ttobj.shutdown();
-		}
-
-		stopSelf();
+		}//main if
 	}
-	
+	public void onProviderEnabled(String s){}
+
+	public void onProviderDisabled(String s) {}
+	public void onStatusChanged(String s, int i, Bundle b){}
+
+
 	public void speechAndUpdateAfterMessege(ContactDataStructure contact)
 	{
 		contact.setContactAnswer(eAnswer.messageSent);
-		
+
 		note.tickerText="Message to get down was sent to "+ contact.getName();
 		startForeground(1337, note);
-		
+
 		//SEND UPDATE TO DRAWER
 		Intent updateIntent = new Intent("com.tripper.mobile.UPDATE");	
 		LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
-		
+
 		//talk!
 		ttobj.speak("arrival message sent ." , TextToSpeech.QUEUE_FLUSH, null);
-			
+
 		//MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.get_down);
 		//mPlayer.start();
 	}
-	
-	
+
+
 
 	private void InitializeSpeech()
 	{
@@ -228,45 +263,6 @@ public class DistanceService extends IntentService implements LocationListener
         mNotificationManager.notify(1337, note);*/
 	}
 
-
-
-	private Location getLastKnownLocation()
-	{ 
-		Location l1=null; 	
-		Location l2=null; 
-		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
-		{
-			l1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
-		}
-		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-		{
-			l2 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		}
-
-		if (l1 == null && l2==null) 
-			return null;
-		else if(l1 == null)
-			return l2;
-		else if(l2 == null)
-			return l1;
-		else if(l1.getAccuracy() < l2.getAccuracy())
-			return l1;
-		else
-			return l2;
-	}
-	
-	
-	
-	
-
-	@Override
-	public void onDestroy()
-	{
-		super.onDestroy();
-		stopForeground(true);
-	}
 
 
 	public void sendGetDownMessage(String targetNumber)
@@ -321,4 +317,23 @@ public class DistanceService extends IntentService implements LocationListener
 		SmsManager sms = SmsManager.getDefault();
 		sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
 	}
+
+
+	@Override
+	public void onDestroy() 
+	{	
+		super.onDestroy();	
+		myClose();
+	}
+	private void myClose()
+	{
+		locationManager.removeUpdates(this);
+		if(ttobj !=null){
+			ttobj.stop();
+			ttobj.shutdown();
+		}
+		stopForeground(true);
+		stopSelf();
+	}
+
 }
