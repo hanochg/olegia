@@ -37,7 +37,16 @@ public class SplashScreen extends Activity {
 		splashActivity=this;
 
 		setContentView(R.layout.splash_screen);
+		
+		networkConnection=isNetworkAvailable();
 
+		if (!networkConnection)
+		{
+			Toast.makeText(getApplicationContext(), "You must be connected to the internet", Toast.LENGTH_LONG).show();
+			return; //Exit, connection error.
+		}
+		
+		
 		Timer myTimer = new Timer();
 		myTimer.schedule(new TimerTask()
 		{
@@ -72,13 +81,7 @@ public class SplashScreen extends Activity {
 			}
 		},getResources().getInteger(R.integer.splash_screen_timeout)); 	
 
-		networkConnection=isNetworkAvailable();
-
-		if (!networkConnection)
-		{
-			Toast.makeText(getApplicationContext(), "You must be connected to the internet", Toast.LENGTH_LONG).show();
-			return; //Exit, connection error.
-		}
+		
 
 		//ParseUser.logOut();
 		currentUser = ParseUser.getCurrentUser();	

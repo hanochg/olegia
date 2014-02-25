@@ -39,8 +39,10 @@ import android.widget.Toast;
 import com.tripper.mobile.adapter.FilterCursorWrapper;
 import com.tripper.mobile.adapter.FriendsAutoCompleteAdapter;
 import com.tripper.mobile.adapter.FriendsSelectedAdapter;
-import com.tripper.mobile.utils.*;
+import com.tripper.mobile.utils.ContactDataStructure;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
+import com.tripper.mobile.utils.ContactsListSingleton;
+import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.Queries.Extra;
 import com.tripper.mobile.utils.Queries.Net;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
@@ -67,7 +69,7 @@ public class FriendsList extends Activity implements
 		context = this;
 		setContentView(R.layout.friends_list);		
 		
-		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
+		APP_MODE = getIntent().getExtras().getInt(Extra.APP_MODE);
 		
 		//Reset Settings values
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
@@ -84,7 +86,7 @@ public class FriendsList extends Activity implements
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(context, ContactsList.class);
-				intent.putExtra(Queries.Extra.APP_MODE,APP_MODE);
+				intent.putExtra(Extra.APP_MODE,APP_MODE);
 				startActivityForResult(intent,CONTACTLIST_REQUEST_CODE);	
 				
 			}
