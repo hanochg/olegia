@@ -124,7 +124,7 @@ public class DistanceService extends Service implements LocationListener {
 							else if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() &&
 									contact.getContactAnswer()==eAnswer.manual && contact.getAppStatus()==eAppStatus.noApp)
 							{
-								sendSMS(contact.getInternationalPhoneNumber());
+								sendSMS(contact.getInternationalPhoneNumber(),APP_MODE );
 								speechAndUpdateAfterMessege(contact);							
 							}		
 
@@ -168,7 +168,7 @@ public class DistanceService extends Service implements LocationListener {
 							if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS() && contact.isAllowSMS() && 
 									contact.getContactAnswer()==eAnswer.single && contact.getAppStatus()==eAppStatus.noApp)
 							{
-								sendSMS(contact.getInternationalPhoneNumber());
+								sendSMS(contact.getInternationalPhoneNumber(),APP_MODE);
 								contact.setContactAnswer(eAnswer.singleWithMessage);
 							}
 
@@ -302,10 +302,15 @@ public class DistanceService extends Service implements LocationListener {
 		push.sendInBackground();
 	}
 
-	public void sendSMS(String phoneNumber)
+	@SuppressWarnings("deprecation")
+	public void sendSMS(String phoneNumber,int mode)
 	{	 
 		SmsManager sms = SmsManager.getDefault();
-		sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
+		if(mode==Extra.MULTI_DESTINATION)
+			sms.sendTextMessage(phoneNumber, null, "Get Down!", null, null);
+		else if (mode==Extra.SINGLE_DESTINATION)
+			sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
+			
 	}
 
 
