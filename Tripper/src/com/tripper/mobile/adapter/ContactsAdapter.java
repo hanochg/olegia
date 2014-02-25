@@ -17,7 +17,6 @@ import android.widget.CursorAdapter;
 import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-
 import com.tripper.mobile.R;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
@@ -168,16 +167,19 @@ public class ContactsAdapter extends CursorAdapter implements SectionIndexer {
         final Uri contactUri = Contacts.getLookupUri(
                 cursor.getLong(Queries.ID),
                 cursor.getString(Queries.LOOKUP_KEY));
-
+        
         // Binds the contact's lookup Uri to the QuickContactBadge
         //String photo = cursor.getString(Queries.PHOTO_THUMBNAIL_DATA);
         //Long id  = cursor.getLong(Queries.ID);
         //String lookup = cursor.getString(Queries.LOOKUP_KEY);
         holder.icon.assignContactUri(contactUri);
 
+        
+        
         // Loads the thumbnail image pointed to by photoUri into the QuickContactBadge in a
         // background worker thread
-     //## mImageLoader.loadImage(photoUri, holder.icon);
+        //imageLoader.DisplayImage(photoUri, holder.icon);
+        //mImageLoader.loadImage(photoUri, holder.icon);
     }
 
     /**

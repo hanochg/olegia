@@ -10,6 +10,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_contact_picture_holo_light"
         android:focusable="false"
+        android:visibility="gone"
         />
 
     <TextView
