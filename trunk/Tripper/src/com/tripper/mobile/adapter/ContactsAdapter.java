@@ -18,6 +18,7 @@ import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 import com.tripper.mobile.R;
+import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries;
 
@@ -202,6 +203,7 @@ public class ContactsAdapter extends CursorAdapter implements SectionIndexer {
         if (getCursor() == null) {
             return 0;
         }
+        
         return super.getCount();
     }
 
