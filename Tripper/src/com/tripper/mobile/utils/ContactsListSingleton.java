@@ -1,9 +1,7 @@
 package com.tripper.mobile.utils;
 
 import java.util.ArrayList;
-
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.Marker;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
@@ -16,7 +14,6 @@ import com.tripper.mobile.adapter.FriendsSelectedAdapter;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.ContactDataStructure.eAppStatus;
 import com.tripper.mobile.utils.Queries.Net.ChannelMode;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +39,40 @@ public class ContactsListSingleton
 	private boolean GlobalPreferenceAllowSMS=false;
 	private double RadiusSingleFromSettings;	
     private Circle singleRouteCircle=null;
+    public FriendsSelectedAdapter mFriendsSelectedAdapter;
+
+    
+    public void clearAllSelected()
+    {
+		for(int i=0 ; i<db.size() ; i++)
+		{
+			db.get(i).setSelected(false);
+		}		
+    }
+
+	public void setDefaultSettingsFromContex( Context context)
+	{	
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
+		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list,"");
+		boolean allowSMS = sharedPref.getBoolean(SettingsActivity.pref_key_sms_allow,true);
+		String radiusSingleRoute = sharedPref.getString(SettingsActivity.default_radius_text_single,"0");
+		CountryTwoLetters = countryTwoLetters;
+		LanguageFromSettings = languageFromSettings;
+		GlobalPreferenceAllowSMS=allowSMS;
+		RadiusSingleFromSettings=Double.valueOf(radiusSingleRoute);
+	}
+
+
+	public double getRadiusSingleFromSettings() {
+		return RadiusSingleFromSettings;
+	}
+
+	public void setRadiusSingleFromSettings(double radiusSingleFromSettings) {
+		RadiusSingleFromSettings = radiusSingleFromSettings;
+		if (singleRouteCircle!=null)
+			singleRouteCircle.setRadius(radiusSingleFromSettings);
+	}
 
 	public Circle getSingleRouteCircle() {
 		return singleRouteCircle;
@@ -74,34 +105,7 @@ public class ContactsListSingleton
 	public void setCountryTwoLetters(String countryTwoLetters) {
 		CountryTwoLetters = countryTwoLetters;
 	}
-
-	public void setDefaultSettingsFromContex( Context context)
-	{	
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		String countryTwoLetters = sharedPref.getString(SettingsActivity.location_list,"");
-		String languageFromSettings = sharedPref.getString(SettingsActivity.language_list,"");
-		boolean allowSMS = sharedPref.getBoolean(SettingsActivity.pref_key_sms_allow,true);
-		String radiusSingleRoute = sharedPref.getString(SettingsActivity.default_radius_text_single,"0");
-		CountryTwoLetters = countryTwoLetters;
-		LanguageFromSettings = languageFromSettings;
-		GlobalPreferenceAllowSMS=allowSMS;
-		RadiusSingleFromSettings=Double.valueOf(radiusSingleRoute);
-	}
-
-
-	public double getRadiusSingleFromSettings() {
-		return RadiusSingleFromSettings;
-	}
-
-	public void setRadiusSingleFromSettings(double radiusSingleFromSettings) {
-		RadiusSingleFromSettings = radiusSingleFromSettings;
-		if (singleRouteCircle!=null)
-			singleRouteCircle.setRadius(radiusSingleFromSettings);
-	}
-
-
-	public FriendsSelectedAdapter mFriendsSelectedAdapter;
-
+	
 	public void close()
 	{
 		db.clear();

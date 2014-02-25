@@ -15,10 +15,8 @@ import com.tripper.mobile.utils.ImageLoader;
 import com.tripper.mobile.utils.Queries;
 import com.tripper.mobile.utils.ContactDataStructure.eAnswer;
 import com.tripper.mobile.utils.Queries.Extra;
-
 import android.app.Activity;
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -28,6 +26,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Contacts.Photo;
 
@@ -74,7 +73,6 @@ public class ContactsList extends Activity implements
     //private final int CONTACTLIST_REQUEST_CODE = 11;
     private int APP_MODE;
     
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,7 +80,12 @@ public class ContactsList extends Activity implements
 		context=this;
 		
 		APP_MODE = getIntent().getExtras().getInt(Queries.Extra.APP_MODE);
-				
+
+		//Reset Settings values
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		//Writing global settings Settings				
+		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
+		
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(this);
         getLoaderManager().initLoader(Queries.LoaderManagerID, null, this);
@@ -208,6 +211,14 @@ public class ContactsList extends Activity implements
           
     }
 
+	
+	@Override
+	protected void onDestroy() {
+		context=null;
+		super.onDestroy();
+	}
+	
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 	    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK)

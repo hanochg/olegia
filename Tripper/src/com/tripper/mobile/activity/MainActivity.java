@@ -3,16 +3,10 @@ package com.tripper.mobile.activity;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v4.content.LocalBroadcastManager;
-
 import com.tripper.mobile.R;
 import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.utils.ContactsListSingleton;
@@ -24,12 +18,10 @@ public class MainActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);	
-		//if(SplashScreen.splashActivity!=null)
-		//	SplashScreen.splashActivity.finish();
-		
-		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
-		//reading Settings				
+		//Reset Settings values
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		//Writing global settings Settings				
 		ContactsListSingleton.getInstance().setDefaultSettingsFromContex(this);
 		
 	}

@@ -6,7 +6,6 @@ import java.util.TimerTask;
 
 import com.parse.ParseUser;
 import com.tripper.mobile.R;
-import com.tripper.mobile.utils.ContactsListSingleton;
 import com.tripper.mobile.utils.Queries.Extra;
 
 import android.net.ConnectivityManager;
@@ -15,12 +14,9 @@ import android.os.Bundle;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.widget.Toast;

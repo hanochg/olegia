@@ -1,15 +1,10 @@
 package com.tripper.mobile.adapter;
 
 import java.util.List;
-
 import com.tripper.mobile.R;
-import com.tripper.mobile.SettingsActivity;
 import com.tripper.mobile.utils.ContactsListSingleton;
-
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Address;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
