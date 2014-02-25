@@ -4,5 +4,7 @@
 
 12. check if cursor is closed when accessing it in FriendsList - I think I fixed it - Hanoch
 16. add SMS to multi_destination
-20. TODO camera movement on the map
 21. check if GPS & internet is on, on all activities
+22. doesn't sent messages in:
+SINGLE - user that has eAppStatus.notChecked. the service get canceled before the contact get the AppStatus.
+MULTI - user that has manual address and NoApp.
