@@ -113,13 +113,13 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			convertView = mInflater.inflate(R.layout.drawer_list_item_closed, null);
 			imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 		}		
-		
+
 		//NO APP SETTINGS
 		if (curContact.getAppStatus()==eAppStatus.noApp && 
 				curContact.getContactAnswer()!=eAnswer.single &&
-						curContact.getContactAnswer()!=eAnswer.manual &&
-								curContact.getContactAnswer()!=eAnswer.messageSent &&
-									curContact.getContactAnswer()!=eAnswer.singleWithMessage)
+				curContact.getContactAnswer()!=eAnswer.manual &&
+				curContact.getContactAnswer()!=eAnswer.messageSent &&
+				curContact.getContactAnswer()!=eAnswer.singleWithMessage)
 		{
 			Log.d("getView_NAV","In MultiRoute NoApp settings");
 			if(isContactWiderMenu)
@@ -128,7 +128,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				convertView = mInflater.inflate(R.layout.drawer_list_item_no_app, null);
 
 				imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-			
+
 				setWiderMenuNoApp(convertView,curContact);
 				txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 				txtStatus.setText(context.getResources().getText(R.string.contact_no_app_status));
@@ -148,9 +148,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				{
 					Log.d("getView_NAV","In NotAnswered settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_no_answer, null);
-					
+
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-					
+
 					setWiderMenuNoAnswer(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_waiting_reply_status));
@@ -158,18 +158,18 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				Log.d("getView_NAV","In NotAnswered settings-closed");
 				imgIcon.setImageResource(R.drawable.question_mark);
 				break;
-			//ANSWERED NO! SETTINGS
+				//ANSWERED NO! SETTINGS
 			case no:
 				Log.d("getView_NAV","In AnswerIsNo settings");
 				if(isContactWiderMenu)
 				{
 					Log.d("getView_NAV","In AnswerIsNo settings-wide");
-					
+
 					//Same layout as No Answer
 					convertView = mInflater.inflate(R.layout.drawer_list_item_no_answer, null);
-					
+
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-					
+
 					//Same options as No Answer
 					setWiderMenuNoAnswer(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
@@ -178,16 +178,16 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				Log.d("getView_NAV","In AnswerIsNo settings-closed");
 				imgIcon.setImageResource(R.drawable.red_circle);
 				break;
-			//ANSWERED YES SETTINGS
+				//ANSWERED YES SETTINGS
 			case ok:
 				Log.d("getView_NAV","In AnswerIsOK settings");
 				if(isContactWiderMenu)
 				{
 					Log.d("getView_NAV","In AnswerIsOK settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_replied, null);	
-					
+
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-					
+
 					setWiderMenuYes(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_response_status));
@@ -195,7 +195,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				Log.d("getView_NAV","In AnswerIsOK settings-closed");
 				imgIcon.setImageResource(R.drawable.green_circle);
 				break;
-			//MANUAL ADDRESS ENTERED SETTINGS
+				//MANUAL ADDRESS ENTERED SETTINGS
 			case manual:
 				Log.d("getView_NAV","In ManualAddress settings");
 				if(isContactWiderMenu)
@@ -226,9 +226,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				{
 					Log.d("getView_NAV","In messageSent settings-wide");
 					convertView = mInflater.inflate(R.layout.drawer_list_item_msg_sent, null);
-					
+
 					imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-					
+
 					setWiderMenuMsgSent(convertView,curContact);
 					txtStatus = (TextView) convertView.findViewById(R.id.contactStatus);
 					txtStatus.setText(context.getResources().getText(R.string.contact_msg_sent_status));
@@ -250,10 +250,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 	private void setWiderMenuMsgSent(View convertView,
 			ContactDataStructure curContact) {
-		
+
 		final ContactDataStructure contact=curContact;
-		
-		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+
+		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);		
 		if(contact.getAppStatus()==eAppStatus.hasApp)
 		{
 			allowSMSCheck.setVisibility(View.GONE);
@@ -262,36 +262,37 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			// Changes the height to the specified *DIP*
 			params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 115, convertView.getResources().getDisplayMetrics());
 			lowerLayout.setLayoutParams(params);*/
-			
+
 		}
 		else
 		{
-		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
-					contact.setAllowSMS(isChecked);
-				else
-				{
-					allowSMSCheck.setChecked(false);
-					Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();	
-				}								
-			}
-		});
+			allowSMSCheck.setChecked(contact.isAllowSMS());
+			allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
+						contact.setAllowSMS(isChecked);
+					else
+					{
+						allowSMSCheck.setChecked(false);
+						Toast.makeText(context, "App is not allowed to send SMS.\nYou can change it in Settings.", Toast.LENGTH_LONG).show();	
+					}								
+				}
+			});
 		}
 		Button reSendGetDownButton = (Button) convertView.findViewById(R.id.resendMessage);
 		reSendGetDownButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				//TODO RESEND GET DOWN
-				
+
 			}
 		});
 		Button removeButton = (Button) convertView.findViewById(R.id.removeContact);
 		removeButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				if(ContactsListSingleton.getInstance().getDB().size()==1)
@@ -308,10 +309,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 								contact.getRadiusOnMap().remove();
 							if(contact.getMarker()!=null)
 								contact.getMarker().remove();
-							
+
 							//DELETE
 							ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
-							
+
 							//SEND UPDATE TO DRAWER
 							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
 							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -327,15 +328,16 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 			}
 		});
-		
+
 	}
 
 	private void setWiderMenuSingleRouteNoApp(View convertView,ContactDataStructure curContact) {
 		final ContactDataStructure contact=curContact;
-		
+
 		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		allowSMSCheck.setChecked(contact.isAllowSMS());
 		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
+
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
@@ -352,12 +354,13 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 	private void setWiderMenuYes(View convertView,ContactDataStructure curContact) {
 		final ContactDataStructure contact=curContact;
-		
+
 		if(contact.getAppStatus()==eAppStatus.noApp)			
 		{
 			final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+			allowSMSCheck.setChecked(contact.isAllowSMS());
 			allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
+
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
@@ -370,8 +373,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 			});
 		}
-		
-		
+
+
 		Button setRadiusButton = (Button) convertView.findViewById(R.id.radiusSet);
 		setRadiusButton.setOnClickListener(new OnClickListener() {
 
@@ -383,8 +386,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				text.setInputType(InputType.TYPE_CLASS_NUMBER);
 				text.selectAll();
 
-				
-				
+
+
 				AlertDialog.Builder b = new AlertDialog.Builder(context)
 				.setTitle("Radius Value")
 				.setMessage("Enter Radius Value (In Meters)")
@@ -411,7 +414,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 			AlertDialog alert;
 			@Override
 			public void onClick(View v) {
-				
+
 				final CharSequence[] choiceList =
 					{"Waze", "Google Maps","Other" };	
 				int selected = -1; // does not select anything
@@ -427,7 +430,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
 							@Override
 							public void onClick(DialogInterface dialog,int which) 
 							{
-								
+
 								switch(which)
 								{
 								case 0: 
@@ -451,29 +454,29 @@ public class NavDrawerListAdapter extends BaseAdapter {
 										context.startActivity(intent);
 									}	
 									return;
-									
+
 								case 1://GoogleMaps Navigation							
 									try{															
-									    //can enter a String address after saddr\daddr
-									    Uri uri = Uri.parse("google.navigation:q="+contact.getLatitude()+","+contact.getLongitude());
-									    //Uri uri = Uri.parse("http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+contact.getLatitude()+","+contact.getLongitude());
-									    Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-									    intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-									    context.startActivity(intent);
+										//can enter a String address after saddr\daddr
+										Uri uri = Uri.parse("google.navigation:q="+contact.getLatitude()+","+contact.getLongitude());
+										//Uri uri = Uri.parse("http://maps.google.com/maps?" + "saddr="+ latitudeCurr + "," + longitudeCurr + "&daddr="+contact.getLatitude()+","+contact.getLongitude());
+										Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+										intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+										context.startActivity(intent);
 									}catch(Exception e)
 									{
 										Log.e("Google Navigate","Error: "+e.getMessage());
 									}
-									
+
 									alert.dismiss();
 									return;
 								case 2:
 									try{															
-									    //can enter a String address after saddr\daddr
-									    Uri uri = Uri.parse("google.navigation:q="+contact.getLatitude()+","+contact.getLongitude());
-									    Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-									    //intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-									    context.startActivity(intent);
+										//can enter a String address after saddr\daddr
+										Uri uri = Uri.parse("google.navigation:q="+contact.getLatitude()+","+contact.getLongitude());
+										Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+										//intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+										context.startActivity(intent);
 									}catch(Exception e)
 									{
 										Log.e("Other Application Navigate","Error: "+e.getMessage());
@@ -494,9 +497,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 
 	private void setWiderMenuNoAnswer(View convertView, ContactDataStructure curContact) {
-		
+
 		final ContactDataStructure contact=curContact;
-		
+
 		Button reRequestButton = (Button) convertView.findViewById(R.id.reRequest);
 		reRequestButton.setOnClickListener(new OnClickListener() {			
 			@Override
@@ -510,17 +513,17 @@ public class NavDrawerListAdapter extends BaseAdapter {
 					Toast.makeText(context, "Please wait.\nStill checking for if contact has app.", Toast.LENGTH_LONG).show();
 			}
 		});
-		
+
 		Button manualLocationButton = (Button) convertView.findViewById(R.id.manualLocation);
 		manualLocationButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(context, FindAddress.class);
 				intent.putExtra(Extra.APP_MODE,Extra.MULTI_DESTINATION);
 				intent.putExtra(Extra.MANUAL_ADDRESS,contact.getPhoneNumber());
 				context.startActivity(intent);
-				
+
 			}
 		});
 	}
@@ -528,10 +531,11 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	private void setWiderMenuNoApp(View convertView,ContactDataStructure curContact) {
 
 		final ContactDataStructure contact=curContact;
-		
+
 		final CheckBox allowSMSCheck = (CheckBox) convertView.findViewById(R.id.allowSMS);
+		allowSMSCheck.setChecked(contact.isAllowSMS());
 		allowSMSCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
+
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(ContactsListSingleton.getInstance().isGlobalPreferenceAllowSMS())
@@ -543,22 +547,22 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}								
 			}
 		});
-		
+
 		Button manualLocationButton = (Button) convertView.findViewById(R.id.manualLocation);
 		manualLocationButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(context, FindAddress.class);
 				intent.putExtra(Extra.APP_MODE,Extra.MULTI_DESTINATION);
 				intent.putExtra(Extra.MANUAL_ADDRESS,contact.getPhoneNumber());
 				context.startActivity(intent);
-				
+
 			}
 		});
 		Button removeButton = (Button) convertView.findViewById(R.id.removeContact);
 		removeButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				if(ContactsListSingleton.getInstance().getDB().size()==1)
@@ -575,10 +579,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
 								contact.getRadiusOnMap().remove();
 							if(contact.getMarker()!=null)
 								contact.getMarker().remove();
-							
+
 							//DELETE
 							ContactsListSingleton.getInstance().removeContactByPhoneNum(contact.getPhoneNumber());
-							
+
 							//SEND UPDATE TO DRAWER
 							Intent intent = new Intent("com.tripper.mobile.UPDATE");	
 							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -594,28 +598,28 @@ public class NavDrawerListAdapter extends BaseAdapter {
 				}
 			}
 		});
-		
-		
+
+
 	}
 
 	public void sendNotification(ContactDataStructure curContact)
 	{	 
 		ParsePush push = new ParsePush();
 		push.setChannel(Net.PhoneToChannel(ChannelMode.INVITATION,curContact.getInternationalPhoneNumber()));
-		
-		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
-		
-		JSONObject data = new JSONObject();		
-	    try
-	    {
-	    		data.put("alert", Messeges.INVITATION ); // ParseUser.getCurrentUser().getUsername());
-	    		data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
 
-	    }
-	    catch(JSONException x)
-	    {
-	    	throw new RuntimeException("Something wrong with JSON", x);
-	    }
+		push.setExpirationTimeInterval(60*60*24);//one day till query is relevant
+
+		JSONObject data = new JSONObject();		
+		try
+		{
+			data.put("alert", Messeges.INVITATION ); // ParseUser.getCurrentUser().getUsername());
+			data.put(Net.USER, ParseUser.getCurrentUser().getUsername());
+
+		}
+		catch(JSONException x)
+		{
+			throw new RuntimeException("Something wrong with JSON", x);
+		}
 		push.setData(data);
 		push.sendInBackground();
 	}
