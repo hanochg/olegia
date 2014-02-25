@@ -25,9 +25,6 @@ import android.util.Log;
 
 public class ContactsListSingleton 
 {
-	//public enum AppMode{SINGLE_DESTINATION,MULTI_DESTINATION,NOTIFICATION };
-	//public AppMode APP_MODE;
-
 
 	static private ArrayList<ContactDataStructure> db=null;
 	static private ContactsListSingleton instance=null;
@@ -201,7 +198,13 @@ public class ContactsListSingleton
 		{
 			int indexNum = indexOf(phone);
 			if(indexNum!=(-1))
+			{
+				if(db.get(indexNum).getRadiusOnMap()!=null)					
+					db.get(indexNum).getRadiusOnMap().remove();
+				if(db.get(indexNum).getMarker()!=null)
+					db.get(indexNum).getMarker().remove();
 				db.remove(indexNum);
+			}
 		}			
 		else
 			Log.e("ContactsListSingelton","DB Not created before removeContactByPhoneNum");
@@ -227,6 +230,10 @@ public class ContactsListSingleton
 		if(db!=null)
 		{
 			try{
+				if(db.get(index).getRadiusOnMap()!=null)					
+					db.get(index).getRadiusOnMap().remove();
+				if(db.get(index).getMarker()!=null)
+					db.get(index).getMarker().remove();
 				db.remove(index);
 			}
 			catch (Exception e){
