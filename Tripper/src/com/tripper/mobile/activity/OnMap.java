@@ -136,7 +136,7 @@ public class OnMap extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.on_map);
 
-
+		ContactsListSingleton.getInstance().setTripActive(true);
 		APP_MODE = getIntent().getExtras().getInt(Extra.APP_MODE);
 		getScreenDimensions();
 
@@ -514,10 +514,13 @@ public class OnMap extends Activity {
 		addContactsMarkers();
 
 		navDrawerListAdapter.notifyDataSetChanged();
-
-		Intent intent=new Intent(this, DistanceService.class);
-		intent.putExtra(Extra.APP_MODE, APP_MODE);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
+		//TODO
+		if( ContactsListSingleton.getInstance().GetIsTripActive())
+		{
+			Intent intent=new Intent(this, DistanceService.class);
+			intent.putExtra(Extra.APP_MODE, APP_MODE);
+			bindService(intent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
+		}
 	}
 
 
@@ -608,34 +611,34 @@ public class OnMap extends Activity {
 	}
 
 	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // toggle nav drawer on selecting action bar app icon/title
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        Intent intent;
-        // Handle action bar actions click
-        switch (item.getItemId()) {
-        case R.id.SettingsOM:
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// toggle nav drawer on selecting action bar app icon/title
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+		Intent intent;
+		// Handle action bar actions click
+		switch (item.getItemId()) {
+		case R.id.SettingsOM:
 			intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);			
 			break;
-        case R.id.exitOM:        	
-        	finish();
-        	//intent = new Intent("com.tripper.mobile.EXIT");	
-    		//LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        	break;
-        case R.id.editContacts:
-            intent = new Intent(this,FriendsList.class);
-            intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.ON_MAP);            
-            startActivity(intent);
-            break;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    
+		case R.id.exitOM:        	
+			finish();
+			//intent = new Intent("com.tripper.mobile.EXIT");	
+			//LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+			break;
+		case R.id.editContacts:
+			intent = new Intent(this,FriendsList.class);
+			intent.putExtra(Queries.Extra.APP_MODE,Queries.Extra.ON_MAP);            
+			startActivity(intent);
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 
 	/***
 	 * Called when invalidateOptionsMenu() is triggered
