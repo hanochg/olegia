@@ -32,7 +32,9 @@ public class MyCustomReceiver extends BroadcastReceiver
 	    }
 	    catch (JSONException x) 
 	    {
-	    	throw new RuntimeException("Something wrong with JSON", x);
+	    	//throw new RuntimeException("Something wrong with JSON", x);
+	    	Log.e("MyCustomReceiver","ANSWERHandler-com.parse.Data-JNSON");
+	    	return;
 	    }
 		
 		switch(channel)

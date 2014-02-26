@@ -94,10 +94,10 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		{
 			public void onLocationChanged(Location location) 
 			{
-				if(location.getAccuracy()<100)
+				if(location.getAccuracy()<70)
 				{
 					progressDialog.dismiss();
-					locationManager.removeUpdates(locationListener);			//not so working
+					locationManager.removeUpdates(locationListener);			//not so working another one in OnDestroy is working
 					Toast.makeText(notificationActivity, "Your location was sent back.", Toast.LENGTH_LONG).show();
 					answerHandler(getJSONDataMessage(Net.AnswerIsOK,location.getLatitude(),location.getLongitude()),phone);	
 					notificationActivity.finish();
@@ -268,14 +268,6 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		return super.onKeyDown(keyCode, event);
 	}
 
-	/*		
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.	
-		getMenuInflater().inflate(R.menu.notification, menu);			
-		return true;
-	}*/
 
 	@SuppressWarnings("deprecation")
 	private void  showNotification()
@@ -292,10 +284,11 @@ LoaderManager.LoaderCallbacks<Cursor>{
 		mNotificationManager.notify(101, note); 
 
 	}
+	/*
 	protected void onNewIntent(Intent intent) {
 		Log.e("sdaasdas","dsasdasdasdas");
 	}
-
+*/
 }
 
 
