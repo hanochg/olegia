@@ -35,6 +35,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.gsm.SmsManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DistanceService extends Service implements LocationListener {
 
@@ -43,8 +44,9 @@ public class DistanceService extends Service implements LocationListener {
 	private PendingIntent pi;
 	private TextToSpeech ttobj;
 	private int APP_MODE=-1;
-	ArrayList<ContactDataStructure> db;
-	Location targetlocation;
+	private ArrayList<ContactDataStructure> db;
+	private Location targetlocation;
+	private boolean status=false;
 
 	LocationManager lm;
 
@@ -79,26 +81,33 @@ public class DistanceService extends Service implements LocationListener {
 
 		return START_STICKY;
 	}
-
+	//OnStop of OnMap
 	public void startFineLocations()
 	{
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
+		status=true;
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000, 0, this);
+
 	}
+	//On Bind,ONResume
 	public void startPassiveLocations()
 	{
+		status=false;
 		locationManager.removeUpdates(this);
-		locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 500, 0, this);
+		if(locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER))
+			locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 500, 0, this);
 	}
 
 	public void onLocationChanged(Location mylocation) 
 	{
 		boolean endFlag=true;
-		/*
-		Log.e( mylocation.getProvider(), "h");
-		Log.e(Long.toString((System.currentTimeMillis()-starttime)/1000), Float.toString(mylocation.getAccuracy()));
-		 */
-		if(mylocation.getAccuracy()<40 && db!=null && !db.isEmpty()&& mylocation!=null )
+
+		//Log.e( mylocation.getProvider(), "h");
+	//	Log.e(Long.toString((System.currentTimeMillis()-starttime)/1000), Float.toString(mylocation.getAccuracy()));
+
+		if(mylocation.getAccuracy()<50 && db!=null && !db.isEmpty()&& mylocation!=null )
 		{
 
 			if(APP_MODE==Extra.MULTI_DESTINATION)
@@ -179,7 +188,7 @@ public class DistanceService extends Service implements LocationListener {
 					{
 					}
 				}
-				
+
 				ContactDataStructure contact;
 				for (int i=0;i<db.size();i++)
 				{
@@ -196,10 +205,21 @@ public class DistanceService extends Service implements LocationListener {
 			}
 		}//main if
 	}
-	public void onProviderEnabled(String s){}
+	public void onProviderEnabled(String provider)
+	{
+		//Log.e( "onProviderEnabled", "h");
+	}
 
-	public void onProviderDisabled(String s) {}
-	public void onStatusChanged(String s, int i, Bundle b){}
+	public void onProviderDisabled(String provider) 
+	{		
+		if(status==true && provider.equals(LocationManager.GPS_PROVIDER)) 
+			Toast.makeText(this, "TripR, Please enable GPS location!", Toast.LENGTH_LONG).show();
+	//	Log.e( "onProviderDisabled", "h");
+	}
+	public void onStatusChanged(String provider, int i, Bundle b)
+	{
+		//Log.e( "onStatusChanged", "h");
+	}
 
 
 	public void speechAndUpdateAfterMessege(ContactDataStructure contact)
@@ -310,7 +330,7 @@ public class DistanceService extends Service implements LocationListener {
 			sms.sendTextMessage(phoneNumber, null, "Get Down!", null, null);
 		else if (mode==Extra.SINGLE_DESTINATION)
 			sms.sendTextMessage(phoneNumber, null, "Got to Place", null, null);
-			
+
 	}
 
 

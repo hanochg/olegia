@@ -8,3 +8,5 @@
 22. doesn't sent messages in:
 SINGLE - user that has eAppStatus.notChecked. the service get canceled before the contact get the AppStatus.
 MULTI - user that has manual address and NoApp.
+23. the isAppActictive, need to be false, in case that not only all messages are sent, becouse some users can't recive messeges
+24. to remove getApplicationContex()

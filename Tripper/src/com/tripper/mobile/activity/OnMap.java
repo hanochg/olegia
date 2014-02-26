@@ -109,7 +109,7 @@ public class OnMap extends Activity {
 
 
 
-	DistanceService mService;
+	private DistanceService mService;
 	boolean mBound = false;
 
 	private ServiceConnection mConnection = new ServiceConnection() {
@@ -145,7 +145,6 @@ public class OnMap extends Activity {
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
 		startService(intent);
 
-
 		mMessageReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) 
@@ -166,11 +165,8 @@ public class OnMap extends Activity {
 				}
 			}
 		};
-
-
 		//Initialize the Drawer
 		InitializeDrawer();
-
 	}
 
 	private void setMapView(LatLng dest)
@@ -502,6 +498,12 @@ public class OnMap extends Activity {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.tripper.mobile.EXIT"));
 
 		googleMap=null;
+		
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) 
+		{
+			Toast.makeText(this, "Please turn on the GPS!", Toast.LENGTH_LONG).show();
+		}
 
 		// Initializing Map
 		initilizeMap();
@@ -581,7 +583,13 @@ public class OnMap extends Activity {
 	{
 		super.onDestroy();
 		selectedAddress=null;
-
+		
+		if (mBound)
+		{
+			unbindService(mConnection);
+			mBound = false;
+		}
+		
 		Intent i=new Intent(this, DistanceService.class);
 		stopService(i);
 	}
